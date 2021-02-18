@@ -21,7 +21,7 @@ public class BINavController {
 	public BINavController() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
 		UIManager.setLookAndFeel(new FlatDarculaLaf());
 		frame = new BINavigatorFrame();
-		panel = new TextEditorPanel();
+		panel = new TextEditorPanel(textColorTheme);
 		menuBar = new NavMenuBar(this);
 
 		//loadColorPallete();

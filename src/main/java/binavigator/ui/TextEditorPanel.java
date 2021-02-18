@@ -1,5 +1,8 @@
 package binavigator.ui;
 
+import binavigator.ui.colortheme.Monokai;
+import binavigator.ui.colortheme.TextColorTheme;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -12,15 +15,17 @@ import java.awt.event.FocusListener;
 import static java.lang.System.lineSeparator;
 
 public class TextEditorPanel extends JPanel {
-   	JTextArea textArea = new JTextArea();
-   	Document document = textArea.getDocument();
+   	private JTextArea textArea = new JTextArea();
+   	private Document document = textArea.getDocument();
 	private JPanel lineCounterArea = null;
-	LineNumberingTextArea rowHeaders  = null;
+	private LineNumberingTextArea rowHeaders  = null;
 	private int lineCount = 1;
+	private TextColorTheme textColorTheme = new Monokai();
 
 
-	public TextEditorPanel() {
+	public TextEditorPanel(TextColorTheme textColorTheme) {
 		super();
+		this.textColorTheme = textColorTheme;
 		this.setLayout(new BorderLayout());
 		JScrollPane textAreaPane = new JScrollPane(textArea);
 		textArea.getDocument().addDocumentListener(new DocumentListener() {
