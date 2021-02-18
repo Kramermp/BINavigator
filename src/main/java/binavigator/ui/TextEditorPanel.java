@@ -11,7 +11,7 @@ import java.awt.event.FocusListener;
 
 import static java.lang.System.lineSeparator;
 
-public class NavPanel extends JPanel {
+public class TextEditorPanel extends JPanel {
    	JTextArea textArea = new JTextArea();
    	Document document = textArea.getDocument();
 	private JPanel lineCounterArea = null;
@@ -19,7 +19,7 @@ public class NavPanel extends JPanel {
 	private int lineCount = 1;
 
 
-	public NavPanel() {
+	public TextEditorPanel() {
 		super();
 		this.setLayout(new BorderLayout());
 		JScrollPane textAreaPane = new JScrollPane(textArea);

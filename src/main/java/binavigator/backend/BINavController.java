@@ -2,7 +2,7 @@ package binavigator.backend;
 
 import binavigator.ui.BINavigatorFrame;
 import binavigator.ui.NavMenuBar;
-import binavigator.ui.NavPanel;
+import binavigator.ui.TextEditorPanel;
 import binavigator.ui.Theme;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatLightLaf;
@@ -12,13 +12,13 @@ import java.io.*;
 
 public class BINavController {
 	private BINavigatorFrame frame = null;
-	private NavPanel panel = null;
+	private TextEditorPanel panel = null;
 	private NavMenuBar menuBar = null;
 
 	public BINavController() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
 		UIManager.setLookAndFeel(new FlatDarculaLaf());
 		frame = new BINavigatorFrame();
-		panel = new NavPanel();
+		panel = new TextEditorPanel();
 		menuBar = new NavMenuBar(this);
 
 		//loadColorPallete();
