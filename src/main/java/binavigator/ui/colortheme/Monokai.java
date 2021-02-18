@@ -2,7 +2,7 @@ package binavigator.ui.colortheme;
 
 import java.awt.*;
 
-public class Monokai extends ColorTheme{
+public class Monokai extends TextColorTheme {
 	private static final Color WHITE = Color.decode("#F8F8F2");
 	private static final Color RED = Color.decode("#F92672");
 	private static final Color DARK_GRAY = Color.decode("#75715E");

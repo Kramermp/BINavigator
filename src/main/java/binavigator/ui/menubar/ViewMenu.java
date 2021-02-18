@@ -1,7 +1,7 @@
 package binavigator.ui.menubar;
 
 import binavigator.backend.BINavController;
-import binavigator.ui.Theme;
+import binavigator.ui.colortheme.WindowTheme;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -17,12 +17,12 @@ public class ViewMenu extends JMenu {
 	}
 
 	public void buildThemeSelector() {
-		JMenu selectThemeBtn =  new JMenu("Select Theme");
+		JMenu selectThemeBtn =  new JMenu("Select WindowTheme");
 
 		JMenuItem darkThemBtn = new JMenuItem("Dark");
 		darkThemBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				parentController.setTheme(Theme.DARK);
+				parentController.setTheme(WindowTheme.DARK);
 			}
 		});
 		selectThemeBtn.add(darkThemBtn);
@@ -30,7 +30,7 @@ public class ViewMenu extends JMenu {
 		JMenuItem lightThemeBtn = new JMenuItem("Light");
 		lightThemeBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				parentController.setTheme(Theme.LIGHT);
+				parentController.setTheme(WindowTheme.LIGHT);
 			}
 		});
 		selectThemeBtn.add(lightThemeBtn);

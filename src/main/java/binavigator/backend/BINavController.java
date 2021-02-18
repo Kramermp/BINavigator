@@ -3,7 +3,9 @@ package binavigator.backend;
 import binavigator.ui.BINavigatorFrame;
 import binavigator.ui.NavMenuBar;
 import binavigator.ui.TextEditorPanel;
-import binavigator.ui.Theme;
+import binavigator.ui.colortheme.WindowTheme;
+import binavigator.ui.colortheme.TextColorTheme;
+import binavigator.ui.colortheme.Monokai;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
@@ -14,6 +16,7 @@ public class BINavController {
 	private BINavigatorFrame frame = null;
 	private TextEditorPanel panel = null;
 	private NavMenuBar menuBar = null;
+	private TextColorTheme textColorTheme = new Monokai();
 
 	public BINavController() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
 		UIManager.setLookAndFeel(new FlatDarculaLaf());
@@ -34,15 +37,15 @@ public class BINavController {
 		System.exit(0);
 	}
 
-	public void setTheme(Theme theme) {
+	public void setTheme(WindowTheme windowTheme) {
 		try {
-			switch (theme) {
+			switch (windowTheme) {
 				case DARK:
-					System.out.println("Setting Theme to Dark");
+					System.out.println("Setting WindowTheme to Dark");
 					UIManager.setLookAndFeel(new FlatDarculaLaf());
 					break;
 				case LIGHT:
-					System.out.println("Setting Theme to Light");
+					System.out.println("Setting WindowTheme to Light");
 					UIManager.setLookAndFeel(new FlatLightLaf());
 					break;
 			}
