@@ -92,4 +92,8 @@ public class BINavController {
 	public String getTextContent() {
 		return panel.getTextContent();
 	}
+
+	public TextColorTheme getTextColorTheme() {
+		return this.textColorTheme;
+	}
 }
