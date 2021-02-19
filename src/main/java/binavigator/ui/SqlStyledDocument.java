@@ -25,12 +25,20 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 	private synchronized void refreshDocument() throws BadLocationException {
 		String text = getText(0, getLength());
-		final List<HiliteWord> list = processWords(text);
 
-		for(HiliteWord word : list) {
-			int p0 = word._position;
-			setCharacterAttributes(p0, word._word.length(), keyWordSyle, true);
+		String[] lines = text.split("\n");
+		List<HiliteWord> wordList;
+		int lineStart = 0;
+		for(String currentLine : lines) {
+			System.out.println(currentLine);
+			wordList = processWords(currentLine);
+			for (HiliteWord word : wordList) {
+				int p0 = word._position + lineStart;
+				setCharacterAttributes(p0, word._word.length(), keyWordSyle, true);
+			}
+			lineStart+=currentLine.length() + 1;
 		}
+
 	}
 
 	public void remove (int offs, int len) throws BadLocationException {
