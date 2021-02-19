@@ -32,6 +32,7 @@ public class TextEditorPanel extends JPanel {
 		DefaultStyledDocument doc = new SqlStyledDocument();
 
 		textPane = new JTextPane(doc);
+		new LinePainter(textPane, this.getBackground());
 		textPane.setText("public class Hi {}");
 		JScrollPane jScrollPane = new JScrollPane(textPane);
 		add(jScrollPane);
