@@ -9,5 +9,5 @@ public abstract class TextColorTheme {
 	public abstract Color getKeyWordColor();
 
 
-
+	public abstract Color getLineHiLight();
 }

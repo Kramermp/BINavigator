@@ -10,7 +10,7 @@ public class Monokai extends TextColorTheme {
 	private static final Color Light_Orange = Color.decode("#E69F66");
 	private static final Color YELLOW = Color.decode("#E6DB74");
 	private static final Color GREEN = Color.decode("#A6E22E");
-	private static final Color Blue = Color.decode("#66D9EF");
+	private static final Color BLUE = Color.decode("#66D9EF");
 	private static final Color Purple = Color.decode("#AE81FF");
 
 
@@ -32,5 +32,10 @@ public class Monokai extends TextColorTheme {
 	@Override
 	public Color getKeyWordColor() {
 		return this.RED;
+	}
+
+	@Override
+	public Color getLineHiLight() {
+		return this.BLUE;
 	}
 }

@@ -29,4 +29,9 @@ public class RandomColorTheme extends TextColorTheme{
 	public Color getKeyWordColor() {
 		return getRandomColor();
 	}
+
+	@Override
+	public Color getLineHiLight() {
+		return getRandomColor();
+	}
 }

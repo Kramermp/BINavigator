@@ -24,7 +24,6 @@ public class BINavController {
 		panel = new TextEditorPanel(textColorTheme);
 		menuBar = new NavMenuBar(this);
 
-		//loadColorPallete();
 		frame.setExtendedState( frame.getExtendedState()| JFrame.MAXIMIZED_BOTH );
 		frame.setJMenuBar(menuBar);
 		frame.add(panel);
@@ -75,7 +74,7 @@ public class BINavController {
 		}
 	}
 
-		public void saveToFile(File file ) {
+	public void saveToFile(File file ) {
 		System.out.println("Saving to File: " + file.getAbsolutePath());
 		try {
 			FileOutputStream fos = new FileOutputStream(file);
