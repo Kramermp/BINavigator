@@ -42,7 +42,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 			}
 
 			if( !foundLineEnd && (endSearchPosition >= body.length() - 1 || body.charAt(endSearchPosition) == 10)) {
-				lineEndIndex = endSearchPosition;
+				lineEndIndex = endSearchPosition + 1;
 				foundLineEnd = true;
 			}
 			startSearchPosition--;
@@ -51,64 +51,80 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 		System.out.println("Current Line Start at: " + lineStartIndex);
 		System.out.println("Current Line End at: " + lineEndIndex);
-		refreshLine(lineStartIndex, lineEndIndex);
+		update(lineStartIndex, lineEndIndex);
 	}
 
-	public void refreshLine(int lineStartIndex, int lineEndIndex) throws BadLocationException {
-		System.out.println("Refreshing Line: " + lineStartIndex + lineEndIndex);
+	public void update(int lineStartIndex, int lineEndIndex) throws BadLocationException {
+		int segementStart = lineStartIndex;
+		System.out.println(lineStartIndex);
 
 		String currentLine = getText(0, getLength());
-		currentLine = currentLine.substring(lineStartIndex, lineEndIndex + 1);
-		System.out.println("Current Line: " + currentLine);
+		currentLine = currentLine.substring(lineStartIndex, lineEndIndex);
 
-		boolean inLineComment = false;
-		boolean inString = false;
-		boolean inBlockComment = false;
-
-		boolean stringTerminated = false;
-
-		int segementStart = 0;
 		for(int i = 0; i < currentLine.length(); i++) {
 
-			//Detects the start of a lineComement
-			if(i != 0 && currentLine.charAt(i) == '-' && currentLine.charAt(i - 1) == '-' && !inString && !inLineComment){
-				int commentStart = lineStartIndex + i - 1;
-				int commentEnd = lineEndIndex;
-				System.out.println("Found Line Comment; Start " + commentStart + " : End " + commentEnd);
-				setCharacterAttributes(commentStart, commentEnd, commentStyle, true);
-				i = currentLine.length(); //Exit the for loop
-			} else {
+			//Detect Start of String and Process it
+			if(currentLine.charAt(i) == '\"') {
+				//Need to deal with letters currently in stack
+				evaluateSegement(currentLine, lineStartIndex, segementStart, i);
+				segementStart = i;
+				i = evaluateString(currentLine, segementStart);
+				segementStart = i;
 
-				//If starting a line comment of in one already we need to check for string
-				if(currentLine.charAt(i) == '\"') {
-					stringTerminated = false;
+			//Detect Start of Line Comment and Process it
+			} else if (i > 0 && currentLine.charAt(i) == '-' && currentLine.charAt(i -1) == '-') {
+				//Need to deal with letters currently in stack
+				evaluateSegement(currentLine, lineStartIndex, segementStart, i);
+				segementStart = i;
+
+				commentSegement(segementStart - 1, currentLine.length()); //Need -1 to hit first '-'
+				i = currentLine.length();
+				segementStart = i;
+
+			//If it is not the start of the comment or string we move along
+			} else {
+				System.out.println("Current Segement Start: " + segementStart);
+				evaluateSegement(currentLine, lineStartIndex, segementStart, i);
+				//Checking For Word Breaks
+				if (currentLine.charAt(i) == ' ' || currentLine.charAt(i) == 10 || i == currentLine.length() - 1
+						 || Character.isWhitespace(currentLine.charAt(i))) {
 					segementStart = i;
-					i++;
-					while (i < currentLine.length() && !stringTerminated) {
-						if(currentLine.charAt(i) == '\"') {
-							stringTerminated = true;
-						}
-						i+=1;
-					}
-					System.out.println("String detected as " + currentLine.substring(segementStart, i));
-					setCharacterAttributes(segementStart, i, stringStyle, true);
-					segementStart = i;
-				} else if ((Character.isWhitespace(currentLine.charAt(i)) || currentLine.charAt(i) == 10 || i == currentLine.length() - 1)) {
-					String currentWord = currentLine.substring(segementStart, i + 1).trim();
-					System.out.println("Checking word:" + currentWord);
-					if(SqlHelper.isKeyWord(currentWord)) {
-						System.out.println("isKeyword");
-						setCharacterAttributes(segementStart + lineStartIndex , i + lineStartIndex, keyWordSyle, true);
-					} else {
-						System.out.println("Not Keyword");
-						setCharacterAttributes(segementStart +lineStartIndex, i + lineStartIndex, defaultStyle, true);
-					}
-					segementStart = i + 1;
 				}
 			}
+
 		}
 	}
 
+	private void evaluateSegement(String currentLine, int lineStartIndex, int segementStart, int segementEnd) {
+		String currentSegment = currentLine.substring(segementStart, segementEnd).trim();
+		System.out.println("Checking word:" + currentSegment);
+		if (SqlHelper.isKeyWord(currentSegment)) {
+			System.out.println("isKeyword");
+			setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, keyWordSyle, true);
+		} else {
+			System.out.println("Not Keyword");
+			setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, defaultStyle, true);
+		}
+	}
+
+	private void commentSegement(int startPos, int endPos) {
+		setCharacterAttributes(startPos, endPos, commentStyle, true);
+	}
+
+	private int evaluateString(String currentLine, int startPos) {
+		boolean stringTerminated = false;
+		int endPosition = startPos + 1;
+		while (endPosition < currentLine.length() && !stringTerminated) {
+			//Check for String termination
+			if(currentLine.charAt(endPosition) == '\"') {
+				stringTerminated = true;
+			}
+			endPosition++;
+		}
+		System.out.println("String detected as " + currentLine.substring(startPos, endPosition));
+		setCharacterAttributes(startPos, endPosition, stringStyle, true);
+		return endPosition;
+	}
 
 //	if (body.charAt(i) == '/' && i != body.length() - 1 && body.charAt(i + 1) == '*') {
 //		inBlockComment = true;
