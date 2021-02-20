@@ -54,9 +54,9 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 		update(lineStartIndex, lineEndIndex);
 	}
 
-	public void update(int lineStartIndex, int lineEndIndex) throws BadLocationException {
-		int segementStart = lineStartIndex;
-		System.out.println(lineStartIndex);
+	public synchronized void update(int lineStartIndex, int lineEndIndex) throws BadLocationException {
+		int segementStart = 0;
+		System.out.println(0);
 
 		String currentLine = getText(0, getLength());
 		currentLine = currentLine.substring(lineStartIndex, lineEndIndex);
@@ -66,7 +66,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 			//Detect Start of String and Process it
 			if(currentLine.charAt(i) == '\"') {
 				//Need to deal with letters currently in stack
-				evaluateSegement(currentLine, lineStartIndex, segementStart, i);
+				evaluateSegement(currentLine, lineStartIndex, segementStart, i + 1);
 				segementStart = i;
 				i = evaluateString(currentLine, segementStart);
 				segementStart = i;
@@ -74,7 +74,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 			//Detect Start of Line Comment and Process it
 			} else if (i > 0 && currentLine.charAt(i) == '-' && currentLine.charAt(i -1) == '-') {
 				//Need to deal with letters currently in stack
-				evaluateSegement(currentLine, lineStartIndex, segementStart, i);
+				evaluateSegement(currentLine, lineStartIndex, segementStart, i + 1);
 				segementStart = i;
 
 				commentSegement(segementStart - 1, currentLine.length()); //Need -1 to hit first '-'
@@ -84,18 +84,21 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 			//If it is not the start of the comment or string we move along
 			} else {
 				System.out.println("Current Segement Start: " + segementStart);
-				evaluateSegement(currentLine, lineStartIndex, segementStart, i);
+				evaluateSegement(currentLine, lineStartIndex, segementStart, i + 1);
 				//Checking For Word Breaks
 				if (currentLine.charAt(i) == ' ' || currentLine.charAt(i) == 10 || i == currentLine.length() - 1
 						 || Character.isWhitespace(currentLine.charAt(i))) {
-					segementStart = i;
+					segementStart = i + 1;
 				}
 			}
 
 		}
 	}
 
-	private void evaluateSegement(String currentLine, int lineStartIndex, int segementStart, int segementEnd) {
+	private synchronized void evaluateSegement(String currentLine, int lineStartIndex, int segementStart, int segementEnd) {
+		System.out.println("Segement Start:" + segementStart);
+		System.out.println("Segement End:" + segementEnd);
+
 		String currentSegment = currentLine.substring(segementStart, segementEnd).trim();
 		System.out.println("Checking word:" + currentSegment);
 		if (SqlHelper.isKeyWord(currentSegment)) {
