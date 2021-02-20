@@ -68,7 +68,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 				//Need to deal with letters currently in stack
 				evaluateSegement(currentLine, lineStartIndex, segementStart, i + 1);
 				segementStart = i;
-				i = evaluateString(currentLine, segementStart);
+				i = evaluateString(currentLine, lineStartIndex, segementStart);
 				segementStart = i;
 
 			//Detect Start of Line Comment and Process it
@@ -77,7 +77,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 				evaluateSegement(currentLine, lineStartIndex, segementStart, i + 1);
 				segementStart = i;
 
-				commentSegement(segementStart - 1, currentLine.length()); //Need -1 to hit first '-'
+				commentSegement(segementStart - 1 + lineStartIndex, currentLine.length()); //Need -1 to hit first '-'
 				i = currentLine.length();
 				segementStart = i;
 
@@ -114,7 +114,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 		setCharacterAttributes(startPos, endPos, commentStyle, true);
 	}
 
-	private int evaluateString(String currentLine, int startPos) {
+	private int evaluateString(String currentLine, int lineStartIndex, int startPos) {
 		boolean stringTerminated = false;
 		int endPosition = startPos + 1;
 		while (endPosition < currentLine.length() && !stringTerminated) {
@@ -125,7 +125,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 			endPosition++;
 		}
 		System.out.println("String detected as " + currentLine.substring(startPos, endPosition));
-		setCharacterAttributes(startPos, endPosition, stringStyle, true);
+		setCharacterAttributes(startPos + lineStartIndex, endPosition + lineStartIndex, stringStyle, true);
 		return endPosition;
 	}
 
