@@ -3,6 +3,7 @@ package binavigator.ui;
 import binavigator.backend.sql.SqlHelper;
 import binavigator.ui.colortheme.Monokai;
 import binavigator.ui.colortheme.TextColorTheme;
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.AttributeType;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -19,6 +20,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 	final AttributeSet keyWordSyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, textColorTheme.getKeyWordColor());
 	final AttributeSet defaultStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, textColorTheme.getTextColor());
 	final AttributeSet commentStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, textColorTheme.getCommentColor());
+	final AttributeSet stringStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, textColorTheme.getStringColor());
 
 	ArrayList<Integer> blockCommentStarts = new ArrayList<Integer>();
 
@@ -62,8 +64,13 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 		boolean inLineComment = false;
 		boolean inString = false;
 		boolean inBlockComment = false;
-		int wordStart = 0;
+
+		boolean stringTerminated = false;
+
+		int segementStart = 0;
 		for(int i = 0; i < currentLine.length(); i++) {
+
+			//Detects the start of a lineComement
 			if(i != 0 && currentLine.charAt(i) == '-' && currentLine.charAt(i - 1) == '-' && !inString && !inLineComment){
 				int commentStart = lineStartIndex + i - 1;
 				int commentEnd = lineEndIndex;
@@ -72,17 +79,31 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 				i = currentLine.length(); //Exit the for loop
 			} else {
 
-				if ((Character.isWhitespace(currentLine.charAt(i)) || currentLine.charAt(i) == 10 || i == currentLine.length() - 1) && !inString) {
-					String currentWord = currentLine.substring(wordStart, i + 1).trim();
+				//If starting a line comment of in one already we need to check for string
+				if(currentLine.charAt(i) == '\"') {
+					stringTerminated = false;
+					segementStart = i;
+					i++;
+					while (i < currentLine.length() && !stringTerminated) {
+						if(currentLine.charAt(i) == '\"') {
+							stringTerminated = true;
+						}
+						i+=1;
+					}
+					System.out.println("String detected as " + currentLine.substring(segementStart, i));
+					setCharacterAttributes(segementStart, i, stringStyle, true);
+					segementStart = i;
+				} else if ((Character.isWhitespace(currentLine.charAt(i)) || currentLine.charAt(i) == 10 || i == currentLine.length() - 1)) {
+					String currentWord = currentLine.substring(segementStart, i + 1).trim();
 					System.out.println("Checking word:" + currentWord);
 					if(SqlHelper.isKeyWord(currentWord)) {
 						System.out.println("isKeyword");
-						setCharacterAttributes(wordStart + lineStartIndex , i + lineStartIndex, keyWordSyle, true);
+						setCharacterAttributes(segementStart + lineStartIndex , i + lineStartIndex, keyWordSyle, true);
 					} else {
 						System.out.println("Not Keyword");
-						setCharacterAttributes(wordStart +lineStartIndex, i + lineStartIndex, defaultStyle, true);
+						setCharacterAttributes(segementStart +lineStartIndex, i + lineStartIndex, defaultStyle, true);
 					}
-					wordStart = i + 1;
+					segementStart = i + 1;
 				}
 			}
 		}
