@@ -33,7 +33,7 @@ public class TextEditorPanel extends JPanel {
 
 		textPane = new JTextPane(doc);
 		new LinePainter(textPane, this.getBackground());
-		textPane.setText("public class Hi {}");
+		textPane.setText("SELECT testColumn \n FROM sampleTable --Sample Comment \n WHERE Test=\"test\"");
 		JScrollPane jScrollPane = new JScrollPane(textPane);
 		add(jScrollPane);
 		
