@@ -16,7 +16,9 @@ public class BINavController {
 	private BINavigatorFrame frame = null;
 	private TextEditorPanel panel = null;
 	private NavMenuBar menuBar = null;
-	private TextColorTheme textColorTheme = new Monokai();
+	private WindowTheme windowTheme = WindowTheme.DARK;
+	private TextColorTheme textColorTheme = new Monokai(windowTheme);
+
 
 	public BINavController() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
 		UIManager.setLookAndFeel(new FlatDarculaLaf());
@@ -42,10 +44,12 @@ public class BINavController {
 				case DARK:
 					System.out.println("Setting WindowTheme to Dark");
 					UIManager.setLookAndFeel(new FlatDarculaLaf());
+					textColorTheme.setWindowTheme(WindowTheme.DARK);
 					break;
 				case LIGHT:
 					System.out.println("Setting WindowTheme to Light");
 					UIManager.setLookAndFeel(new FlatLightLaf());
+					textColorTheme.setWindowTheme(WindowTheme.LIGHT);
 					break;
 			}
 		} catch (UnsupportedLookAndFeelException e) {

@@ -18,18 +18,19 @@ public class TextEditorPanel extends JPanel {
 	private JPanel lineCounterArea = null;
 	private TextLineNumber rowHeaders  = null;
 	private int lineCount = 1;
-	private TextColorTheme textColorTheme = new Monokai();
+	private TextColorTheme textColorTheme = null;
+	private SqlStyledDocument doc;
 
 	final StyleContext cont = StyleContext.getDefaultStyleContext();
-	final AttributeSet keywordAttr = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, textColorTheme.getKeyWordColor());
-	final AttributeSet defaultAttr = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, textColorTheme.getTextColor());
+//	final AttributeSet keywordAttr; = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, textColorTheme.getKeyWordColor());
+//	final AttributeSet defaultAttr = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, textColorTheme.getTextColor());
 
 	public TextEditorPanel(TextColorTheme textColorTheme) {
 		super();
 		this.textColorTheme = textColorTheme;
 		this.setLayout(new BorderLayout());
 
-		DefaultStyledDocument doc = new SqlStyledDocument();
+		doc = new SqlStyledDocument(textColorTheme);
 
 		textPane = new JTextPane(doc);
 		new LinePainter(textPane, this.getBackground());
@@ -90,6 +91,10 @@ public class TextEditorPanel extends JPanel {
 
 	private int calculateLineCount() {
 		return textPane.getText().split("\n").length + 1;
+	}
+
+	public void setTextColorThem(TextColorTheme textColorTheme) {
+		this.textColorTheme = textColorTheme;
 	}
 
 //	private class LineNumberingTextArea extends JTextArea

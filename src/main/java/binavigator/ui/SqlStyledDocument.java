@@ -7,22 +7,27 @@ import com.sun.xml.internal.bind.v2.schemagen.xmlschema.AttributeType;
 
 import javax.swing.*;
 import javax.swing.text.*;
+import javax.xml.soap.Text;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 
 public class SqlStyledDocument extends DefaultStyledDocument {
 	private JComponent parent;
-	final StyleContext cont = StyleContext.getDefaultStyleContext();
+	StyleContext cont = StyleContext.getDefaultStyleContext();
 
-	final TextColorTheme textColorTheme = new Monokai();
-	
-	final AttributeSet keyWordSyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, textColorTheme.getKeyWordColor());
-	final AttributeSet defaultStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, textColorTheme.getTextColor());
-	final AttributeSet commentStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, textColorTheme.getCommentColor());
-	final AttributeSet stringStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, textColorTheme.getStringColor());
+	TextColorTheme textColorTheme = null;
 
 	ArrayList<Integer> blockCommentStarts = new ArrayList<Integer>();
+
+	public SqlStyledDocument(TextColorTheme textColorTheme) {
+		this.textColorTheme = textColorTheme;
+		updateStyles();
+	}
+
+	private void updateStyles() {
+
+	}
 
 	public void insertString (int offset, String str, AttributeSet a) throws BadLocationException {
 		super.insertString(offset, str, a);
@@ -103,15 +108,15 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 		System.out.println("Checking word:" + currentSegment);
 		if (SqlHelper.isKeyWord(currentSegment)) {
 			System.out.println("isKeyword");
-			setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, keyWordSyle, true);
+			setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getKeyWordSyle(), true);
 		} else {
 			System.out.println("Not Keyword");
-			setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, defaultStyle, true);
+			setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getDefaultStyle(), true);
 		}
 	}
 
 	private void commentSegement(int startPos, int endPos) {
-		setCharacterAttributes(startPos, endPos, commentStyle, true);
+		setCharacterAttributes(startPos, endPos, textColorTheme.getCommentStyle(), true);
 	}
 
 	private int evaluateString(String currentLine, int lineStartIndex, int startPos) {
@@ -125,7 +130,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 			endPosition++;
 		}
 		System.out.println("String detected as " + currentLine.substring(startPos, endPosition));
-		setCharacterAttributes(startPos + lineStartIndex, endPosition + lineStartIndex, stringStyle, true);
+		setCharacterAttributes(startPos + lineStartIndex, endPosition + lineStartIndex, textColorTheme.getStringStyle(), true);
 		return endPosition;
 	}
 
