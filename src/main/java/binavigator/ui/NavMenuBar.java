@@ -1,6 +1,7 @@
 package binavigator.ui;
 
 import binavigator.backend.BINavController;
+import binavigator.ui.menubar.ConnectionMenu;
 import binavigator.ui.menubar.EditMenu;
 import binavigator.ui.menubar.FileMenu;
 import binavigator.ui.menubar.ViewMenu;
@@ -37,6 +38,11 @@ public class NavMenuBar extends JMenuBar {
 	private void buildViewMenu() {
 
 		this.add(new ViewMenu(parentController));
+	}
+
+	private void buildConnectionMenu() {
+
+		this.add(new ConnectionMenu(parentController));
 	}
 
 }
