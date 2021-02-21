@@ -69,12 +69,12 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 				segementStart = i;
 
 			//Detect Start of Line Comment and Process it
-			} else if (i > 0 && currentLine.charAt(i) == '-' && currentLine.charAt(i -1) == '-') {
+			} else if (i < currentLine.length() - 1 && currentLine.charAt(i) == '-' && currentLine.charAt(i + 1) == '-') {
 				//Need to deal with letters currently in stack
 				evaluateSegement(currentLine, lineStartIndex, segementStart, i + 1);
 				segementStart = i;
 
-				commentSegement(segementStart - 1 + lineStartIndex, currentLine.length() - segementStart); //Need -1 to hit first '-'
+				commentSegement(segementStart + lineStartIndex, currentLine.length() - segementStart); //Need -1 to hit first '-'
 				i = currentLine.length();
 				segementStart = i;
 
