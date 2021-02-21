@@ -1,14 +1,18 @@
 package binavigator.ui;
 
 import binavigator.backend.sql.SqlHelper;
-import binavigator.ui.colortheme.Monokai;
 import binavigator.ui.colortheme.TextColorTheme;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.swing.text.*;
 
 import java.util.*;
 import java.util.List;
 
 public class SqlStyledDocument extends DefaultStyledDocument {
+	Log log = LogFactory.getLog(this.getClass());
+
 	private TextEditorPanel parent;
 
 	TextColorTheme textColorTheme = null;
@@ -21,43 +25,56 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 	public void insertString (int offset, String str, AttributeSet a) throws BadLocationException {
 		super.insertString(offset, str, a);
-		String body = this.getText(0,  getLength());
 
-		boolean foundLineStart = false;
-		int startSearchPosition = offset;
-		int lineStartIndex = -1;
-		boolean foundLineEnd = false;
-		int endSearchPosition = offset;
-		int lineEndIndex = -1;
+		String[] lines = str.split("\n", -1);
 
-		while(!foundLineStart || !foundLineEnd) {
-			if(!foundLineStart && (startSearchPosition <= 0 || body.charAt(startSearchPosition) == 10 )) {
-				lineStartIndex = startSearchPosition;
-				foundLineStart = true;
-			}
-
-			if( !foundLineEnd && (endSearchPosition >= body.length() - 1 || body.charAt(endSearchPosition) == 10)) {
-				lineEndIndex = endSearchPosition + 1;
-				foundLineEnd = true;
-			}
-			startSearchPosition--;
-			endSearchPosition++;
+		for(int i = 0; i < lines.length; i++) {
+			System.out.println("Detected Line: " + lines[i]);
+			processLine(lines[i], offset);
+			offset+=lines[i].length() + 1; //Need magic +1 to account for the linebreak that was removed by split command
 		}
 
-		System.out.println("Current Line Start at: " + lineStartIndex);
-		System.out.println("Current Line End at: " + lineEndIndex);
-		update(lineStartIndex, lineEndIndex);
+		System.out.println("Last Line = " + lines[lines.length - 1]);
+
 	}
 
-	public synchronized void update(int lineStartIndex, int lineEndIndex) throws BadLocationException {
+	private void processLine(String line, int offset) throws BadLocationException {
+		System.out.println("Processing Line: " + line);
+		String body = this.getText(0,  getLength());
+
+//		boolean foundLineStart = false;
+//		int startSearchPosition = offset;
+//		int lineStartIndex = -1;
+//		boolean foundLineEnd = false;
+//		int endSearchPosition = offset;
+
+
+//		while(!foundLineStart || !foundLineEnd) {
+//			if(!foundLineStart && (startSearchPosition <= 0 || body.charAt(startSearchPosition) == 10 )) {
+//				lineStartIndex = startSearchPosition;
+//				foundLineStart = true;
+//			}
+//
+//			if( !foundLineEnd && (endSearchPosition >= body.length() - 1 || body.charAt(endSearchPosition) == 10)) {
+//				lineEndIndex = endSearchPosition + 1;
+//				foundLineEnd = true;
+//			}
+//			startSearchPosition--;
+//			endSearchPosition++;
+//		}
+
+//		System.out.println("Current Line Start at: " + lineStartIndex);
+//		System.out.println("Current Line End at: " + lineEndIndex);
+		updateSegement(offset, offset + line.length());
+	}
+
+	public synchronized void updateSegement(int lineStartIndex, int lineEndIndex) throws BadLocationException {
 		int segementStart = 0;
-		System.out.println(0);
+
 
 		String currentLine = getText(0, getLength());
 		currentLine = currentLine.substring(lineStartIndex, lineEndIndex);
-		System.out.println("Line Start Index: " + lineStartIndex);
-		System.out.println("Line End Index:" + lineEndIndex);
-
+		System.out.println("Updating Segement: " + lineStartIndex + " - " + lineEndIndex + " : " + currentLine);
 		for(int i = 0; i < currentLine.length(); i++) {
 
 			//Detect Start of String and Process it
@@ -93,9 +110,17 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 	}
 
 	public void paintDocument(int startIndex, int endIndex) {
-		System.out.println("Printing Documenting");
+//		System.out.println("Printing Documenting");
 		try {
-			update(startIndex, endIndex);
+			String text = getText(0, getLength());
+			String[] lines = text.split("\n", -1);
+
+			int offset = 0;
+			for(int i = 0; i <= lines.length; i++) {
+				processLine(lines[i], offset);
+				offset+=lines[i].length();
+			}
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -104,12 +129,12 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 
 	private synchronized void evaluateSegement(String currentLine, int lineStartIndex, int segementStart, int segementEnd) {
-		System.out.println("Segement Start:" + segementStart);
-		System.out.println("Segement End:" + segementEnd);
+//		System.out.println("Segement Start:" + segementStart);
+//		System.out.println("Segement End:" + segementEnd);
 
 		String currentSegment = currentLine.substring(segementStart, segementEnd).trim();
 
-		System.out.println("Current Segement: " + currentSegment);
+//		System.out.println("Current Segement: " + currentSegment);
 
 		switch (SqlHelper.getWordType(currentSegment)) {
 			case KEY:
@@ -131,7 +156,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 	}
 
 	private void commentSegement(int startPos, int length) {
-		System.out.println("Commenting Segement: " + startPos + " " + length);
+//		System.out.println("Commenting Segement: " + startPos + " " + length);
 		setCharacterAttributes(startPos, length, parent.getTextColorTheme().getCommentStyle(), true);
 	}
 
@@ -146,7 +171,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 			endPosition++;
 		}
 		String string = currentLine.substring(startPos, endPosition);
-		System.out.println("String detected as " + string);
+//		System.out.println("String detected as " + string);
 		setCharacterAttributes(startPos + lineStartIndex, string.length(),  parent.getTextColorTheme().getStringStyle(), true);
 		return endPosition;
 	}
