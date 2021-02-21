@@ -3,12 +3,8 @@ package binavigator.ui;
 import binavigator.backend.sql.SqlHelper;
 import binavigator.ui.colortheme.Monokai;
 import binavigator.ui.colortheme.TextColorTheme;
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.AttributeType;
-
-import javax.swing.*;
 import javax.swing.text.*;
-import javax.xml.soap.Text;
-import java.awt.*;
+
 import java.util.*;
 import java.util.List;
 
@@ -22,7 +18,6 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 	public SqlStyledDocument(TextColorTheme textColorTheme, TextEditorPanel parent) {
 		this.textColorTheme = textColorTheme;
 		this.parent = parent;
-//		parent.repaintDocument();
 	}
 
 	public void insertString (int offset, String str, AttributeSet a) throws BadLocationException {
@@ -61,6 +56,8 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 		String currentLine = getText(0, getLength());
 		currentLine = currentLine.substring(lineStartIndex, lineEndIndex);
+		System.out.println("Line Start Index: " + lineStartIndex);
+		System.out.println("Line End Index:" + lineEndIndex);
 
 		for(int i = 0; i < currentLine.length(); i++) {
 
@@ -78,13 +75,13 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 				evaluateSegement(currentLine, lineStartIndex, segementStart, i + 1);
 				segementStart = i;
 
-				commentSegement(segementStart - 1 + lineStartIndex, currentLine.length()); //Need -1 to hit first '-'
+				commentSegement(segementStart - 1 + lineStartIndex, currentLine.length() - segementStart); //Need -1 to hit first '-'
 				i = currentLine.length();
 				segementStart = i;
 
 			//If it is not the start of the comment or string we move along
 			} else {
-				System.out.println("Current Segement Start: " + segementStart);
+				//System.out.println("Current Segement Start: " + segementStart);
 				evaluateSegement(currentLine, lineStartIndex, segementStart, i + 1);
 				//Checking For Word Breaks
 				if (currentLine.charAt(i) == ' ' || currentLine.charAt(i) == 10 || i == currentLine.length() - 1
@@ -107,14 +104,16 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 	}
 
 
-
 	private synchronized void evaluateSegement(String currentLine, int lineStartIndex, int segementStart, int segementEnd) {
 		System.out.println("Segement Start:" + segementStart);
 		System.out.println("Segement End:" + segementEnd);
 
 		String currentSegment = currentLine.substring(segementStart, segementEnd).trim();
+
+		System.out.println("Current Segement: " + currentSegment);
+
 		//int offSet = (segementEnd - segementStart) - currentSegment.length();
-		System.out.println("Checking word:" + currentSegment);
+		//System.out.println("Checking word:" + currentSegment);
 
 //		if (SqlHelper.isKeyWord(currentSegment)) {
 //			System.out.println("isKeyword");
@@ -126,25 +125,26 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 		switch (SqlHelper.getWordType(currentSegment)) {
 			case KEY:
-				setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getKeyWordSyle(), true);
+				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length(), textColorTheme.getKeyWordSyle(), true);
 				break;
 			case SECONDAY:
-				setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getSecondaryStyle(), true);
+				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , textColorTheme.getSecondaryStyle(), true);
 				break;
 			case MISC:
-				setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getMiscStyle(), true);
+				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , textColorTheme.getMiscStyle(), true);
 				break;
 			case NUMBER:
-				setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getNumberStyle(), true);
+				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , textColorTheme.getNumberStyle(), true);
 				break;
 			case NONE:
-				setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getDefaultStyle(), true);
+				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , textColorTheme.getDefaultStyle(), true);
 				break;
 		}
 	}
 
-	private void commentSegement(int startPos, int endPos) {
-		setCharacterAttributes(startPos, endPos, textColorTheme.getCommentStyle(), true);
+	private void commentSegement(int startPos, int length) {
+		System.out.println("Commenting Segement: " + startPos + " " + length);
+		setCharacterAttributes(startPos, length, textColorTheme.getCommentStyle(), true);
 	}
 
 	private int evaluateString(String currentLine, int lineStartIndex, int startPos) {
@@ -157,8 +157,9 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 			}
 			endPosition++;
 		}
-		System.out.println("String detected as " + currentLine.substring(startPos, endPosition));
-		setCharacterAttributes(startPos + lineStartIndex, endPosition + lineStartIndex, textColorTheme.getStringStyle(), true);
+		String string = currentLine.substring(startPos, endPosition);
+		System.out.println("String detected as " + string);
+		setCharacterAttributes(startPos + lineStartIndex, string.length(), textColorTheme.getStringStyle(), true);
 		return endPosition;
 	}
 

@@ -32,6 +32,7 @@ public class BINavController {
 		frame.setVisible(true);
 		frame.validate();
 		frame.repaint();
+		panel.repaintDocument();
 	}
 
 	public void exitSafely() {
