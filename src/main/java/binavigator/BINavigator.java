@@ -7,6 +7,9 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 
+/**
+ * Entry Point for the BINavigator Application
+ */
 public class BINavigator {
 	private static Logger log = LogManager.getLogger(BINavigator.class);
 

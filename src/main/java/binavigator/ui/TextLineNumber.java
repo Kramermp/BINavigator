@@ -370,8 +370,8 @@ public class TextLineNumber extends JPanel
 	}
 
 	//
-//  Implement CaretListener interface
-//
+	//  Implement CaretListener interface
+	//
 	@Override
 	public void caretUpdate(CaretEvent e)
 	{
@@ -385,15 +385,15 @@ public class TextLineNumber extends JPanel
 
 		if (lastLine != currentLine)
 		{
-//			repaint();
+		//	repaint();
 			getParent().repaint();
 			lastLine = currentLine;
 		}
 	}
 
 	//
-//  Implement DocumentListener interface
-//
+	//  Implement DocumentListener interface
+	//
 	@Override
 	public void changedUpdate(DocumentEvent e)
 	{

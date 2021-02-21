@@ -112,17 +112,6 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 		System.out.println("Current Segement: " + currentSegment);
 
-		//int offSet = (segementEnd - segementStart) - currentSegment.length();
-		//System.out.println("Checking word:" + currentSegment);
-
-//		if (SqlHelper.isKeyWord(currentSegment)) {
-//			System.out.println("isKeyword");
-//			setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getKeyWordSyle(), true);
-//		} else {
-//			System.out.println("Not Keyword");
-//			setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getDefaultStyle(), true);
-//		}
-
 		switch (SqlHelper.getWordType(currentSegment)) {
 			case KEY:
 				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length(), textColorTheme.getKeyWordSyle(), true);
@@ -162,64 +151,6 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 		setCharacterAttributes(startPos + lineStartIndex, string.length(), textColorTheme.getStringStyle(), true);
 		return endPosition;
 	}
-
-//	if (body.charAt(i) == '/' && i != body.length() - 1 && body.charAt(i + 1) == '*') {
-//		inBlockComment = true;
-//	} else if (body.charAt(i) == '/' && i != body.length() - 1 && body.charAt(i - 1) == '*') {
-//		inBlockComment = false;
-//		styleForChar = commentStyle;
-//		pickedStyle = true;
-//	} else if (body.charAt(i) == '-' && body.charAt(i - 1) ==  '-' && !inBlockComment && !inString) {
-//		inLineComment = true;
-//		setCharacterAttributes(i - 1, i, commentStyle, true);
-//		pickedStyle = true;
-//	} else if (inLineComment && body.charAt(i) == 10) {
-//		inLineComment = false;
-//		pickedStyle = true;
-//	}
-//
-//			if(!inBlockComment && !inBlockComment && !inLineComment && !Character.isWhitespace(body.charAt(i))) {
-//		runningString.append(body.charAt(i));
-//	} else if(!inBlockComment && !inBlockComment && !inLineComment && Character.isWhitespace(body.charAt(i))) {
-//		currentString = runningString.toString();
-//		runningString.setLength(0);
-//		if(SqlHelper.isKeyWord(currentString)) {
-//			setCharacterAttributes(i - currentString.length(), i, keyWordSyle, true);
-//		} else {
-//			System.out.println(currentString +  " is not a keyword.");
-//		}
-//	}
-
-//	currentLine = lines[i];
-//	commentIndex = currentLine.indexOf("--");
-//			if (editFound == false && lineStart + currentLine.length() >= offset) {
-////				System.out.println("Reseting current line");
-//		setCharacterAttributes(lineStart, lineStart + currentLine.length(), defaultStyle, true);
-//		editFound = true;
-//	}
-//
-//
-//			if(commentIndex >= 0) {
-////				System.out.println("Line Contains a Comment at index: " + commentIndex);
-//		setCharacterAttributes(lineStart + commentIndex, lineStart + currentLine.length(), commentStyle, true);
-//	}
-////			System.out.println("No Comment " + commentIndex);
-//	wordList = processWords((currentLine));
-//
-//
-//	int wordStart = 0;
-//	int wordEnd = 0;
-//
-//			for (int j = 0; j <  wordList.size(); j++) {
-//		wordStart = wordList.get(0).wordStart + lineStart;
-//		wordEnd = wordStart + wordList.get(0).word.length();
-//		if (wordEnd >= commentIndex) {
-//			// After Comment means it is part of the comment
-//			// Do Nothing
-//		} else {
-//			setCharacterAttributes(wordStart, wordEnd, keyWordSyle, true);
-//		}
-//	}
 
 	public void remove (int offs, int len) throws BadLocationException {
 		super.remove(offs, len);

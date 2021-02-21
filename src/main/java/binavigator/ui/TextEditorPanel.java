@@ -13,6 +13,9 @@ import java.awt.event.FocusListener;
 
 import static java.lang.System.lineSeparator;
 
+/**
+ * TextEditor Panel is the panel Containg Text Editor and its deails i.e. Line Numbers
+ */
 public class TextEditorPanel extends JPanel {
    	private JTextPane textPane =  null;
 	private JPanel lineCounterArea = null;
@@ -24,8 +27,7 @@ public class TextEditorPanel extends JPanel {
 	private JScrollPane jScrollPane;
 
 	final StyleContext cont = StyleContext.getDefaultStyleContext();
-//	final AttributeSet keywordAttr; = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, textColorTheme.getKeyWordColor());
-//	final AttributeSet defaultAttr = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, textColorTheme.getTextColor());
+
 
 	public TextEditorPanel(TextColorTheme textColorTheme) {
 		super();
