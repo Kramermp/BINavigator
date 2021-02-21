@@ -20,6 +20,7 @@ public class Monokai extends TextColorTheme {
 
  	public Monokai(WindowTheme windowTheme) {
 		super(windowTheme);
+		super.name = "Monokai";
 	}
 
 	@Override

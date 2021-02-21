@@ -15,8 +15,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 	ArrayList<Integer> blockCommentStarts = new ArrayList<Integer>();
 
-	public SqlStyledDocument(TextColorTheme textColorTheme, TextEditorPanel parent) {
-		this.textColorTheme = textColorTheme;
+	public SqlStyledDocument(TextEditorPanel parent) {
 		this.parent = parent;
 	}
 
@@ -114,26 +113,26 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 		switch (SqlHelper.getWordType(currentSegment)) {
 			case KEY:
-				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length(), textColorTheme.getKeyWordSyle(), true);
+				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length(), parent.getTextColorTheme().getKeyWordSyle(), true);
 				break;
 			case SECONDAY:
-				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , textColorTheme.getSecondaryStyle(), true);
+				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , parent.getTextColorTheme().getSecondaryStyle(), true);
 				break;
 			case MISC:
-				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , textColorTheme.getMiscStyle(), true);
+				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , parent.getTextColorTheme().getMiscStyle(), true);
 				break;
 			case NUMBER:
-				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , textColorTheme.getNumberStyle(), true);
+				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , parent.getTextColorTheme().getNumberStyle(), true);
 				break;
 			case NONE:
-				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , textColorTheme.getDefaultStyle(), true);
+				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , parent.getTextColorTheme().getDefaultStyle(), true);
 				break;
 		}
 	}
 
 	private void commentSegement(int startPos, int length) {
 		System.out.println("Commenting Segement: " + startPos + " " + length);
-		setCharacterAttributes(startPos, length, textColorTheme.getCommentStyle(), true);
+		setCharacterAttributes(startPos, length, parent.getTextColorTheme().getCommentStyle(), true);
 	}
 
 	private int evaluateString(String currentLine, int lineStartIndex, int startPos) {
@@ -148,7 +147,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 		}
 		String string = currentLine.substring(startPos, endPosition);
 		System.out.println("String detected as " + string);
-		setCharacterAttributes(startPos + lineStartIndex, string.length(), textColorTheme.getStringStyle(), true);
+		setCharacterAttributes(startPos + lineStartIndex, string.length(),  parent.getTextColorTheme().getStringStyle(), true);
 		return endPosition;
 	}
 

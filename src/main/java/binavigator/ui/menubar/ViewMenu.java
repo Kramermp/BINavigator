@@ -1,15 +1,23 @@
 package binavigator.ui.menubar;
 
 import binavigator.backend.BINavController;
+import binavigator.ui.colortheme.Monokai;
+import binavigator.ui.colortheme.RandomColorTheme;
 import binavigator.ui.colortheme.WindowTheme;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.logging.Logger;
 
 public class ViewMenu extends JMenu {
+	Log log = LogFactory.getLog(this.getClass());
+
 	BINavController parentController = null;
+	JMenuItem textThemeBtn;
 
 	public ViewMenu(BINavController parentController) {
 		super("View");
@@ -20,7 +28,11 @@ public class ViewMenu extends JMenu {
 	}
 
 	public void buildThemeSelector() {
-		JMenu selectThemeBtn =  new JMenu("Select WindowTheme");
+		textThemeBtn =  new JMenu("Select Text Color Theme");
+		populateTextThemeBtn();
+		this.add(textThemeBtn);
+
+		JMenu windowThemeBtn =  new JMenu("Select Window Theme");
 
 		JMenuItem darkThemBtn = new JMenuItem("Dark");
 		darkThemBtn.addActionListener(new ActionListener() {
@@ -28,7 +40,7 @@ public class ViewMenu extends JMenu {
 				parentController.setTheme(WindowTheme.DARK);
 			}
 		});
-		selectThemeBtn.add(darkThemBtn);
+		windowThemeBtn.add(darkThemBtn);
 
 		JMenuItem lightThemeBtn = new JMenuItem("Light");
 		lightThemeBtn.addActionListener(new ActionListener() {
@@ -36,9 +48,35 @@ public class ViewMenu extends JMenu {
 				parentController.setTheme(WindowTheme.LIGHT);
 			}
 		});
-		selectThemeBtn.add(lightThemeBtn);
+		windowThemeBtn.add(lightThemeBtn);
 
-		this.add(selectThemeBtn);
+		this.add(windowThemeBtn);
+	}
+
+	//TODO: Implement a method that can expand right now just hardcoded MVP
+	private void populateTextThemeBtn() {
+		int supportedTextThemeCount = 2;
+		JMenuItem textBtn = new JMenuItem("Monokai");
+		textBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				log.info("Setting Text Theme to Monokai");
+				parentController.setTextColorTheme(new Monokai(parentController.getWindowTheme()));
+			}
+		});
+
+		textThemeBtn.add(textBtn);
+
+		JMenuItem textBtn2 = new JMenuItem("Random");
+		textBtn2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				log.info("Setting Text Theme to Random");
+				parentController.setTextColorTheme(new RandomColorTheme(parentController.getWindowTheme()));
+			}
+		});
+
+		textThemeBtn.add(textBtn2);
 	}
 
 

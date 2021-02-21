@@ -2,6 +2,8 @@ package binavigator.ui;
 
 import binavigator.ui.colortheme.Monokai;
 import binavigator.ui.colortheme.TextColorTheme;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -17,6 +19,8 @@ import static java.lang.System.lineSeparator;
  * TextEditor Panel is the panel Containg Text Editor and its deails i.e. Line Numbers
  */
 public class TextEditorPanel extends JPanel {
+	Log log = LogFactory.getLog(this.getClass());
+
    	private JTextPane textPane =  null;
 	private JPanel lineCounterArea = null;
 	private TextLineNumber rowHeaders  = null;
@@ -34,7 +38,7 @@ public class TextEditorPanel extends JPanel {
 		this.textColorTheme = textColorTheme;
 		this.setLayout(new BorderLayout());
 
-		doc = new SqlStyledDocument(textColorTheme, this);
+		doc = new SqlStyledDocument(this);
 
 		textPane = new JTextPane(doc);
 		new LinePainter(textPane, this.getBackground());
@@ -108,8 +112,13 @@ public class TextEditorPanel extends JPanel {
 		return textPane.getText().split("\n").length + 1;
 	}
 
-	public void setTextColorThem(TextColorTheme textColorTheme) {
+	public void setTextColorTheme(TextColorTheme textColorTheme) {
+		log.info("Setting Text Color Theme to " + textColorTheme.getName());
 		this.textColorTheme = textColorTheme;
+	}
+
+	public TextColorTheme getTextColorTheme() {
+		return textColorTheme;
 	}
 
 //	private class LineNumberingTextArea extends JTextArea

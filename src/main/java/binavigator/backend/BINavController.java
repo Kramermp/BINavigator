@@ -101,4 +101,14 @@ public class BINavController {
 	public TextColorTheme getTextColorTheme() {
 		return this.textColorTheme;
 	}
+
+	public void setTextColorTheme(TextColorTheme textColorTheme) {
+		this.textColorTheme = textColorTheme;
+		panel.setTextColorTheme(this.textColorTheme);
+		panel.repaintDocument();
+	}
+
+	public WindowTheme getWindowTheme() {
+		return windowTheme;
+	}
 }

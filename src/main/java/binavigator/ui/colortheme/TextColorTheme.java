@@ -8,6 +8,7 @@ import java.awt.*;
 
 public abstract class TextColorTheme {
 	private WindowTheme windowTheme = WindowTheme.DARK;
+	protected String name;
 
 	protected StyleContext cont = StyleContext.getDefaultStyleContext();
 
@@ -78,5 +79,9 @@ public abstract class TextColorTheme {
 
 	public AttributeSet getNumberStyle() {
 		return numberStyle;
+	}
+
+	public String getName() {
+		return name;
 	}
 }

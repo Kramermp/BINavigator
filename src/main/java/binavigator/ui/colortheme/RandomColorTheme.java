@@ -13,6 +13,7 @@ public class RandomColorTheme extends TextColorTheme{
 
 	public RandomColorTheme(WindowTheme windowTheme) {
 		super(windowTheme);
+		super.name = "Random";
 	}
 
 	@Override
