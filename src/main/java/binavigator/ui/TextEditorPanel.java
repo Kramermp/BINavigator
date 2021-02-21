@@ -42,7 +42,9 @@ public class TextEditorPanel extends JPanel {
 
 		textPane = new JTextPane(doc);
 		new LinePainter(textPane, this.getBackground());
-		textPane.setText("SELECT testColumn \n FROM sampleTable --Sample Comment \n WHERE Test=\"test\" \n AND 1 = \"TEST\" \n asdfasdf" );
+		textPane.setText("SELECT testColumn \nFROM sampleTable --Sample Comment \nWHERE Test=\"test\" \nAND " +
+				"1 = \"TEST\" \nAND TESTColmn2 IN ( SELECT TestColumn2 \n\tFROM TESTTable2);"
+		);
 		jScrollPane = new JScrollPane(textPane);
 		add(jScrollPane);
 		
@@ -58,6 +60,8 @@ public class TextEditorPanel extends JPanel {
 				System.out.println("Text Area Lost Focus");
 			}
 		});
+
+
 	}
 
 	public void repaintDocument() {
