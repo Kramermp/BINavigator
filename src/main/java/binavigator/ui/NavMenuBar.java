@@ -23,6 +23,7 @@ public class NavMenuBar extends JMenuBar {
 		buildFileMenu();
 		buildEditMenu();
 		buildViewMenu();
+		buildConnectionMenu();
 	}
 
 	private void buildFileMenu() {
