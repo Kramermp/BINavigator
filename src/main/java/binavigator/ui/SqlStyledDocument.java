@@ -106,12 +106,27 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 		String currentSegment = currentLine.substring(segementStart, segementEnd).trim();
 		System.out.println("Checking word:" + currentSegment);
-		if (SqlHelper.isKeyWord(currentSegment)) {
-			System.out.println("isKeyword");
-			setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getKeyWordSyle(), true);
-		} else {
-			System.out.println("Not Keyword");
-			setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getDefaultStyle(), true);
+
+//		if (SqlHelper.isKeyWord(currentSegment)) {
+//			System.out.println("isKeyword");
+//			setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getKeyWordSyle(), true);
+//		} else {
+//			System.out.println("Not Keyword");
+//			setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getDefaultStyle(), true);
+//		}
+
+		switch (SqlHelper.getWordType(currentSegment)) {
+			case KEY:
+				setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getKeyWordSyle(), true);
+				break;
+			case SECONDAY:
+				setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getSecondaryStyle(), true);
+				break;
+			case MISC:
+				setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getMiscStyle(), true);
+				break;
+			case NONE:
+				setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getDefaultStyle(), true);
 		}
 	}
 
@@ -198,27 +213,27 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 	}
 
 	private static  List<HiliteWord> processWords(String content) {
-		content += " ";
+//		content += " ";
 		List<HiliteWord> hiliteWords = new ArrayList<HiliteWord>();
-		int lastWhitespacePosition = 0;
-		String word = "";
-		char[] data = content.toCharArray();
-
-		for(int index=0; index < data.length; index++) {
-			char ch = data[index];
-			if(!(Character.isLetter(ch) || Character.isDigit(ch) || ch == '_')) {
-				lastWhitespacePosition = index;
-				if(word.length() > 0) {
-					if(SqlHelper.isKeyWord(word)) {
-						hiliteWords.add(new HiliteWord(word,(lastWhitespacePosition - word.length())));
-					}
-					word="";
-				}
-			}
-			else {
-				word += ch;
-			}
-		}
+//		int lastWhitespacePosition = 0;
+//		String word = "";
+//		char[] data = content.toCharArray();
+//
+//		for(int index=0; index < data.length; index++) {
+//			char ch = data[index];
+//			if(!(Character.isLetter(ch) || Character.isDigit(ch) || ch == '_')) {
+//				lastWhitespacePosition = index;
+//				if(word.length() > 0) {
+//					if(SqlHelper.isKeyWord(word)) {
+//						hiliteWords.add(new HiliteWord(word,(lastWhitespacePosition - word.length())));
+//					}
+//					word="";
+//				}
+//			}
+//			else {
+//				word += ch;
+//			}
+//		}
 		return hiliteWords;
 	}
 

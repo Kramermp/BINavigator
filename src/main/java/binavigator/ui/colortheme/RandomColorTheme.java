@@ -36,11 +36,13 @@ public class RandomColorTheme extends TextColorTheme{
 	}
 
 	@Override
-	public void updateStyles() {
-		keyWordSyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getKeyWordColor());
-		defaultStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getTextColor());
-		commentStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getCommentColor());
-		stringStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getStringColor());
+	public Color getMiscColor() {
+		return getRandomColor();
+	}
+
+	@Override
+	public Color getSecondaryColor() {
+		return getRandomColor();
 	}
 
 	@Override

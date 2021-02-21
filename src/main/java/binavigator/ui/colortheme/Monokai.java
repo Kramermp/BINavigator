@@ -27,12 +27,11 @@ public class Monokai extends TextColorTheme {
 		}
 
 		return this.DARK_GRAY;
-
 	}
 
 	@Override
 	public Color getCommentColor() {
-		return this.LIGHT_ORANGE;
+		return this.GREEN;
 	}
 
 	@Override
@@ -46,16 +45,15 @@ public class Monokai extends TextColorTheme {
 	}
 
 	@Override
-	public void updateStyles() {
-		keyWordSyle = super.cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getKeyWordColor());
-		defaultStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getTextColor());
-		commentStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getCommentColor());
-		stringStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getStringColor());
-	}
-
-	@Override
 	public Color getLineHiLight() {
 		return this.BLUE;
 	}
 
+	public Color getMiscColor() {
+		return this.BLUE;
+	}
+
+	public Color getSecondaryColor() {
+		return this.ORANGE;
+	}
 }

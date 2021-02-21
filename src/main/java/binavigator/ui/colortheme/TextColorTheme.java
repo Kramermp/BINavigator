@@ -15,12 +15,23 @@ public abstract class TextColorTheme {
 	protected AttributeSet defaultStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getTextColor());
 	protected AttributeSet commentStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getCommentColor());
 	protected AttributeSet stringStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getStringColor());
+	protected AttributeSet secondaryStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getSecondaryColor());
+	protected AttributeSet miscStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getMiscColor());
 
 	public abstract Color getTextColor();
 	public abstract Color getCommentColor();
 	public abstract Color getStringColor();
 	public abstract Color getKeyWordColor();
-	public abstract void updateStyles();
+	public abstract Color getMiscColor();
+	public abstract Color getSecondaryColor();
+	public void updateStyles() {
+		keyWordSyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getKeyWordColor());
+		defaultStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getTextColor());
+		commentStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getCommentColor());
+		stringStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getStringColor());
+		secondaryStyle = stringStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getSecondaryColor());
+		miscStyle = stringStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getMiscColor());
+	}
 
 	public abstract Color getLineHiLight();
 
@@ -53,4 +64,11 @@ public abstract class TextColorTheme {
 		return stringStyle;
 	}
 
+	public AttributeSet getMiscStyle() {
+		return miscStyle;
+	}
+
+	public AttributeSet getSecondaryStyle() {
+		return secondaryStyle;
+	}
 }
