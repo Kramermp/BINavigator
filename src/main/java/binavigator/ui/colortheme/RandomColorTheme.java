@@ -46,6 +46,11 @@ public class RandomColorTheme extends TextColorTheme{
 	}
 
 	@Override
+	public Color getNumberColor() {
+		return getRandomColor();
+	}
+
+	@Override
 	public Color getLineHiLight() {
 		return getRandomColor();
 	}

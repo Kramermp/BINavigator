@@ -3,8 +3,12 @@ package binavigator.backend.sql;
 import binavigator.backend.ArrayUtils;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 public class SqlHelper {
+
+	//Used for Number Checking
+	private static final Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
 	public static final String[] keyWordArray = new String[]{"SELECT", "FROM", "CREATE", "INSERT", "INTO", "ALTER",
 			"ADD", "DISTINCT", "UNIQUE", "UPDATE", "SET", "DELETE", "TRUNCATE", "AS", "ORDER", "BY", "ASC", "DESC",
@@ -21,14 +25,19 @@ public class SqlHelper {
 	}
 
 	public static WordType getWordType(String toCheck) {
+		if (toCheck == null) {
+			return WordType.NONE;
+		}
+
 		if(ArrayUtils.containsIgnoreCase(keyWordArray, toCheck)) {
 			return WordType.KEY;
 		} else if (ArrayUtils.containsIgnoreCase(secondaryWordArray, toCheck)) {
 			return  WordType.SECONDAY;
 		} else if (ArrayUtils.containsIgnoreCase(miscWordArray, toCheck)){
 			return WordType.MISC;
+		} else if (pattern.matcher(toCheck).matches()) {
+			return WordType.NUMBER;
 		}
-
 		return WordType.NONE;
 	}
 

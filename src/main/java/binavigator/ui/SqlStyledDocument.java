@@ -104,7 +104,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 		System.out.println("Segement Start:" + segementStart);
 		System.out.println("Segement End:" + segementEnd);
 
-		String currentSegment = currentLine.substring(segementStart, segementEnd).trim();
+		String currentSegment = currentLine.substring(segementStart, segementEnd);
 		System.out.println("Checking word:" + currentSegment);
 
 //		if (SqlHelper.isKeyWord(currentSegment)) {
@@ -125,8 +125,12 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 			case MISC:
 				setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getMiscStyle(), true);
 				break;
+			case NUMBER:
+				setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getNumberStyle(), true);
+				break;
 			case NONE:
 				setCharacterAttributes(segementStart + lineStartIndex, segementEnd + lineStartIndex, textColorTheme.getDefaultStyle(), true);
+				break;
 		}
 	}
 

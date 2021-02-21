@@ -4,5 +4,6 @@ public enum WordType {
 	KEY,
 	SECONDAY,
 	MISC,
+	NUMBER,
 	NONE
 }

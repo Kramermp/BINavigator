@@ -56,4 +56,9 @@ public class Monokai extends TextColorTheme {
 	public Color getSecondaryColor() {
 		return this.ORANGE;
 	}
+
+	@Override
+	public Color getNumberColor() {
+		return this.PURPLE;
+	}
 }
