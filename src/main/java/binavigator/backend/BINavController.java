@@ -1,9 +1,6 @@
 package binavigator.backend;
 
-import binavigator.ui.BINavigatorFrame;
-import binavigator.ui.InfoPanel;
-import binavigator.ui.NavMenuBar;
-import binavigator.ui.TextEditorPanel;
+import binavigator.ui.*;
 import binavigator.ui.colortheme.WindowTheme;
 import binavigator.ui.colortheme.TextColorTheme;
 import binavigator.ui.colortheme.Monokai;
@@ -12,14 +9,18 @@ import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Utilities;
 import java.io.*;
 
 public class BINavController {
 	private BINavigatorFrame frame = null;
 	private TextEditorPanel panel = null;
 	private NavMenuBar menuBar = null;
+
 	private WindowTheme windowTheme = WindowTheme.DARK;
 	private TextColorTheme textColorTheme = new Monokai(windowTheme);
+
+	private SqlStyledDocument sqlDoc = new SqlStyledDocument(this);
 
 	private InfoPanel infoPanel;
 
@@ -27,7 +28,7 @@ public class BINavController {
 	public BINavController() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, BadLocationException {
 		UIManager.setLookAndFeel(new FlatDarculaLaf());
 		frame = new BINavigatorFrame();
-		panel = new TextEditorPanel(this, textColorTheme);
+		panel = new TextEditorPanel(this);
 		menuBar = new NavMenuBar(this);
 		infoPanel = new InfoPanel();
 
@@ -120,6 +121,23 @@ public class BINavController {
 	}
 
 	public void caretMoved() {
+
 		infoPanel.setCaretInfo("Caret Move Detected");
+	}
+
+	public SqlStyledDocument getSqlStyledDocument() {
+		return sqlDoc;
+	}
+
+	public int getRowStart(int offset) throws BadLocationException {
+		return Utilities.getRowStart(panel.getTextPane(), offset);
+	}
+
+	public int getRowEnd(int offset) throws BadLocationException {
+		return Utilities.getRowEnd(panel.getTextPane(), offset);
+	}
+
+	public JTextPane getNewSqlPane() {
+		return new JTextPane(sqlDoc);
 	}
 }

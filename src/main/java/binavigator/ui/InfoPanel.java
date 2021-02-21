@@ -11,6 +11,7 @@ public class InfoPanel extends JPanel {
 
 	public InfoPanel() {
 		super();
+		this.add(caretInfo);
 	}
 
 	public void setCaretInfo(String text) {

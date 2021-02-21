@@ -26,7 +26,6 @@ public class TextEditorPanel extends JPanel {
 	private int lineCount = 1;
 	private TextColorTheme textColorTheme = null;
 	private SqlStyledDocument doc;
-
 	private JScrollPane jScrollPane;
 
 	private JLabel caretInfo = null;
@@ -36,15 +35,14 @@ public class TextEditorPanel extends JPanel {
 	private InfoPanel infoPanel;
 
 
-	public TextEditorPanel(BINavController biNavController, TextColorTheme textColorTheme) throws BadLocationException {
+	public TextEditorPanel(BINavController biNavController) throws BadLocationException {
 		super();
 		this.parentController = biNavController;
-		this.textColorTheme = textColorTheme;
 		this.setLayout(new BorderLayout());
 
-		doc = new SqlStyledDocument(this);
+		doc = this.parentController.getSqlStyledDocument();
 
-		textPane = new JTextPane(doc);
+		textPane = this.parentController.getNewSqlPane();
 		new LinePainter(textPane, this.getBackground());
 //		new ParenthesesPainter(textPane, this.getBackground(), doc.getCurrentFont());
 		textPane.setText("SELECT testColumn \nFROM sampleTable --Sample Comment \nWHERE Test=\"test\" \nAND " +
@@ -61,7 +59,7 @@ public class TextEditorPanel extends JPanel {
 		jScrollPane = new JScrollPane(textPane);
 		add(jScrollPane);
 
-		rowHeaders =  new TextLineNumber(textPane, this.textColorTheme);
+		rowHeaders =  new TextLineNumber(textPane, parentController.getTextColorTheme());
 		jScrollPane.setRowHeaderView(rowHeaders);
 
 		textPane.addFocusListener(new FocusListener() {

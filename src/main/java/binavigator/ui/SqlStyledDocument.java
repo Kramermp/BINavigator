@@ -1,5 +1,6 @@
 package binavigator.ui;
 
+import binavigator.backend.BINavController;
 import binavigator.backend.sql.SqlHelper;
 import binavigator.ui.colortheme.TextColorTheme;
 import org.apache.commons.logging.Log;
@@ -14,12 +15,12 @@ import java.util.List;
 public class SqlStyledDocument extends DefaultStyledDocument {
 	Log log = LogFactory.getLog(this.getClass());
 
-	private TextEditorPanel parent;
+	private BINavController parentController;
 
 	ArrayList<Integer> blockCommentStarts = new ArrayList<Integer>();
 
-	public SqlStyledDocument(TextEditorPanel parent) {
-		this.parent = parent;
+	public SqlStyledDocument(BINavController parentController) {
+		this.parentController = parentController;
 
 	}
 
@@ -35,8 +36,8 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 				offset += lines[i].length() + 1; //Need magic +1 to account for the linebreak that was removed by split command
 			}
 		} else {
-			int rowStart = Utilities.getRowStart(parent.getTextPane(), offset);
-			int rowEnd = Utilities.getRowEnd(parent.getTextPane(), offset);
+			int rowStart = parentController.getRowStart(offset);
+			int rowEnd = parentController.getRowEnd(offset);
 
 			String currentLine = this.getText(rowStart, rowEnd - rowStart);
 			processLine(currentLine, rowStart);
@@ -144,26 +145,26 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 		switch (SqlHelper.getWordType(currentSegment)) {
 			case KEY:
-				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length(), parent.getTextColorTheme().getKeyWordSyle(), true);
+				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length(), parentController.getTextColorTheme().getKeyWordSyle(), true);
 				break;
 			case SECONDAY:
-				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , parent.getTextColorTheme().getSecondaryStyle(), true);
+				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , parentController.getTextColorTheme().getSecondaryStyle(), true);
 				break;
 			case MISC:
-				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , parent.getTextColorTheme().getMiscStyle(), true);
+				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , parentController.getTextColorTheme().getMiscStyle(), true);
 				break;
 			case NUMBER:
-				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , parent.getTextColorTheme().getNumberStyle(), true);
+				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , parentController.getTextColorTheme().getNumberStyle(), true);
 				break;
 			case NONE:
-				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , parent.getTextColorTheme().getDefaultStyle(), true);
+				setCharacterAttributes(segementStart + lineStartIndex, currentSegment.length() , parentController.getTextColorTheme().getDefaultStyle(), true);
 				break;
 		}
 	}
 
 	private void commentSegement(int startPos, int length) {
 //		System.out.println("Commenting Segement: " + startPos + " " + length);
-		setCharacterAttributes(startPos, length, parent.getTextColorTheme().getCommentStyle(), true);
+		setCharacterAttributes(startPos, length, parentController.getTextColorTheme().getCommentStyle(), true);
 	}
 
 	private int evaluateString(String currentLine, int lineStartIndex, int startPos) {
@@ -178,7 +179,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 		}
 		String string = currentLine.substring(startPos, endPosition);
 //		System.out.println("String detected as " + string);
-		setCharacterAttributes(startPos + lineStartIndex, string.length(),  parent.getTextColorTheme().getStringStyle(), true);
+		setCharacterAttributes(startPos + lineStartIndex, string.length(),  parentController.getTextColorTheme().getStringStyle(), true);
 		return endPosition;
 	}
 
@@ -232,7 +233,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 	}
 
 	public Font getCurrentFont() {
-		return this.getFont(parent.getTextColorTheme().getDefaultStyle());
+		return this.getFont(parentController.getTextColorTheme().getDefaultStyle());
 	}
 
 	public static class HiliteWord {
