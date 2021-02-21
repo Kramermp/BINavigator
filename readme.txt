@@ -1,0 +1,1 @@
+This Project is supposed to be a SQL Editor connection thing.
