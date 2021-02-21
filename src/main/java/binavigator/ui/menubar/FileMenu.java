@@ -5,6 +5,7 @@ import binavigator.backend.BINavController;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 
 public class FileMenu extends JMenu {
@@ -13,6 +14,7 @@ public class FileMenu extends JMenu {
 	public FileMenu(BINavController biNavController) {
 		super("File");
 		this.parentController = biNavController;
+		this.setMnemonic(KeyEvent.VK_F);
 
 		JMenuItem saveBtn = new JMenuItem("Save");
 		saveBtn.addActionListener(new ActionListener() {
