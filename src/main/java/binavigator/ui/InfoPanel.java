@@ -7,11 +7,13 @@ import java.awt.*;
 
 public class InfoPanel extends JPanel {
 
-	JLabel caretInfo = new JLabel("Col: XXX Char: XXXX");
+	JLabel caretInfo;
 
-	public InfoPanel() {
+	public InfoPanel(String string) {
 		super();
-		this.add(caretInfo);
+		this.caretInfo = new JLabel(string);
+		this.setLayout(new BorderLayout());
+		this.add(caretInfo, BorderLayout.WEST);
 	}
 
 	public void setCaretInfo(String text) {

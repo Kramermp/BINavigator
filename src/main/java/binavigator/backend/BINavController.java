@@ -6,6 +6,8 @@ import binavigator.ui.colortheme.TextColorTheme;
 import binavigator.ui.colortheme.Monokai;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -13,6 +15,7 @@ import javax.swing.text.Utilities;
 import java.io.*;
 
 public class BINavController {
+	private Log log = LogFactory.getLog(this.getClass());
 	private BINavigatorFrame frame = null;
 	private TextEditorPanel panel = null;
 	private NavMenuBar menuBar = null;
@@ -30,16 +33,16 @@ public class BINavController {
 		frame = new BINavigatorFrame();
 		panel = new TextEditorPanel(this);
 		menuBar = new NavMenuBar(this);
-		infoPanel = new InfoPanel();
+		infoPanel = new InfoPanel(" ");
 
 		panel.addInfoPanel(infoPanel);
 
 		frame.setExtendedState( frame.getExtendedState()| JFrame.MAXIMIZED_BOTH );
 		frame.setJMenuBar(menuBar);
 		frame.add(panel);
+
 		frame.setVisible(true);
-		frame.validate();
-		frame.repaint();
+		infoPanel.setCaretInfo(getInfoString());
 	}
 
 	public void exitSafely() {
@@ -62,8 +65,13 @@ public class BINavController {
 			e.printStackTrace();
 		}
 
+		refresh();
+	}
+
+	private void refresh() {
 		textColorTheme.setWindowTheme(windowTheme);
 		panel.repaintDocument();
+		caretMoved();
 		infoPanel.validate();
 
 		SwingUtilities.updateComponentTreeUI(frame);
@@ -121,8 +129,16 @@ public class BINavController {
 	}
 
 	public void caretMoved() {
+		infoPanel.setCaretInfo(getInfoString());
+	}
 
-		infoPanel.setCaretInfo("Caret Move Detected");
+	public String getInfoString() {
+		try {
+			return "Col: " + String.format("%03d", (getCaretColumn() + 1)) + " Char: " + String.format("%4d", getCaretPosition() + 1);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+			return 	"Col: " + String.format("%03d", 0) + " Char: " + String.format("%4d", 0);
+		}
 	}
 
 	public SqlStyledDocument getSqlStyledDocument() {
@@ -140,4 +156,13 @@ public class BINavController {
 	public JTextPane getNewSqlPane() {
 		return new JTextPane(sqlDoc);
 	}
+
+	public int getCaretPosition() {
+		return panel.getTextPane().getCaretPosition();
+	}
+
+	public int getCaretColumn() throws BadLocationException {
+		return getCaretPosition() - getRowStart(getCaretPosition());
+	}
+
 }

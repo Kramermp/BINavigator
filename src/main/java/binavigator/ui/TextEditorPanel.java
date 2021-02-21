@@ -57,6 +57,7 @@ public class TextEditorPanel extends JPanel {
 		});
 
 		jScrollPane = new JScrollPane(textPane);
+		jScrollPane.setBorder(null);
 		add(jScrollPane);
 
 		rowHeaders =  new TextLineNumber(textPane, parentController.getTextColorTheme());
@@ -143,13 +144,8 @@ public class TextEditorPanel extends JPanel {
 		return textPane;
 	}
 
-	private int getCaretColumn() throws BadLocationException {
-		return textPane.getCaretPosition() - Utilities.getRowStart(textPane, textPane.getCaretPosition());
-	}
 
-	private String getCaretInfoString() throws BadLocationException {
-		return "Column " + String.format("%03d", getCaretColumn()) + " Char: " + String.format("%04d", textPane.getCaretPosition()) ;
-	}
+
 
 	public void addInfoPanel(InfoPanel infoPanel) {
 		this.add(infoPanel, BorderLayout.SOUTH);
