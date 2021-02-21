@@ -1,6 +1,7 @@
 package binavigator.backend;
 
 import binavigator.ui.BINavigatorFrame;
+import binavigator.ui.InfoPanel;
 import binavigator.ui.NavMenuBar;
 import binavigator.ui.TextEditorPanel;
 import binavigator.ui.colortheme.WindowTheme;
@@ -20,12 +21,17 @@ public class BINavController {
 	private WindowTheme windowTheme = WindowTheme.DARK;
 	private TextColorTheme textColorTheme = new Monokai(windowTheme);
 
+	private InfoPanel infoPanel;
+
 
 	public BINavController() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, BadLocationException {
 		UIManager.setLookAndFeel(new FlatDarculaLaf());
 		frame = new BINavigatorFrame();
-		panel = new TextEditorPanel(textColorTheme);
+		panel = new TextEditorPanel(this, textColorTheme);
 		menuBar = new NavMenuBar(this);
+		infoPanel = new InfoPanel();
+
+		panel.addInfoPanel(infoPanel);
 
 		frame.setExtendedState( frame.getExtendedState()| JFrame.MAXIMIZED_BOTH );
 		frame.setJMenuBar(menuBar);
@@ -33,7 +39,6 @@ public class BINavController {
 		frame.setVisible(true);
 		frame.validate();
 		frame.repaint();
-//		panel.repaintDocument();
 	}
 
 	public void exitSafely() {
@@ -58,6 +63,7 @@ public class BINavController {
 
 		textColorTheme.setWindowTheme(windowTheme);
 		panel.repaintDocument();
+		infoPanel.validate();
 
 		SwingUtilities.updateComponentTreeUI(frame);
 		frame.validate();
@@ -111,5 +117,9 @@ public class BINavController {
 
 	public WindowTheme getWindowTheme() {
 		return windowTheme;
+	}
+
+	public void caretMoved() {
+		infoPanel.setCaretInfo("Caret Move Detected");
 	}
 }

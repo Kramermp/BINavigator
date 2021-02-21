@@ -30,7 +30,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 		if (lines.length > 1) {
 			for (int i = 0; i < lines.length; i++) {
-				System.out.println("Detected Line: " + lines[i]);
+//				System.out.println("Detected Line: " + lines[i]);
 				processLine(lines[i], offset);
 				offset += lines[i].length() + 1; //Need magic +1 to account for the linebreak that was removed by split command
 			}
@@ -45,7 +45,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 	}
 
 	private void processLine(String line, int offset) throws BadLocationException {
-		System.out.println("Processing Line: " + line);
+//		System.out.println("Processing Line: " + line);
 		String body = this.getText(0,  getLength());
 
 //		boolean foundLineStart = false;
@@ -80,7 +80,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 		String currentLine = getText(0, getLength());
 		currentLine = currentLine.substring(lineStartIndex, lineEndIndex);
-		System.out.println("Updating Segement: " + lineStartIndex + " - " + lineEndIndex + " : " + currentLine);
+//		System.out.println("Updating Segement: " + lineStartIndex + " - " + lineEndIndex + " : " + currentLine);
 		for(int i = 0; i < currentLine.length(); i++) {
 
 			//Detect Start of String and Process it

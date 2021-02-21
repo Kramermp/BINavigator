@@ -1,5 +1,6 @@
 package binavigator.ui;
 
+import binavigator.backend.BINavController;
 import binavigator.ui.colortheme.TextColorTheme;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,6 +17,7 @@ import java.awt.event.FocusListener;
  * TextEditor Panel is the panel Containg Text Editor and its deails i.e. Line Numbers
  */
 public class TextEditorPanel extends JPanel {
+	private final BINavController parentController;
 	Log log = LogFactory.getLog(this.getClass());
 
    	private JTextPane textPane =  null;
@@ -31,9 +33,12 @@ public class TextEditorPanel extends JPanel {
 
 	final StyleContext cont = StyleContext.getDefaultStyleContext();
 
+	private InfoPanel infoPanel;
 
-	public TextEditorPanel(TextColorTheme textColorTheme) throws BadLocationException {
+
+	public TextEditorPanel(BINavController biNavController, TextColorTheme textColorTheme) throws BadLocationException {
 		super();
+		this.parentController = biNavController;
 		this.textColorTheme = textColorTheme;
 		this.setLayout(new BorderLayout());
 
@@ -49,11 +54,7 @@ public class TextEditorPanel extends JPanel {
 		textPane.addCaretListener(new CaretListener() {
 			@Override
 			public void caretUpdate(CaretEvent caretEvent) {
-				try {
-					caretInfo.setText(getCaretInfoString());
-				} catch (BadLocationException e) {
-					e.printStackTrace();
-				}
+				parentController.caretMoved();
 			}
 		});
 
@@ -72,15 +73,6 @@ public class TextEditorPanel extends JPanel {
 				System.out.println("Text Area Lost Focus");
 			}
 		});
-
-
-		JPanel bottomPanel = new JPanel();
-		bottomPanel.setBackground(this.getBackground().darker());
-
-		caretInfo = new JLabel(getCaretInfoString());
-		bottomPanel.add(caretInfo);
-
-		this.add(bottomPanel, BorderLayout.SOUTH);
 
 	}
 
@@ -149,6 +141,10 @@ public class TextEditorPanel extends JPanel {
 		return doc.getCurrentFont();
 	}
 
+	public JTextPane getTextPane() {
+		return textPane;
+	}
+
 	private int getCaretColumn() throws BadLocationException {
 		return textPane.getCaretPosition() - Utilities.getRowStart(textPane, textPane.getCaretPosition());
 	}
@@ -157,9 +153,12 @@ public class TextEditorPanel extends JPanel {
 		return "Column " + String.format("%03d", getCaretColumn()) + " Char: " + String.format("%04d", textPane.getCaretPosition()) ;
 	}
 
-	public JTextPane getTextPane() {
-		return textPane;
+	public void addInfoPanel(InfoPanel infoPanel) {
+		this.add(infoPanel, BorderLayout.SOUTH);
 	}
+
+
+
 
 	//	private class LineNumberingTextArea extends JTextArea
 //	{
