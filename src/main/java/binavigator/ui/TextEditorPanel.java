@@ -21,6 +21,8 @@ public class TextEditorPanel extends JPanel {
 	private TextColorTheme textColorTheme = null;
 	private SqlStyledDocument doc;
 
+	private JScrollPane jScrollPane;
+
 	final StyleContext cont = StyleContext.getDefaultStyleContext();
 //	final AttributeSet keywordAttr; = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, textColorTheme.getKeyWordColor());
 //	final AttributeSet defaultAttr = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, textColorTheme.getTextColor());
@@ -30,12 +32,12 @@ public class TextEditorPanel extends JPanel {
 		this.textColorTheme = textColorTheme;
 		this.setLayout(new BorderLayout());
 
-		doc = new SqlStyledDocument(textColorTheme);
+		doc = new SqlStyledDocument(textColorTheme, this);
 
 		textPane = new JTextPane(doc);
 		new LinePainter(textPane, this.getBackground());
 		textPane.setText("SELECT testColumn \n FROM sampleTable --Sample Comment \n WHERE Test=\"test\"");
-		JScrollPane jScrollPane = new JScrollPane(textPane);
+		jScrollPane = new JScrollPane(textPane);
 		add(jScrollPane);
 		
 		rowHeaders =  new TextLineNumber(textPane, this.textColorTheme);
@@ -50,7 +52,18 @@ public class TextEditorPanel extends JPanel {
 				System.out.println("Text Area Lost Focus");
 			}
 		});
+	}
 
+	public void repaintDocument() {
+		JViewport viewport = jScrollPane.getViewport();
+		Point startPoint = viewport.getViewPosition();
+		Dimension size = viewport.getExtentSize();
+		Point endPoint =  new Point(startPoint.x + size.width, startPoint.y + size.height);
+
+		int start = textPane.viewToModel(startPoint);
+		int end = textPane.viewToModel(endPoint);
+
+		doc.paintDocument(start, end);
 	}
 
 	public String getTextContent() {

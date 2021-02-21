@@ -44,17 +44,18 @@ public class BINavController {
 				case DARK:
 					System.out.println("Setting WindowTheme to Dark");
 					UIManager.setLookAndFeel(new FlatDarculaLaf());
-					textColorTheme.setWindowTheme(WindowTheme.DARK);
 					break;
 				case LIGHT:
 					System.out.println("Setting WindowTheme to Light");
 					UIManager.setLookAndFeel(new FlatLightLaf());
-					textColorTheme.setWindowTheme(WindowTheme.LIGHT);
 					break;
 			}
 		} catch (UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
+
+		textColorTheme.setWindowTheme(windowTheme);
+		panel.repaintDocument();
 
 		SwingUtilities.updateComponentTreeUI(frame);
 		frame.validate();

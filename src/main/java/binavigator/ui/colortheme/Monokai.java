@@ -16,6 +16,8 @@ public class Monokai extends TextColorTheme {
 	private static final Color BLUE = Color.decode("#66D9EF");
 	private static final Color PURPLE = Color.decode("#AE81FF");
 
+	private static final Color BLACK = Color.decode("#1b1b1b");
+
  	public Monokai(WindowTheme windowTheme) {
 		super(windowTheme);
 	}
@@ -26,7 +28,7 @@ public class Monokai extends TextColorTheme {
 			return this.WHITE;
 		}
 
-		return this.DARK_GRAY;
+		return this.BLACK;
 	}
 
 	@Override

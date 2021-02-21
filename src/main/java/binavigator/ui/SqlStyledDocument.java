@@ -13,20 +13,16 @@ import java.util.*;
 import java.util.List;
 
 public class SqlStyledDocument extends DefaultStyledDocument {
-	private JComponent parent;
-	StyleContext cont = StyleContext.getDefaultStyleContext();
+	private TextEditorPanel parent;
 
 	TextColorTheme textColorTheme = null;
 
 	ArrayList<Integer> blockCommentStarts = new ArrayList<Integer>();
 
-	public SqlStyledDocument(TextColorTheme textColorTheme) {
+	public SqlStyledDocument(TextColorTheme textColorTheme, TextEditorPanel parent) {
 		this.textColorTheme = textColorTheme;
-		updateStyles();
-	}
-
-	private void updateStyles() {
-
+		this.parent = parent;
+//		parent.repaintDocument();
 	}
 
 	public void insertString (int offset, String str, AttributeSet a) throws BadLocationException {
@@ -100,11 +96,24 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 		}
 	}
 
+	public void paintDocument(int startIndex, int endIndex) {
+		System.out.println("Printing Documenting");
+		try {
+			update(startIndex, endIndex);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+	}
+
+
+
 	private synchronized void evaluateSegement(String currentLine, int lineStartIndex, int segementStart, int segementEnd) {
 		System.out.println("Segement Start:" + segementStart);
 		System.out.println("Segement End:" + segementEnd);
 
-		String currentSegment = currentLine.substring(segementStart, segementEnd);
+		String currentSegment = currentLine.substring(segementStart, segementEnd).trim();
+		//int offSet = (segementEnd - segementStart) - currentSegment.length();
 		System.out.println("Checking word:" + currentSegment);
 
 //		if (SqlHelper.isKeyWord(currentSegment)) {
