@@ -131,8 +131,7 @@ public class LinePainter
 
 	//  Implement CaretListener
 
-	public void caretUpdate(CaretEvent e)
-	{
+	public void caretUpdate(CaretEvent e) {
 		resetHighlight();
 	}
 

@@ -33,8 +33,8 @@ public abstract class TextColorTheme {
 		defaultStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getTextColor());
 		commentStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getCommentColor());
 		stringStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getStringColor());
-		secondaryStyle = stringStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getSecondaryColor());
-		miscStyle = stringStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getMiscColor());
+		secondaryStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getSecondaryColor());
+		miscStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getMiscColor());
 		numberStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getNumberColor());
 	}
 

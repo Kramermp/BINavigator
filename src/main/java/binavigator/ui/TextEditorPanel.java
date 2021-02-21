@@ -1,19 +1,16 @@
 package binavigator.ui;
 
-import binavigator.ui.colortheme.Monokai;
 import binavigator.ui.colortheme.TextColorTheme;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-
-import static java.lang.System.lineSeparator;
 
 /**
  * TextEditor Panel is the panel Containg Text Editor and its deails i.e. Line Numbers
@@ -30,10 +27,12 @@ public class TextEditorPanel extends JPanel {
 
 	private JScrollPane jScrollPane;
 
+	private JLabel caretInfo = null;
+
 	final StyleContext cont = StyleContext.getDefaultStyleContext();
 
 
-	public TextEditorPanel(TextColorTheme textColorTheme) {
+	public TextEditorPanel(TextColorTheme textColorTheme) throws BadLocationException {
 		super();
 		this.textColorTheme = textColorTheme;
 		this.setLayout(new BorderLayout());
@@ -42,16 +41,29 @@ public class TextEditorPanel extends JPanel {
 
 		textPane = new JTextPane(doc);
 		new LinePainter(textPane, this.getBackground());
+//		new ParenthesesPainter(textPane, this.getBackground(), doc.getCurrentFont());
 		textPane.setText("SELECT testColumn \nFROM sampleTable --Sample Comment \nWHERE Test=\"test\" \nAND " +
 				"1 = \"TEST\" \nAND TESTColmn2 IN ( SELECT TestColumn2 \n\tFROM TESTTable2);"
 		);
+
+		textPane.addCaretListener(new CaretListener() {
+			@Override
+			public void caretUpdate(CaretEvent caretEvent) {
+				try {
+					caretInfo.setText(getCaretInfoString());
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
 		jScrollPane = new JScrollPane(textPane);
 		add(jScrollPane);
-		
+
 		rowHeaders =  new TextLineNumber(textPane, this.textColorTheme);
 		jScrollPane.setRowHeaderView(rowHeaders);
 
- 		textPane.addFocusListener(new FocusListener() {
+		textPane.addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent focusEvent) {
 				System.out.println("Text Area Gained Focus");
 			}
@@ -61,6 +73,14 @@ public class TextEditorPanel extends JPanel {
 			}
 		});
 
+
+		JPanel bottomPanel = new JPanel();
+		bottomPanel.setBackground(this.getBackground().darker());
+
+		caretInfo = new JLabel(getCaretInfoString());
+		bottomPanel.add(caretInfo);
+
+		this.add(bottomPanel, BorderLayout.SOUTH);
 
 	}
 
@@ -125,7 +145,23 @@ public class TextEditorPanel extends JPanel {
 		return textColorTheme;
 	}
 
-//	private class LineNumberingTextArea extends JTextArea
+	public Font getDocumentFont() {
+		return doc.getCurrentFont();
+	}
+
+	private int getCaretColumn() throws BadLocationException {
+		return textPane.getCaretPosition() - Utilities.getRowStart(textPane, textPane.getCaretPosition());
+	}
+
+	private String getCaretInfoString() throws BadLocationException {
+		return "Column " + String.format("%03d", getCaretColumn()) + " Char: " + String.format("%04d", textPane.getCaretPosition()) ;
+	}
+
+	public JTextPane getTextPane() {
+		return textPane;
+	}
+
+	//	private class LineNumberingTextArea extends JTextArea
 //	{
 //		private JTextPane jTextPane;
 //

@@ -10,6 +10,7 @@ import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
 import java.io.*;
 
 public class BINavController {
@@ -20,7 +21,7 @@ public class BINavController {
 	private TextColorTheme textColorTheme = new Monokai(windowTheme);
 
 
-	public BINavController() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+	public BINavController() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, BadLocationException {
 		UIManager.setLookAndFeel(new FlatDarculaLaf());
 		frame = new BINavigatorFrame();
 		panel = new TextEditorPanel(textColorTheme);

@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.swing.text.*;
 
+import java.awt.*;
 import java.util.*;
 import java.util.List;
 
@@ -15,12 +16,11 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 	private TextEditorPanel parent;
 
-	TextColorTheme textColorTheme = null;
-
 	ArrayList<Integer> blockCommentStarts = new ArrayList<Integer>();
 
 	public SqlStyledDocument(TextEditorPanel parent) {
 		this.parent = parent;
+
 	}
 
 	public void insertString (int offset, String str, AttributeSet a) throws BadLocationException {
@@ -28,13 +28,19 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 		String[] lines = str.split("\n", -1);
 
-		for(int i = 0; i < lines.length; i++) {
-			System.out.println("Detected Line: " + lines[i]);
-			processLine(lines[i], offset);
-			offset+=lines[i].length() + 1; //Need magic +1 to account for the linebreak that was removed by split command
-		}
+		if (lines.length > 1) {
+			for (int i = 0; i < lines.length; i++) {
+				System.out.println("Detected Line: " + lines[i]);
+				processLine(lines[i], offset);
+				offset += lines[i].length() + 1; //Need magic +1 to account for the linebreak that was removed by split command
+			}
+		} else {
+			int rowStart = Utilities.getRowStart(parent.getTextPane(), offset);
+			int rowEnd = Utilities.getRowEnd(parent.getTextPane(), offset);
 
-		System.out.println("Last Line = " + lines[lines.length - 1]);
+			String currentLine = this.getText(rowStart, rowEnd - rowStart);
+			processLine(currentLine, rowStart);
+		}
 
 	}
 
@@ -116,7 +122,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 			String[] lines = text.split("\n", -1);
 
 			int offset = 0;
-			for(int i = 0; i <= lines.length; i++) {
+			for(int i = 0; i < lines.length; i++) {
 				processLine(lines[i], offset);
 				offset+=lines[i].length();
 			}
@@ -223,6 +229,10 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 			index++;
 		}
 		return index;
+	}
+
+	public Font getCurrentFont() {
+		return this.getFont(parent.getTextColorTheme().getDefaultStyle());
 	}
 
 	public static class HiliteWord {

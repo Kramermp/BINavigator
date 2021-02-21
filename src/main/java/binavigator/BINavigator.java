@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
 
 /**
  * Entry Point for the BINavigator Application
@@ -24,6 +25,8 @@ public class BINavigator {
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
 	}
