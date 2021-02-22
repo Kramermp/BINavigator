@@ -215,7 +215,7 @@ public class BINavController {
 	}
 
 	public Color getParenthesePaintColor() {
-		return Color.RED;
+		return textColorTheme.getParenthesesHiLightColor();
 	}
 
 	static class CustomTabParagraphView extends ParagraphView {

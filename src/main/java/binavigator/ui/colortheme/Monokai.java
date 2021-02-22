@@ -64,4 +64,9 @@ public class Monokai extends TextColorTheme {
 	public Color getNumberColor() {
 		return this.PURPLE;
 	}
+
+	@Override
+	public Color getParenthesesHiLightColor() {
+ 		return this.LIGHT_ORANGE;
+	}
 }

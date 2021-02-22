@@ -27,6 +27,7 @@ public abstract class TextColorTheme {
 	public abstract Color getMiscColor();
 	public abstract Color getSecondaryColor();
 	public abstract Color getNumberColor();
+	public abstract Color getParenthesesHiLightColor();
 
 	public void updateStyles() {
 		keyWordSyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getKeyWordColor());

@@ -52,6 +52,11 @@ public class RandomColorTheme extends TextColorTheme{
 	}
 
 	@Override
+	public Color getParenthesesHiLightColor() {
+		return getRandomColor();
+	}
+
+	@Override
 	public Color getLineHiLight() {
 		return getRandomColor();
 	}
