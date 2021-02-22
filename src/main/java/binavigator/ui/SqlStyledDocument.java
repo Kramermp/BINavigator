@@ -20,6 +20,8 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 	ArrayList<Integer> blockCommentStarts = new ArrayList<Integer>();
 
 	public SqlStyledDocument(BINavController parentController) {
+		super();
+		this.putProperty(PlainDocument.tabSizeAttribute, 2);
 		this.parentController = parentController;
 
 	}

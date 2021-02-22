@@ -10,8 +10,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Utilities;
+import javax.swing.text.*;
+import java.awt.*;
 import java.io.*;
 
 public class BINavController {
@@ -24,8 +24,12 @@ public class BINavController {
 	private TextColorTheme textColorTheme = new Monokai(windowTheme);
 
 	private SqlStyledDocument sqlDoc = new SqlStyledDocument(this);
+	private Font font = new Font(Font.MONOSPACED, Font.PLAIN, 16);
 
 	private InfoPanel infoPanel;
+	private TextLineNumber textLineNumber;
+
+	private int tabSize = 8;
 
 
 	public BINavController() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, BadLocationException {
@@ -34,8 +38,10 @@ public class BINavController {
 		panel = new TextEditorPanel(this);
 		menuBar = new NavMenuBar(this);
 		infoPanel = new InfoPanel(" ");
+		textLineNumber = new TextLineNumber(panel.getTextPane(), textColorTheme);
 
 		panel.addInfoPanel(infoPanel);
+		panel.addTextLineNumber(textLineNumber);
 
 		frame.setExtendedState( frame.getExtendedState()| JFrame.MAXIMIZED_BOTH );
 		frame.setJMenuBar(menuBar);
@@ -43,6 +49,9 @@ public class BINavController {
 
 		frame.setVisible(true);
 		infoPanel.setCaretInfo(getInfoString());
+		setFont(this.font);
+
+		new ParenthesesPainter(panel.getTextPane(), this);
 	}
 
 	public void exitSafely() {
@@ -163,6 +172,46 @@ public class BINavController {
 
 	public int getCaretColumn() throws BadLocationException {
 		return getCaretPosition() - getRowStart(getCaretPosition());
+	}
+
+	public void setFont(Font font) {
+		this.font = font;
+		panel.setFont(font);
+		panel.getTextPane().setFont(font);
+	}
+
+	public Font getFont() {
+		return font;
+	}
+
+	public void setTabSize(int tabSize) {
+		this.tabSize = tabSize;
+	}
+
+	public int getTabSize() {
+		return this.tabSize;
+	}
+
+	public Color getParenthesePaintColor() {
+		return Color.RED;
+	}
+
+	static class CustomTabParagraphView extends ParagraphView {
+
+		public CustomTabParagraphView(Element elem) {
+			super(elem);
+		}
+
+		public float nextTabStop(float x, int tabOffset) {
+			TabSet tabs = getTabSet();
+			if(tabs == null) {
+				// a tab every 72 pixels.
+				return (float)(getTabBase() + (((int)x / 8 + 1) * 8));
+			}
+
+			return super.nextTabStop(x, tabOffset);
+		}
+
 	}
 
 }

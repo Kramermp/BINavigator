@@ -1,5 +1,7 @@
 package binavigator.ui;
 
+import binavigator.backend.BINavController;
+
 import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -19,9 +21,9 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 
 	private JTextComponent component;
 
-	private Color color;
+	private BINavController parentController = null;
 
-	private Font font;
+	private Color color;
 
 	private Rectangle lastView;
 
@@ -34,7 +36,7 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 	public ParenthesesPainter(JTextComponent component)
 		{
 
-			this(component, null, null);
+			this(component, null);
 			setLighter(component.getSelectionColor());
 		}
 
@@ -44,11 +46,11 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 		 *  @param component  text component that requires background line painting
 		 *  @param color      the color of the background line
 		 */
-	public ParenthesesPainter(JTextComponent component, Color color, Font font)
+	public ParenthesesPainter(JTextComponent component, BINavController parentController)
 		{
 			this.component = component;
-			setColor( color );
-			setFont(font);
+			this.parentController = parentController;
+			setColor( parentController.getParenthesePaintColor());
 
 			//  Add listeners so we know when to change highlighting
 
@@ -75,10 +77,6 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 			this.color = color;
 		}
 
-		public void setFont(Font font) {
-			this.font = font;
-		}
-
 		/*
 		 *  Calculate the line color by making the selection color lighter
 		 *
@@ -92,26 +90,57 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 			setColor(new Color(red, green, blue));
 		}
 
-		//  Paint the background highlight
+	public Rectangle getCurrentView(JTextComponent component) {
+		Rectangle rec = null;
+		rec = new Rectangle();
+
+		rec.width = component.getWidth();
+		rec.x = component.getMargin().left;
+		FontMetrics fm = component.getGraphics().getFontMetrics(parentController.getFont());
+		rec.y  = (fm.getHeight() * (component.getText().substring(0, component.getCaretPosition()).split(("\n")).length - 1)) + component.getMargin().top  ;
+		rec.height = fm.getHeight();
+
+		int countNeeded = 1;
+		int i = 0;
+		for(i = component.getCaretPosition() + 1; i < component.getText().length() && countNeeded > 0; i++) {
+			if(component.getText().charAt(i) == ')') {
+				countNeeded--;
+			} else if (component.getText().charAt(i) == '(') {
+				countNeeded++;
+			}
+		}
+
+		int lineCount = component.getText().substring(component.getCaretPosition(), i).split("\n", - 1).length;
+		rec.height = rec.height * lineCount;
+
+		return rec;
+	}
+
+
+	//  Paint the background highlight
 
 		public void paint(Graphics g, int p0, int p1, Shape bounds, JTextComponent c)
 		{
-			try
-			{
-				int rowStart = Utilities.getRowStart(component, c.getCaretPosition());
-				int column = (c.getCaretPosition() - rowStart);
-				FontMetrics fm = g.getFontMetrics(font);
+//			try
+//			{
 
-				System.out.println("Current Column: " + column);
+			Rectangle rec = rec = getCurrentView(c);
+				if(c.getText().charAt(c.getCaretPosition()) == '(' || (c.getCaretPosition() != 0 && c.getText().charAt(c.getCaretPosition() - 1) == '(')) {
+					System.out.println("Sittting on opening parentheses");
+					g.setColor(Color.BLUE);
 
-				Rectangle r = c.modelToView(c.getCaretPosition());
-				g.setColor(color);
-				g.fillRect(0, r.y, c.getWidth(), r.height);
+					g.fillRect(rec.x, rec.y, rec.width, rec.height);
+
+
+				} else if(c.getText().charAt(c.getCaretPosition()) == ')'){
+					System.out.println("Sittting on closing parentheses");
+
+				}
 
 				if (lastView == null)
-					lastView = r;
-			}
-			catch(BadLocationException ble) {System.out.println(ble);}
+					lastView = rec;
+//			}
+//			catch(BadLocationException ble) {System.out.println(ble);}
 		}
 
 		/*
@@ -126,19 +155,15 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 			{
 				public void run()
 				{
-					try
-					{
-						int offset =  component.getCaretPosition();
-						Rectangle currentView = component.modelToView(offset);
+					Rectangle currentView = getCurrentView(component);
 
-						//  Remove the highlighting from the previously highlighted line
-						if (lastView.y != currentView.y)
-						{
-							component.repaint(0, lastView.y, component.getWidth(), lastView.height);
-							lastView = currentView;
-						}
+					//  Remove the highlighting from the previously highlighted line
+					if (!lastView.equals(currentView))
+					{
+						component.repaint(lastView);
+						component.repaint(currentView);
+						lastView = currentView;
 					}
-					catch(BadLocationException ble) {}
 				}
 			});
 		}

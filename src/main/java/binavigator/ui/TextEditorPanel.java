@@ -34,6 +34,8 @@ public class TextEditorPanel extends JPanel {
 
 	private InfoPanel infoPanel;
 
+	private Font font = new Font(Font.MONOSPACED, Font.PLAIN, 16);
+
 
 	public TextEditorPanel(BINavController biNavController) throws BadLocationException {
 		super();
@@ -43,11 +45,13 @@ public class TextEditorPanel extends JPanel {
 		doc = this.parentController.getSqlStyledDocument();
 
 		textPane = this.parentController.getNewSqlPane();
-		new LinePainter(textPane, this.getBackground());
-//		new ParenthesesPainter(textPane, this.getBackground(), doc.getCurrentFont());
+//		new LinePainter(textPane, this.getBackground());
+
 		textPane.setText("SELECT testColumn \nFROM sampleTable --Sample Comment \nWHERE Test=\"test\" \nAND " +
 				"1 = \"TEST\" \nAND TESTColmn2 IN ( SELECT TestColumn2 \n\tFROM TESTTable2);"
 		);
+
+
 
 		textPane.addCaretListener(new CaretListener() {
 			@Override
@@ -59,9 +63,6 @@ public class TextEditorPanel extends JPanel {
 		jScrollPane = new JScrollPane(textPane);
 		jScrollPane.setBorder(null);
 		add(jScrollPane);
-
-		rowHeaders =  new TextLineNumber(textPane, parentController.getTextColorTheme());
-		jScrollPane.setRowHeaderView(rowHeaders);
 
 		textPane.addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent focusEvent) {
@@ -144,11 +145,12 @@ public class TextEditorPanel extends JPanel {
 		return textPane;
 	}
 
-
-
-
 	public void addInfoPanel(InfoPanel infoPanel) {
 		this.add(infoPanel, BorderLayout.SOUTH);
+	}
+
+	public void addTextLineNumber(TextLineNumber textLineNumber) {
+		jScrollPane.setRowHeaderView(textLineNumber);
 	}
 
 
