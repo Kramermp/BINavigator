@@ -8,7 +8,6 @@ import javax.swing.text.StyleContext;
 import java.awt.*;
 
 public class Monokai extends TextColorTheme {
-	private BINavController test;
 	private static final Color WHITE = Color.decode("#F8F8F2");
 	private static final Color RED = Color.decode("#F92672");
 	private static final Color DARK_GRAY = Color.decode("#75715E");
@@ -23,7 +22,6 @@ public class Monokai extends TextColorTheme {
 
  	public Monokai(BINavController navController) {
 		super(navController);
-		test = navController;
 		super.name = "Monokai";
 		updateStyles();
 	}
