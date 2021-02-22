@@ -20,7 +20,6 @@ public class BINavController {
 	private Log log = LogFactory.getLog(this.getClass());
 	private BINavigatorFrame frame = null;
 	private TextEditorPanel panel = null;
-	private NavMenuBar menuBar = null;
 
 	private WindowTheme windowTheme = WindowTheme.DARK;
 	private TextColorTheme textColorTheme;
@@ -29,7 +28,6 @@ public class BINavController {
 	private Font font = new Font(Font.MONOSPACED, Font.PLAIN, 16);
 
 	private InfoPanel infoPanel;
-	private TextLineNumber textLineNumber;
 	private ParenthesesPainter parenthesesPainter;
 
 	private int tabSize = 8;
@@ -40,9 +38,9 @@ public class BINavController {
 		UIManager.setLookAndFeel(new FlatDarculaLaf());
 		frame = new BINavigatorFrame();
 		panel = new TextEditorPanel(this);
-		menuBar = new NavMenuBar(this);
+		NavMenuBar menuBar = new NavMenuBar(this);
 		infoPanel = new InfoPanel(" ");
-		textLineNumber = new TextLineNumber(panel.getTextPane(), textColorTheme);
+		TextLineNumber textLineNumber = new TextLineNumber(panel.getTextPane(), this);
 
 		panel.addInfoPanel(infoPanel);
 		panel.addTextLineNumber(textLineNumber);

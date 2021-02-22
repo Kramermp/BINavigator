@@ -1,5 +1,6 @@
 package binavigator.ui;
 
+import binavigator.backend.BINavController;
 import binavigator.ui.colortheme.TextColorTheme;
 
 import java.awt.*;
@@ -31,7 +32,7 @@ public class TextLineNumber extends JPanel
 	private final static Border OUTER = new MatteBorder(0, 0, 0, 2, Color.GRAY);
 
 	private final static int HEIGHT = Integer.MAX_VALUE - 1000000;
-	private TextColorTheme textColorTheme;
+	private BINavController parentController;
 
 	//  Text component this TextTextLineNumber component is in sync with
 
@@ -60,9 +61,9 @@ public class TextLineNumber extends JPanel
 	 *
 	 *  @param component  the related text component
 	 */
-	public TextLineNumber(JTextComponent component, TextColorTheme textColorTheme)
+	public TextLineNumber(JTextComponent component, BINavController parentController)
 	{
-		this(component, 3, textColorTheme);
+		this(component, 3, parentController);
 	}
 
 	/**
@@ -72,15 +73,14 @@ public class TextLineNumber extends JPanel
 	 *  @param minimumDisplayDigits  the number of digits used to calculate
 	 *                               the minimum width of the component
 	 */
-	public TextLineNumber(JTextComponent component, int minimumDisplayDigits, TextColorTheme textColorTheme)
+	public TextLineNumber(JTextComponent component, int minimumDisplayDigits, BINavController parentController)
 	{
 		this.component = component;
-		this.textColorTheme = textColorTheme;
-
+		this.parentController = parentController;
 		setFont( component.getFont() );
 
 		setBorderGap( 5 );
-		setCurrentLineForeground( textColorTheme.getLineHiLight() );
+		setCurrentLineForeground( this.parentController.getTextColorTheme().getLineHiLight() );
 		setDigitAlignment( RIGHT );
 		setMinimumDisplayDigits( minimumDisplayDigits );
 

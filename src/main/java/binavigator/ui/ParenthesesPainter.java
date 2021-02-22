@@ -20,8 +20,6 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 
 	private BINavController parentController = null;
 
-	private Color color;
-
 	private Rectangle lastView;
 
 	/*
@@ -34,7 +32,6 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 		{
 
 			this(component, null);
-			setLighter(component.getSelectionColor());
 		}
 
 		/*
@@ -47,7 +44,6 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 		{
 			this.component = component;
 			this.parentController = parentController;
-			setColor( parentController.getParenthesePaintColor());
 
 			//  Add listeners so we know when to change highlighting
 
@@ -62,29 +58,6 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 				component.getHighlighter().addHighlight(0, 0, this);
 			}
 			catch(BadLocationException ble) {}
-		}
-
-		/*
-		 *	You can reset the line color at any time
-		 *
-		 *  @param color  the color of the background line
-		 */
-		public void setColor(Color color)
-		{
-			this.color = color;
-		}
-
-		/*
-		 *  Calculate the line color by making the selection color lighter
-		 *
-		 *  @return the color of the background line
-		 */
-		public void setLighter(Color color)
-		{
-			int red   = Math.min(255, (int)(color.getRed() * 1.1));
-			int green = Math.min(255, (int)(color.getGreen() * 1.1));
-			int blue  = Math.min(255, (int)(color.getBlue() * 1.1));
-			setColor(new Color(red, green, blue));
 		}
 
 	public Rectangle getCurrentView(JTextComponent component) {
