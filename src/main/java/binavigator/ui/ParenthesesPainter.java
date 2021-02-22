@@ -117,7 +117,7 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 			rec.width = component.getWidth();
 			rec.x = component.getMargin().left;
 			FontMetrics fm = component.getGraphics().getFontMetrics(parentController.getFont());
-			rec.y  = (fm.getHeight() * (component.getText().substring(0, component.getCaretPosition()).split(("\n")).length - 1)) + component.getMargin().top  ;
+			rec.y  = (fm.getHeight() * (component.getText().substring(0, component.getCaretPosition()).split(("\n")).length)) + component.getMargin().top  ;
 			rec.height = fm.getHeight();
 
 			int countNeeded = 1;
@@ -142,7 +142,7 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 
 			int lineCount = component.getText().substring(i, component.getCaretPosition()).split("\n", - 1).length;
 
-			rec.y-=rec.height;
+			rec.y-=(rec.height * lineCount);
 			rec.height =(rec.height * lineCount); //Drawing from bottom up
 		} else {
 			rec = new Rectangle(0,0,0,0);
