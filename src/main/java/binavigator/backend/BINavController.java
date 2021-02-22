@@ -23,7 +23,7 @@ public class BINavController {
 	private NavMenuBar menuBar = null;
 
 	private WindowTheme windowTheme = WindowTheme.DARK;
-	private TextColorTheme textColorTheme = new Monokai(windowTheme);
+	private TextColorTheme textColorTheme;
 
 	private SqlStyledDocument sqlDoc = new SqlStyledDocument(this);
 	private Font font = new Font(Font.MONOSPACED, Font.PLAIN, 16);
@@ -35,7 +35,8 @@ public class BINavController {
 	private int tabSize = 8;
 
 
-	public BINavController() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, BadLocationException {
+	public BINavController() throws UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, BadLocationException {
+		textColorTheme = new Monokai(this);
 		UIManager.setLookAndFeel(new FlatDarculaLaf());
 		frame = new BINavigatorFrame();
 		panel = new TextEditorPanel(this);
@@ -51,7 +52,12 @@ public class BINavController {
 		frame.add(panel);
 
 		frame.setVisible(true);
-		infoPanel.setCaretInfo(getInfoString());
+
+	}
+
+	public void setup() {
+		//Hard Coding because there is a weird multi thread thing goign on here i think
+		infoPanel.setCaretInfo("Col: " + String.format("%03d", 1) + " Char: " + String.format("%4d", 1));
 		setFont(this.font);
 
 		parenthesesPainter = new ParenthesesPainter(panel.getTextPane(), this);
@@ -68,7 +74,7 @@ public class BINavController {
 
 			@Override
 			public void keyReleased(KeyEvent keyEvent) {
-				if(keyEvent.getKeyCode() == KeyEvent.VK_RIGHT || keyEvent.getKeyCode() == KeyEvent.VK_LEFT || keyEvent.getKeyCode() == KeyEvent.VK_UP ||
+				if (keyEvent.getKeyCode() == KeyEvent.VK_RIGHT || keyEvent.getKeyCode() == KeyEvent.VK_LEFT || keyEvent.getKeyCode() == KeyEvent.VK_UP ||
 						keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
 					parenthesesPainter.resetHighlight();
 				}
@@ -96,11 +102,12 @@ public class BINavController {
 			e.printStackTrace();
 		}
 
+		this.windowTheme = windowTheme;
 		refresh();
 	}
 
 	private void refresh() {
-		textColorTheme.setWindowTheme(windowTheme);
+		textColorTheme.updateStyles();
 		panel.repaintDocument();
 		caretMoved();
 		infoPanel.validate();
@@ -215,7 +222,10 @@ public class BINavController {
 	}
 
 	public Color getParenthesePaintColor() {
-		return textColorTheme.getParenthesesHiLightColor();
+		return new Color(textColorTheme.getParenthesesHiLightColor().getRed(),
+				textColorTheme.getParenthesesHiLightColor().getGreen(),
+				textColorTheme.getParenthesesHiLightColor().getBlue(),
+				25);
 	}
 
 	static class CustomTabParagraphView extends ParagraphView {

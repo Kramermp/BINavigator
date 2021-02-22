@@ -1,5 +1,7 @@
 package binavigator.ui.colortheme;
 
+import binavigator.backend.BINavController;
+
 import javax.swing.text.AttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
@@ -7,18 +9,18 @@ import javax.xml.soap.Text;
 import java.awt.*;
 
 public abstract class TextColorTheme {
-	private WindowTheme windowTheme = WindowTheme.DARK;
+	protected BINavController parentController;
 	protected String name;
 
 	protected StyleContext cont = StyleContext.getDefaultStyleContext();
 
-	protected AttributeSet keyWordSyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getKeyWordColor());
-	protected AttributeSet defaultStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getTextColor());
-	protected AttributeSet commentStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getCommentColor());
-	protected AttributeSet stringStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getStringColor());
-	protected AttributeSet secondaryStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getSecondaryColor());
-	protected AttributeSet miscStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getMiscColor());
-	protected AttributeSet numberStyle = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getNumberColor());
+	protected AttributeSet keyWordSyle;// = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getKeyWordColor());
+	protected AttributeSet defaultStyle;// = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getTextColor());
+	protected AttributeSet commentStyle;// = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getCommentColor());
+	protected AttributeSet stringStyle;// = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getStringColor());
+	protected AttributeSet secondaryStyle;// = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getSecondaryColor());
+	protected AttributeSet miscStyle;// = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getMiscColor());
+	protected AttributeSet numberStyle;// = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, getNumberColor());
 
 	public abstract Color getTextColor();
 	public abstract Color getCommentColor();
@@ -41,17 +43,12 @@ public abstract class TextColorTheme {
 
 	public abstract Color getLineHiLight();
 
-	public TextColorTheme (WindowTheme windowTheme) {
-		this.windowTheme = windowTheme;
+	public TextColorTheme() {
+		// Do Nothing
 	}
 
-	public WindowTheme getWindowTheme() {
-		return windowTheme;
-	}
-
-	public void setWindowTheme(WindowTheme windowTheme) {
-		this.windowTheme = windowTheme;
-		this.updateStyles();
+	public TextColorTheme (BINavController parentController) {
+		this.parentController = parentController;
 	}
 
 	public AttributeSet getKeyWordSyle() {

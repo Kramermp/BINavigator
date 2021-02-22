@@ -17,10 +17,8 @@ public class BINavigator {
 	public static void main(String[] args) {
 		log.debug("Launching BINavigator");
 		try {
-			new BINavController();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (UnsupportedLookAndFeelException e) {
+			new BINavController().setup();
+		}  catch (UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		} catch (InstantiationException e) {
 			e.printStackTrace();

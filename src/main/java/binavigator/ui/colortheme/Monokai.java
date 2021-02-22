@@ -1,11 +1,14 @@
 package binavigator.ui.colortheme;
 
+import binavigator.backend.BINavController;
+
 import javax.swing.text.AttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import java.awt.*;
 
 public class Monokai extends TextColorTheme {
+	private BINavController test;
 	private static final Color WHITE = Color.decode("#F8F8F2");
 	private static final Color RED = Color.decode("#F92672");
 	private static final Color DARK_GRAY = Color.decode("#75715E");
@@ -18,14 +21,17 @@ public class Monokai extends TextColorTheme {
 
 	private static final Color BLACK = Color.decode("#1b1b1b");
 
- 	public Monokai(WindowTheme windowTheme) {
-		super(windowTheme);
+ 	public Monokai(BINavController navController) {
+		super(navController);
+		test = navController;
 		super.name = "Monokai";
+		updateStyles();
 	}
 
 	@Override
 	public Color getTextColor() {
-		if(super.getWindowTheme() == WindowTheme.DARK){
+
+		if( parentController.getWindowTheme() == WindowTheme.DARK ){
 			return this.WHITE;
 		}
 
@@ -67,6 +73,8 @@ public class Monokai extends TextColorTheme {
 
 	@Override
 	public Color getParenthesesHiLightColor() {
- 		return this.LIGHT_ORANGE;
+		return this.LIGHT_ORANGE;
 	}
+
+
 }
