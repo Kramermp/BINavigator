@@ -51,29 +51,6 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 //		System.out.println("Processing Line: " + line);
 		String body = this.getText(0,  getLength());
 
-//		boolean foundLineStart = false;
-//		int startSearchPosition = offset;
-//		int lineStartIndex = -1;
-//		boolean foundLineEnd = false;
-//		int endSearchPosition = offset;
-
-
-//		while(!foundLineStart || !foundLineEnd) {
-//			if(!foundLineStart && (startSearchPosition <= 0 || body.charAt(startSearchPosition) == 10 )) {
-//				lineStartIndex = startSearchPosition;
-//				foundLineStart = true;
-//			}
-//
-//			if( !foundLineEnd && (endSearchPosition >= body.length() - 1 || body.charAt(endSearchPosition) == 10)) {
-//				lineEndIndex = endSearchPosition + 1;
-//				foundLineEnd = true;
-//			}
-//			startSearchPosition--;
-//			endSearchPosition++;
-//		}
-
-//		System.out.println("Current Line Start at: " + lineStartIndex);
-//		System.out.println("Current Line End at: " + lineEndIndex);
 		updateSegement(offset, offset + line.length());
 	}
 
@@ -188,50 +165,6 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 	public void remove (int offs, int len) throws BadLocationException {
 		super.remove(offs, len);
 
-	}
-
-	private static  List<HiliteWord> processWords(String content) {
-//		content += " ";
-		List<HiliteWord> hiliteWords = new ArrayList<HiliteWord>();
-//		int lastWhitespacePosition = 0;
-//		String word = "";
-//		char[] data = content.toCharArray();
-//
-//		for(int index=0; index < data.length; index++) {
-//			char ch = data[index];
-//			if(!(Character.isLetter(ch) || Character.isDigit(ch) || ch == '_')) {
-//				lastWhitespacePosition = index;
-//				if(word.length() > 0) {
-//					if(SqlHelper.isKeyWord(word)) {
-//						hiliteWords.add(new HiliteWord(word,(lastWhitespacePosition - word.length())));
-//					}
-//					word="";
-//				}
-//			}
-//			else {
-//				word += ch;
-//			}
-//		}
-		return hiliteWords;
-	}
-
-	private int findLastNonWordChar (String text, int index) {
-		while (--index >= 0) {
-			if (String.valueOf(text.charAt(index)).matches("\\W")) {
-				break;
-			}
-		}
-		return index;
-	}
-
-	private int findFirstNonWordChar (String text, int index) {
-		while (index < text.length()) {
-			if (String.valueOf(text.charAt(index)).matches("\\W")) {
-				break;
-			}
-			index++;
-		}
-		return index;
 	}
 
 	public Font getCurrentFont() {

@@ -153,37 +153,4 @@ public class TextEditorPanel extends JPanel {
 		jScrollPane.setRowHeaderView(textLineNumber);
 	}
 
-
-
-
-	//	private class LineNumberingTextArea extends JTextArea
-//	{
-//		private JTextPane jTextPane;
-//
-//		public LineNumberingTextArea(JTextPane jTextPane){
-//			this.jTextPane = jTextPane;
-//			setEditable(false);
-//		}
-//
-//		public void updateLineNumbers() {
-//			System.out.println("Updating Line Numbers");
-//			String lineNumbersText = getLineNumbersText();
-//			setText(lineNumbersText);
-//		}
-//
-//		private String getLineNumbersText()
-//		{
-//			StringBuilder stringBuilder = new StringBuilder();
-//			int lineCount = calculateLineCount();
-//
-//			for(int i =  1; i < lineCount; i++) {
-//				stringBuilder.append(i);
-//				stringBuilder.append(lineSeparator());
-//			}
-//
-//			return stringBuilder.toString();
-//		}
-//
-//	}
-
 }

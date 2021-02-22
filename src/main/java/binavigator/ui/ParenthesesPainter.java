@@ -15,9 +15,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretListener, MouseListener, MouseMotionListener {
-//	public ParenthesesPainter(JTextPane textPane, Color background) {
-//
-//	}
 
 	private JTextComponent component;
 
@@ -126,8 +123,8 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 			//Need because of the backwards search in check
 			if (i != component.getText().length() && component.getText().charAt(i) == ')') {
 				i = component.getCaretPosition() - 1;
-			} else {
-				//if (component.getText().charAt(i - 1) == ')')
+			} else {//if (component.getText().charAt(i - 1) == ')')
+
 				i = component.getCaretPosition() - 2;
 			}
 
@@ -156,8 +153,6 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 
 		public void paint(Graphics g, int p0, int p1, Shape bounds, JTextComponent c)
 		{
-//			try
-//			{
 
 			Rectangle rec = rec = getCurrentView(c);
 				if(checkForOpenParentheses(c)) {
@@ -181,8 +176,6 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 
 				if (lastView == null)
 					lastView = rec;
-//			}
-//			catch(BadLocationException ble) {System.out.println(ble);}
 		}
 
 		/*
