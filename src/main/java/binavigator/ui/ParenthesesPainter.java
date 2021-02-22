@@ -124,7 +124,7 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 			int i = component.getCaretPosition();
 
 			//Need because of the backwards search in check
-			if (component.getText().charAt(i) == ')') {
+			if (i != component.getText().length() && component.getText().charAt(i) == ')') {
 				i = component.getCaretPosition() - 1;
 			} else {
 				//if (component.getText().charAt(i - 1) == ')')
@@ -245,12 +245,48 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 		public void mouseMoved(MouseEvent e) {}
 
 		private boolean checkForOpenParentheses(JTextComponent c) {
+			int caretPosition = c.getCaretPosition();
+			if(caretPosition == 0) {
+				caretPosition = 1;
+			}
 
-			return c.getText().charAt(c.getCaretPosition()) == '(' || (c.getCaretPosition() != 0 && c.getText().charAt(c.getCaretPosition() - 1) == '(');
+			//If is in the array we check it
+			if(!(caretPosition >= c.getText().length() || caretPosition < 0))  {
+				if(c.getText().charAt(caretPosition) == '(') {
+					return true;
+				}
+			}
+
+			if(!(caretPosition - 1 < 0 || caretPosition - 1 >= c.getText().length())) {
+				if(c.getText().charAt(caretPosition - 1) == '(') {
+					return true;
+				}
+			}
+
+			return false;
+
 		}
 
 		private boolean checkForCloseParenthese(JTextComponent c) {
-			return c.getText().charAt(c.getCaretPosition()) == ')' || (c.getCaretPosition() != 0 && c.getText().charAt(c.getCaretPosition() - 1) == ')');
+			int caretPosition = c.getCaretPosition();
+			if(caretPosition == 0) {
+				caretPosition = 1;
+			}
+
+			//If is in the array we check it
+			if(!(caretPosition >= c.getText().length() || caretPosition < 0))  {
+				if(c.getText().charAt(caretPosition) == ')') {
+					return true;
+				}
+			}
+
+			if(!(caretPosition - 1 < 0 || caretPosition - 1 >= c.getText().length())) {
+				if(c.getText().charAt(caretPosition - 1) == ')') {
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 }
