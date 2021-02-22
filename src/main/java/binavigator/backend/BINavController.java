@@ -12,6 +12,8 @@ import org.apache.commons.logging.LogFactory;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.*;
 
 public class BINavController {
@@ -28,6 +30,7 @@ public class BINavController {
 
 	private InfoPanel infoPanel;
 	private TextLineNumber textLineNumber;
+	private ParenthesesPainter parenthesesPainter;
 
 	private int tabSize = 8;
 
@@ -51,7 +54,26 @@ public class BINavController {
 		infoPanel.setCaretInfo(getInfoString());
 		setFont(this.font);
 
-		new ParenthesesPainter(panel.getTextPane(), this);
+		parenthesesPainter = new ParenthesesPainter(panel.getTextPane(), this);
+		panel.getTextPane().addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent keyEvent) {
+
+			}
+
+			@Override
+			public void keyPressed(KeyEvent keyEvent) {
+
+			}
+
+			@Override
+			public void keyReleased(KeyEvent keyEvent) {
+				if(keyEvent.getKeyCode() == KeyEvent.VK_RIGHT || keyEvent.getKeyCode() == KeyEvent.VK_LEFT || keyEvent.getKeyCode() == KeyEvent.VK_UP ||
+						keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
+					parenthesesPainter.resetHighlight();
+				}
+			}
+		});
 	}
 
 	public void exitSafely() {

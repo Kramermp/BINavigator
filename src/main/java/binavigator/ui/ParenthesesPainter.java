@@ -94,6 +94,10 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 		Rectangle rec = null;
 		rec = new Rectangle();
 
+		if(!(component.getText().charAt(component.getCaretPosition()) == '(' || (component.getCaretPosition() != 0 && component.getText().charAt(component.getCaretPosition() - 1) == '(') )) {
+			return rec;
+		}
+
 		rec.width = component.getWidth();
 		rec.x = component.getMargin().left;
 		FontMetrics fm = component.getGraphics().getFontMetrics(parentController.getFont());
@@ -125,12 +129,14 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 //			{
 
 			Rectangle rec = rec = getCurrentView(c);
-				if(c.getText().charAt(c.getCaretPosition()) == '(' || (c.getCaretPosition() != 0 && c.getText().charAt(c.getCaretPosition() - 1) == '(')) {
+				if(c.getText().charAt(c.getCaretPosition()) == '(' || (c.getCaretPosition() != 0 && c.getText().charAt(c.getCaretPosition() - 1) == '(') ) {
 					System.out.println("Sittting on opening parentheses");
 					g.setColor(Color.BLUE);
 
 					g.fillRect(rec.x, rec.y, rec.width, rec.height);
-
+					System.out.println(rec.width);
+					System.out.println(rec.height);
+					System.out.println(rec.y);
 
 				} else if(c.getText().charAt(c.getCaretPosition()) == ')'){
 					System.out.println("Sittting on closing parentheses");
@@ -146,7 +152,7 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 		/*
 		 *   Caret position has changed, remove the highlight
 		 */
-		private void resetHighlight()
+		public void resetHighlight()
 		{
 			//  Use invokeLater to make sure updates to the Document are completed,
 			//  otherwise Undo processing causes the modelToView method to loop.
@@ -155,13 +161,19 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 			{
 				public void run()
 				{
+					System.out.println("Reseting Highlight");
 					Rectangle currentView = getCurrentView(component);
 
 					//  Remove the highlighting from the previously highlighted line
-					if (!lastView.equals(currentView))
-					{
-						component.repaint(lastView);
-						component.repaint(currentView);
+					if (!lastView.equals(currentView)) {
+						System.out.println("Repainting");
+
+						System.out.println(currentView.width);
+						component.validate();
+						component.paintImmediately(lastView);
+						component.paintImmediately(currentView);
+						component.validate();
+
 						lastView = currentView;
 					}
 				}
@@ -195,4 +207,5 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 		}
 
 		public void mouseMoved(MouseEvent e) {}
+
 }
