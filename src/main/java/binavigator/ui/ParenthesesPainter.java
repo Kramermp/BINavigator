@@ -94,28 +94,59 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 		Rectangle rec = null;
 		rec = new Rectangle();
 
-		if(!(component.getText().charAt(component.getCaretPosition()) == '(' || (component.getCaretPosition() != 0 && component.getText().charAt(component.getCaretPosition() - 1) == '(') )) {
-			return rec;
-		}
+		if(checkForOpenParentheses(component) ) {
+			rec.width = component.getWidth();
+			rec.x = component.getMargin().left;
+			FontMetrics fm = component.getGraphics().getFontMetrics(parentController.getFont());
+			rec.y  = (fm.getHeight() * (component.getText().substring(0, component.getCaretPosition()).split(("\n")).length - 1)) + component.getMargin().top  ;
+			rec.height = fm.getHeight();
 
-		rec.width = component.getWidth();
-		rec.x = component.getMargin().left;
-		FontMetrics fm = component.getGraphics().getFontMetrics(parentController.getFont());
-		rec.y  = (fm.getHeight() * (component.getText().substring(0, component.getCaretPosition()).split(("\n")).length - 1)) + component.getMargin().top  ;
-		rec.height = fm.getHeight();
-
-		int countNeeded = 1;
-		int i = 0;
-		for(i = component.getCaretPosition() + 1; i < component.getText().length() && countNeeded > 0; i++) {
-			if(component.getText().charAt(i) == ')') {
-				countNeeded--;
-			} else if (component.getText().charAt(i) == '(') {
-				countNeeded++;
+			int countNeeded = 1;
+			int i = 0;
+			for(i = component.getCaretPosition() + 1; i < component.getText().length() && countNeeded > 0; i++) {
+				if(component.getText().charAt(i) == ')') {
+					countNeeded--;
+				} else if (component.getText().charAt(i) == '(') {
+					countNeeded++;
+				}
 			}
-		}
 
-		int lineCount = component.getText().substring(component.getCaretPosition(), i).split("\n", - 1).length;
-		rec.height = rec.height * lineCount;
+			int lineCount = component.getText().substring(component.getCaretPosition(), i).split("\n", - 1).length;
+			rec.height = rec.height * lineCount;
+		} else  if (checkForCloseParenthese(component)){
+			rec.width = component.getWidth();
+			rec.x = component.getMargin().left;
+			FontMetrics fm = component.getGraphics().getFontMetrics(parentController.getFont());
+			rec.y  = (fm.getHeight() * (component.getText().substring(0, component.getCaretPosition()).split(("\n")).length - 1)) + component.getMargin().top  ;
+			rec.height = fm.getHeight();
+
+			int countNeeded = 1;
+			int i = component.getCaretPosition();
+
+			//Need because of the backwards search in check
+			if (component.getText().charAt(i) == ')') {
+				i = component.getCaretPosition() - 1;
+			} else {
+				//if (component.getText().charAt(i - 1) == ')')
+				i = component.getCaretPosition() - 2;
+			}
+
+			// IDE complain so self assigning
+			for(i = i; i > 0  && countNeeded > 0; i--) {
+				if(component.getText().charAt(i) == '(') {
+					countNeeded--;
+				} else if (component.getText().charAt(i) == ')') {
+					countNeeded++;
+				}
+			}
+
+			int lineCount = component.getText().substring(i, component.getCaretPosition()).split("\n", - 1).length;
+
+			rec.y-=rec.height;
+			rec.height =(rec.height * lineCount); //Drawing from bottom up
+		} else {
+			rec = new Rectangle(0,0,0,0);
+		}
 
 		return rec;
 	}
@@ -129,18 +160,23 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 //			{
 
 			Rectangle rec = rec = getCurrentView(c);
-				if(c.getText().charAt(c.getCaretPosition()) == '(' || (c.getCaretPosition() != 0 && c.getText().charAt(c.getCaretPosition() - 1) == '(') ) {
+				if(checkForOpenParentheses(c)) {
 					System.out.println("Sittting on opening parentheses");
-					g.setColor(Color.BLUE);
+					g.setColor(parentController.getParenthesePaintColor());
 
 					g.fillRect(rec.x, rec.y, rec.width, rec.height);
 					System.out.println(rec.width);
 					System.out.println(rec.height);
 					System.out.println(rec.y);
 
-				} else if(c.getText().charAt(c.getCaretPosition()) == ')'){
+				} else if(checkForCloseParenthese(c)){
 					System.out.println("Sittting on closing parentheses");
+					g.setColor(parentController.getParenthesePaintColor());
 
+					g.fillRect(rec.x, rec.y, rec.width, rec.height);
+					System.out.println(rec.width);
+					System.out.println(rec.height);
+					System.out.println(rec.y);
 				}
 
 				if (lastView == null)
@@ -207,5 +243,14 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 		}
 
 		public void mouseMoved(MouseEvent e) {}
+
+		private boolean checkForOpenParentheses(JTextComponent c) {
+
+			return c.getText().charAt(c.getCaretPosition()) == '(' || (c.getCaretPosition() != 0 && c.getText().charAt(c.getCaretPosition() - 1) == '(');
+		}
+
+		private boolean checkForCloseParenthese(JTextComponent c) {
+			return c.getText().charAt(c.getCaretPosition()) == ')' || (c.getCaretPosition() != 0 && c.getText().charAt(c.getCaretPosition() - 1) == ')');
+		}
 
 }
