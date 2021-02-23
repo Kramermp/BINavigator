@@ -48,6 +48,7 @@ public class BINavController {
 		frame.setExtendedState( frame.getExtendedState()| JFrame.MAXIMIZED_BOTH );
 		frame.setJMenuBar(menuBar);
 		frame.add(panel);
+		frame.add(new ButtonPanel(this), BorderLayout.NORTH);
 
 		frame.setVisible(true);
 
@@ -224,6 +225,11 @@ public class BINavController {
 				textColorTheme.getParenthesesHiLightColor().getGreen(),
 				textColorTheme.getParenthesesHiLightColor().getBlue(),
 				25);
+	}
+
+	public void runSql() {
+		log.info("Running Sql");
+		log.info(panel.getTextPane().getText());
 	}
 
 	static class CustomTabParagraphView extends ParagraphView {
