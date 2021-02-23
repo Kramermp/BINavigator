@@ -5,6 +5,7 @@ import binavigator.ui.*;
 import binavigator.ui.colortheme.WindowTheme;
 import binavigator.ui.colortheme.TextColorTheme;
 import binavigator.ui.colortheme.Monokai;
+import binavigator.ui.texteditor.*;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import org.apache.commons.logging.Log;
