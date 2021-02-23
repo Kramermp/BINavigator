@@ -1,5 +1,6 @@
 package binavigator.backend;
 
+import binavigator.backend.net.OracleCloudConnection;
 import binavigator.ui.*;
 import binavigator.ui.colortheme.WindowTheme;
 import binavigator.ui.colortheme.TextColorTheme;
@@ -230,6 +231,7 @@ public class BINavController {
 	public void runSql() {
 		log.info("Running Sql");
 		log.info(panel.getTextPane().getText());
+		OracleCloudConnection occ =  new OracleCloudConnection();
 	}
 
 	static class CustomTabParagraphView extends ParagraphView {
