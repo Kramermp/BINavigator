@@ -72,43 +72,13 @@ public class TextEditorController {
 		configureInfoPanel();
 		linePainter = new LinePainter(textEditorPanel.getTextPane(), textEditorPanel.getBackground());
 
-		//TODO Create Class for this
-		getTextPane().addKeyListener(new KeyListener() {
-			@Override
-			public void keyTyped(KeyEvent keyEvent) {
+		TextEditorListener listener = new TextEditorListener(this);
 
-			}
 
-			@Override
-			public void keyPressed(KeyEvent keyEvent) {
 
-			}
-
-			@Override
-			public void keyReleased(KeyEvent keyEvent) {
-				if (keyEvent.getKeyCode() == KeyEvent.VK_RIGHT || keyEvent.getKeyCode() == KeyEvent.VK_LEFT || keyEvent.getKeyCode() == KeyEvent.VK_UP ||
-						keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
-					parenthesesPainter.resetHighlight();
-				}
-			}
-		});
-
-		getTextPane().addFocusListener(new FocusListener() {
-			public void focusGained(FocusEvent focusEvent) {
-				System.out.println("Text Area Gained Focus");
-			}
-
-			public void focusLost(FocusEvent focusEvent) {
-				System.out.println("Text Area Lost Focus");
-			}
-		});
-
-		getTextPane().addCaretListener(new CaretListener() {
-			@Override
-			public void caretUpdate(CaretEvent caretEvent) {
-				caretMoved();
-			}
-		});
+		getTextPane().addKeyListener(listener);
+		getTextPane().addFocusListener(listener);
+		getTextPane().addCaretListener(listener);
 
 		setFont(font);
 	}
@@ -243,5 +213,9 @@ public class TextEditorController {
 		if(this.infoPanel != null) {
 			this.infoPanel.setFont(font);
 		}
+	}
+
+	public void resetHighlight() {
+		parenthesesPainter.resetHighlight();
 	}
 }
