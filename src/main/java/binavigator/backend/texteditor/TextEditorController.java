@@ -39,8 +39,22 @@ public class TextEditorController {
 		}
 	}
 
-	public Component getTextEditorPanel() {
+	public void caretMoved() {
+		infoPanel.setCaretInfo(getInfoString());
+	}
 
+	public void repaintDocument() {
+		textEditorPanel.repaintDocument();
+	}
+
+	public void refreshUi() {
+		textColorTheme.updateStyles();
+		repaintDocument();
+		caretMoved();
+	}
+
+	//GETTERS
+	public Component getTextEditorPanel() {
 		return textEditorPanel;
 	}
 
@@ -48,12 +62,36 @@ public class TextEditorController {
 		return  this.sqlDoc;
 	}
 
-	public JTextPane getNewSqlPane() {
-		return new JTextPane(getSqlStyledDocument());
+	public WindowTheme getWindowTheme() {
+		return parentController.getWindowTheme();
 	}
 
-	public void caretMoved() {
-		infoPanel.setCaretInfo(getInfoString());
+	public Color getParenthesePaintColor() {
+		return new Color(textColorTheme.getParenthesesHiLightColor().getRed(),
+				textColorTheme.getParenthesesHiLightColor().getGreen(),
+				textColorTheme.getParenthesesHiLightColor().getBlue(),
+				25);
+	}
+
+	public Font getFont() {
+		return font;
+	}
+
+	public int getCaretColumn() throws BadLocationException {
+		return getCaretPosition() - getRowStart(getCaretPosition());
+	}
+
+	public int getCaretPosition() {
+		return getTextPane().getCaretPosition();
+	}
+
+	public String getInfoString() {
+		try {
+			return "Col: " + String.format("%03d", (getCaretColumn() + 1)) + " Char: " + String.format("%4d", getCaretPosition() + 1);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+			return 	"Col: " + String.format("%03d", 0) + " Char: " + String.format("%4d", 0);
+		}
 	}
 
 	public BINavController getParentController() {
@@ -76,44 +114,11 @@ public class TextEditorController {
 		return this.textColorTheme;
 	}
 
-	public String getInfoString() {
-		try {
-			return "Col: " + String.format("%03d", (getCaretColumn() + 1)) + " Char: " + String.format("%4d", getCaretPosition() + 1);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-			return 	"Col: " + String.format("%03d", 0) + " Char: " + String.format("%4d", 0);
-		}
+	public JTextPane getNewSqlPane() {
+		return new JTextPane(getSqlStyledDocument());
 	}
 
-	public void repaintDocument() {
-		textEditorPanel.repaintDocument();
-	}
-
-	public int getCaretPosition() {
-		return getTextPane().getCaretPosition();
-	}
-
-	public int getCaretColumn() throws BadLocationException {
-		return getCaretPosition() - getRowStart(getCaretPosition());
-	}
-
-	public Font getFont() {
-		return font;
-	}
-
-	public Color getParenthesePaintColor() {
-		return new Color(textColorTheme.getParenthesesHiLightColor().getRed(),
-				textColorTheme.getParenthesesHiLightColor().getGreen(),
-				textColorTheme.getParenthesesHiLightColor().getBlue(),
-				25);
-	}
-
-	public void refresh() {
-		textColorTheme.updateStyles();
-		repaintDocument();
-		caretMoved();
-	}
-
+	//SETTERS
 	public void setTextColorTheme(String textColorTheme) {
 		switch (textColorTheme.toUpperCase()) {
 			case "MONOKAI":
@@ -125,9 +130,5 @@ public class TextEditorController {
 			default:
 				this.textColorTheme = new Monokai(this);
 		}
-	}
-
-	public WindowTheme getWindowTheme() {
-		return parentController.getWindowTheme();
 	}
 }
