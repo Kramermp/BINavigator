@@ -49,8 +49,8 @@ public class TextEditorPanel extends JPanel {
 
 	public void setup() {
 //		this.setFont(controller.getFont());
-		textPane.setText("SELECT\nTestTable.TestColumn1,\nTestTable.TestColumn2\nFROM\nTestTable\nWhere\nTestColumn2 = \"test\"");
 		buildTabs();
+		textPane.setText("SELECT\nTestTable.TestColumn1,\nTestTable.TestColumn2\nFROM\nTestTable\nWhere\nTestColumn2 = \"test\"");
 	}
 
 
