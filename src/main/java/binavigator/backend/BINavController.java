@@ -25,69 +25,25 @@ public class BINavController {
 	private TextEditorPanel panel = null;
 
 	private WindowTheme windowTheme = WindowTheme.DARK;
-	private TextColorTheme textColorTheme;
-
-	private SqlStyledDocument sqlDoc = new SqlStyledDocument(this);
-	private Font font = new Font(Font.MONOSPACED, Font.PLAIN, 16);
-
-	private InfoPanel infoPanel;
-	private ParenthesesPainter parenthesesPainter;
-
-	private int tabSize = 8;
 
 	private TextEditorController textEditorController;
 
 
-	public BINavController() throws UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, BadLocationException {
+	public BINavController() throws UnsupportedLookAndFeelException  {
 
-
-		textColorTheme = new Monokai(this);
 		UIManager.setLookAndFeel(new FlatDarculaLaf());
 		frame = new BINavigatorFrame();
-		panel = new TextEditorPanel(this);
+		this.textEditorController =  new TextEditorController(this);
 		NavMenuBar menuBar = new NavMenuBar(this);
-		infoPanel = new InfoPanel(" ");
-		TextLineNumber textLineNumber = new TextLineNumber(panel.getTextPane(), this);
-
-		panel.addInfoPanel(infoPanel);
-		panel.addTextLineNumber(textLineNumber);
 
 		frame.setExtendedState( frame.getExtendedState()| JFrame.MAXIMIZED_BOTH );
 		frame.setJMenuBar(menuBar);
-//		frame.add(panel);
-		this.textEditorController =  new TextEditorController(this);
+
 		frame.add(textEditorController.getTextEditorPanel());
 		frame.add(new ButtonPanel(this), BorderLayout.NORTH);
 
 		frame.setVisible(true);
 
-	}
-
-	public void setup() {
-		//Hard Coding because there is a weird multi thread thing goign on here i think
-		infoPanel.setCaretInfo("Col: " + String.format("%03d", 1) + " Char: " + String.format("%4d", 1));
-		setFont(this.font);
-
-		parenthesesPainter = new ParenthesesPainter(panel.getTextPane(), this);
-		panel.getTextPane().addKeyListener(new KeyListener() {
-			@Override
-			public void keyTyped(KeyEvent keyEvent) {
-
-			}
-
-			@Override
-			public void keyPressed(KeyEvent keyEvent) {
-
-			}
-
-			@Override
-			public void keyReleased(KeyEvent keyEvent) {
-				if (keyEvent.getKeyCode() == KeyEvent.VK_RIGHT || keyEvent.getKeyCode() == KeyEvent.VK_LEFT || keyEvent.getKeyCode() == KeyEvent.VK_UP ||
-						keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
-					parenthesesPainter.resetHighlight();
-				}
-			}
-		});
 	}
 
 	public void exitSafely() {
@@ -115,14 +71,7 @@ public class BINavController {
 	}
 
 	private void refresh() {
-		textColorTheme.updateStyles();
-		panel.repaintDocument();
-		caretMoved();
-		infoPanel.validate();
-
-		SwingUtilities.updateComponentTreeUI(frame);
-		frame.validate();
-		frame.repaint();
+		textEditorController.refresh();
 	}
 
 
@@ -160,104 +109,36 @@ public class BINavController {
 		return panel.getTextContent();
 	}
 
-	public TextColorTheme getTextColorTheme() {
-		return this.textColorTheme;
-	}
-
-	public void setTextColorTheme(TextColorTheme textColorTheme) {
-		this.textColorTheme = textColorTheme;
-		panel.setTextColorTheme(this.textColorTheme);
-		panel.repaintDocument();
-	}
-
 	public WindowTheme getWindowTheme() {
 		return windowTheme;
 	}
 
-	public void caretMoved() {
-		infoPanel.setCaretInfo(getInfoString());
-	}
-
-	public String getInfoString() {
-		try {
-			return "Col: " + String.format("%03d", (getCaretColumn() + 1)) + " Char: " + String.format("%4d", getCaretPosition() + 1);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-			return 	"Col: " + String.format("%03d", 0) + " Char: " + String.format("%4d", 0);
-		}
-	}
-
 	public SqlStyledDocument getSqlStyledDocument() {
-		return sqlDoc;
+		return textEditorController.getSqlStyledDocument();
 	}
 
 	public int getRowStart(int offset) throws BadLocationException {
-		return Utilities.getRowStart(panel.getTextPane(), offset);
+		return Utilities.getRowStart(textEditorController.getTextPane(), offset);
 	}
 
 	public int getRowEnd(int offset) throws BadLocationException {
-		return Utilities.getRowEnd(panel.getTextPane(), offset);
+		return Utilities.getRowEnd(textEditorController.getTextPane(), offset);
 	}
 
-	public JTextPane getNewSqlPane() {
-		return new JTextPane(sqlDoc);
-	}
 
 	public int getCaretPosition() {
-		return panel.getTextPane().getCaretPosition();
+		return textEditorController.getTextPane().getCaretPosition();
 	}
 
-	public int getCaretColumn() throws BadLocationException {
-		return getCaretPosition() - getRowStart(getCaretPosition());
-	}
-
-	public void setFont(Font font) {
-		this.font = font;
-		panel.setFont(font);
-		panel.getTextPane().setFont(font);
-	}
-
-	public Font getFont() {
-		return font;
-	}
-
-	public void setTabSize(int tabSize) {
-		this.tabSize = tabSize;
-	}
-
-	public int getTabSize() {
-		return this.tabSize;
-	}
-
-	public Color getParenthesePaintColor() {
-		return new Color(textColorTheme.getParenthesesHiLightColor().getRed(),
-				textColorTheme.getParenthesesHiLightColor().getGreen(),
-				textColorTheme.getParenthesesHiLightColor().getBlue(),
-				25);
-	}
 
 	public void runSql() {
 		log.info("Running Sql");
-		log.info(panel.getTextPane().getText());
+		log.info(textEditorController.getTextPane().getText());
 		OracleCloudConnection occ =  new OracleCloudConnection();
 	}
 
-	static class CustomTabParagraphView extends ParagraphView {
-
-		public CustomTabParagraphView(Element elem) {
-			super(elem);
-		}
-
-		public float nextTabStop(float x, int tabOffset) {
-			TabSet tabs = getTabSet();
-			if(tabs == null) {
-				// a tab every 72 pixels.
-				return (float)(getTabBase() + (((int)x / 8 + 1) * 8));
-			}
-
-			return super.nextTabStop(x, tabOffset);
-		}
-
+	public void setTextColorTheme(String textColorTheme) {
+		textEditorController.setTextColorTheme(textColorTheme);
 	}
 
 }

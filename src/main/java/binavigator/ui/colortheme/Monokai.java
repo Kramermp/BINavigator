@@ -1,6 +1,7 @@
 package binavigator.ui.colortheme;
 
 import binavigator.backend.BINavController;
+import binavigator.backend.texteditor.TextEditorController;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.StyleConstants;
@@ -20,7 +21,7 @@ public class Monokai extends TextColorTheme {
 
 	private static final Color BLACK = Color.decode("#1b1b1b");
 
- 	public Monokai(BINavController navController) {
+ 	public Monokai(TextEditorController navController) {
 		super(navController);
 		super.name = "Monokai";
 		updateStyles();

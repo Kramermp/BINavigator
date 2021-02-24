@@ -1,6 +1,7 @@
 package binavigator.ui.texteditor;
 
 import binavigator.backend.BINavController;
+import binavigator.backend.texteditor.TextEditorController;
 import binavigator.ui.colortheme.TextColorTheme;
 
 import java.awt.*;
@@ -32,7 +33,7 @@ public class TextLineNumber extends JPanel
 	private final static Border OUTER = new MatteBorder(0, 0, 0, 2, Color.GRAY);
 
 	private final static int HEIGHT = Integer.MAX_VALUE - 1000000;
-	private BINavController parentController;
+	private TextEditorController parentController;
 
 	//  Text component this TextTextLineNumber component is in sync with
 
@@ -61,7 +62,7 @@ public class TextLineNumber extends JPanel
 	 *
 	 *  @param component  the related text component
 	 */
-	public TextLineNumber(JTextComponent component, BINavController parentController)
+	public TextLineNumber(JTextComponent component, TextEditorController parentController)
 	{
 		this(component, 3, parentController);
 	}
@@ -73,7 +74,7 @@ public class TextLineNumber extends JPanel
 	 *  @param minimumDisplayDigits  the number of digits used to calculate
 	 *                               the minimum width of the component
 	 */
-	public TextLineNumber(JTextComponent component, int minimumDisplayDigits, BINavController parentController)
+	public TextLineNumber(JTextComponent component, int minimumDisplayDigits, TextEditorController parentController)
 	{
 		this.component = component;
 		this.parentController = parentController;

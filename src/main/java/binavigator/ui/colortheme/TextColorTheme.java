@@ -1,6 +1,7 @@
 package binavigator.ui.colortheme;
 
 import binavigator.backend.BINavController;
+import binavigator.backend.texteditor.TextEditorController;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.StyleConstants;
@@ -9,7 +10,7 @@ import javax.xml.soap.Text;
 import java.awt.*;
 
 public abstract class TextColorTheme {
-	protected BINavController parentController;
+	protected TextEditorController parentController;
 	protected String name;
 
 	protected StyleContext cont = StyleContext.getDefaultStyleContext();
@@ -47,7 +48,7 @@ public abstract class TextColorTheme {
 		// Do Nothing
 	}
 
-	public TextColorTheme (BINavController parentController) {
+	public TextColorTheme (TextEditorController parentController) {
 		this.parentController = parentController;
 	}
 

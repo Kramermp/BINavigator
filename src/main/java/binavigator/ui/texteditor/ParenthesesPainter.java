@@ -1,6 +1,7 @@
 package binavigator.ui.texteditor;
 
 import binavigator.backend.BINavController;
+import binavigator.backend.texteditor.TextEditorController;
 
 import javax.swing.*;
 import javax.swing.event.CaretEvent;
@@ -18,7 +19,7 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 
 	private JTextComponent component;
 
-	private BINavController parentController = null;
+	private TextEditorController parentController = null;
 
 	private Rectangle lastView;
 
@@ -44,25 +45,43 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 		 *  @param component  text component that requires background line painting
 		 *  @param color      the color of the background line
 		 */
-	public ParenthesesPainter(JTextComponent component, BINavController parentController)
+//	public ParenthesesPainter(JTextComponent component, BINavController parentController) {
+//		this.component = component;
+//		this.parentController = parentController;
+//
+//		//  Add listeners so we know when to change highlighting
+//
+//		component.addCaretListener( this );
+//		component.addMouseListener( this );
+//		component.addMouseMotionListener( this );
+//
+//		//  Turn highlighting on by adding a dummy highlight
+//
+//		try
+//		{
+//			component.getHighlighter().addHighlight(0, 0, this);
+//		}
+//		catch(BadLocationException ble) {}
+//	}
+
+	public ParenthesesPainter(JTextComponent component, TextEditorController parentController) {
+		this.component = component;
+		this.parentController = parentController;
+
+		//  Add listeners so we know when to change highlighting
+
+		component.addCaretListener( this );
+		component.addMouseListener( this );
+		component.addMouseMotionListener( this );
+
+		//  Turn highlighting on by adding a dummy highlight
+
+		try
 		{
-			this.component = component;
-			this.parentController = parentController;
-
-			//  Add listeners so we know when to change highlighting
-
-			component.addCaretListener( this );
-			component.addMouseListener( this );
-			component.addMouseMotionListener( this );
-
-			//  Turn highlighting on by adding a dummy highlight
-
-			try
-			{
-				component.getHighlighter().addHighlight(0, 0, this);
-			}
-			catch(BadLocationException ble) {}
+			component.getHighlighter().addHighlight(0, 0, this);
 		}
+		catch(BadLocationException ble) {}
+	}
 
 	public Rectangle getCurrentView(JTextComponent component) throws BadLocationException {
 		Rectangle rec = null;

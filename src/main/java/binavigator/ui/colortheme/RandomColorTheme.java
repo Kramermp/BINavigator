@@ -1,6 +1,7 @@
 package binavigator.ui.colortheme;
 
 import binavigator.backend.BINavController;
+import binavigator.backend.texteditor.TextEditorController;
 
 import javax.swing.text.StyleConstants;
 import java.awt.*;
@@ -13,7 +14,7 @@ public class RandomColorTheme extends TextColorTheme{
 		return (new Color(rng.nextInt(255), rng.nextInt(255), rng.nextInt(255)));
 	}
 
-	public RandomColorTheme(BINavController parentController) {
+	public RandomColorTheme(TextEditorController parentController) {
 		super(parentController);
 		super.name = "Random";
 	}

@@ -2,6 +2,7 @@ package binavigator.ui.texteditor;
 
 import binavigator.backend.BINavController;
 import binavigator.backend.texteditor.TextEditorController;
+import binavigator.ui.LinePainter;
 import binavigator.ui.colortheme.TextColorTheme;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,83 +14,39 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 /**
  * TextEditor Panel is the panel Containg Text Editor and its deails i.e. Line Numbers
  */
 public class TextEditorPanel extends JPanel {
-	private BINavController parentController = null;
-	private TextEditorController textEditorController;
+	private TextEditorController controller;
 	Log log = LogFactory.getLog(this.getClass());
 
    	private JTextPane textPane =  null;
-	private JPanel lineCounterArea = null;
 	private TextLineNumber rowHeaders  = null;
 	private int lineCount = 1;
 	private TextColorTheme textColorTheme = null;
 	private SqlStyledDocument doc;
 	private JScrollPane jScrollPane;
 
-	private JLabel caretInfo = null;
-
 	final StyleContext cont = StyleContext.getDefaultStyleContext();
 
 	private InfoPanel infoPanel;
 
-	private Font font = new Font(Font.MONOSPACED, Font.PLAIN, 16);
 
-
-	public TextEditorPanel(BINavController biNavController) throws BadLocationException {
-		super();
-		this.parentController = biNavController;
-		this.setLayout(new BorderLayout());
-
-		doc = this.parentController.getSqlStyledDocument();
-
-		textPane = this.parentController.getNewSqlPane();
-//		new LinePainter(textPane, this.getBackground());
-
-		textPane.setText("SELECT testColumn \nFROM sampleTable --Sample Comment \nWHERE Test=\"test\" \nAND " +
-				"1 = \"TEST\" \nAND TESTColmn2 IN ( SELECT TestColumn2 \n\tFROM TESTTable2);"
-		);
-
-		textPane.addCaretListener(new CaretListener() {
-			@Override
-			public void caretUpdate(CaretEvent caretEvent) {
-				parentController.caretMoved();
-			}
-		});
-
-		jScrollPane = new JScrollPane(textPane);
-		jScrollPane.setBorder(null);
-		add(jScrollPane);
-
-		textPane.addFocusListener(new FocusListener() {
-			public void focusGained(FocusEvent focusEvent) {
-				System.out.println("Text Area Gained Focus");
-			}
-
-			public void focusLost(FocusEvent focusEvent) {
-				System.out.println("Text Area Lost Focus");
-			}
-		});
-
-	}
+	private ParenthesesPainter parenthesesPainter;
 
 	public TextEditorPanel(final TextEditorController textEditorController) throws BadLocationException {
 		super();
-		this.textEditorController = textEditorController;
+		this.controller = textEditorController;
 		this.setLayout(new BorderLayout());
 
-		doc = this.textEditorController.getSqlStyledDocument();
+		doc = this.controller.getSqlStyledDocument();
 
-		textPane = this.textEditorController.getNewSqlPane();
-//		new LinePainter(textPane, this.getBackground());
-
-		textPane.setText("Created Correctly;"
-		);
-
-
+		textPane = this.controller.getNewSqlPane();
+		new LinePainter(textPane, this.getBackground());
 
 		textPane.addCaretListener(new CaretListener() {
 			@Override
@@ -115,12 +72,35 @@ public class TextEditorPanel extends JPanel {
 	}
 
 	public void setup() {
-		if(parentController == null) {
-			jScrollPane.setRowHeaderView(new TextLineNumber(getTextPane(), textEditorController.getParentController()));
-		} else {
-			jScrollPane.setRowHeaderView(new TextLineNumber(getTextPane(), parentController));
-		}
-		addInfoPanel(new InfoPanel( " "));
+		this.setFont(controller.getFont());
+		jScrollPane.setRowHeaderView(new TextLineNumber(getTextPane(), controller));
+
+		this.infoPanel = new InfoPanel(" ");
+		addInfoPanel(infoPanel);
+		textPane.setText("SELECT\nTestTable.TestColumn1,\nTestTable.TestColumn2\nFROM\nTestTable\nWhere\nTestColumn2 = \"test\"");
+		infoPanel.setCaretInfo("Col: " + String.format("%03d", 1) + " Char: " + String.format("%4d", 1));
+
+		parenthesesPainter = new ParenthesesPainter(controller.getTextPane(), controller);
+
+		controller.getTextPane().addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent keyEvent) {
+
+			}
+
+			@Override
+			public void keyPressed(KeyEvent keyEvent) {
+
+			}
+
+			@Override
+			public void keyReleased(KeyEvent keyEvent) {
+				if (keyEvent.getKeyCode() == KeyEvent.VK_RIGHT || keyEvent.getKeyCode() == KeyEvent.VK_LEFT || keyEvent.getKeyCode() == KeyEvent.VK_UP ||
+						keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
+					parenthesesPainter.resetHighlight();
+				}
+			}
+		});
 	}
 
 	public void repaintDocument() {
@@ -193,6 +173,7 @@ public class TextEditorPanel extends JPanel {
 	}
 
 	public void addInfoPanel(InfoPanel infoPanel) {
+		infoPanel = new InfoPanel( " ");
 		this.add(infoPanel, BorderLayout.SOUTH);
 	}
 
