@@ -61,7 +61,7 @@ public class ViewMenu extends JMenu {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				log.info("Setting Text Theme to Monokai");
-				parentController.setTextColorTheme(new Monokai(parentController));
+				parentController.setTextColorTheme("MONOKAI");
 			}
 		});
 
@@ -72,7 +72,7 @@ public class ViewMenu extends JMenu {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				log.info("Setting Text Theme to Random");
-				parentController.setTextColorTheme(new RandomColorTheme(parentController));
+				parentController.setTextColorTheme("RANDOM");
 			}
 		});
 

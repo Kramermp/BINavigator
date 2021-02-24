@@ -4,8 +4,6 @@ import binavigator.backend.net.OracleCloudConnection;
 import binavigator.backend.texteditor.TextEditorController;
 import binavigator.ui.*;
 import binavigator.ui.colortheme.WindowTheme;
-import binavigator.ui.colortheme.TextColorTheme;
-import binavigator.ui.colortheme.Monokai;
 import binavigator.ui.texteditor.*;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatLightLaf;
@@ -13,10 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.swing.*;
-import javax.swing.text.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.*;
 
 public class BINavController {
@@ -41,7 +36,6 @@ public class BINavController {
 
 		frame.add(textEditorController.getTextEditorPanel());
 		frame.add(new ButtonPanel(this), BorderLayout.NORTH);
-
 		frame.setVisible(true);
 
 	}
@@ -67,13 +61,11 @@ public class BINavController {
 		}
 
 		this.windowTheme = windowTheme;
-		refresh();
+		textEditorController.refreshUi();
+		SwingUtilities.updateComponentTreeUI(frame);
+		frame.validate();
+		frame.repaint();
 	}
-
-	private void refresh() {
-		textEditorController.refresh();
-	}
-
 
 	public void loadFile(File file) {
 		System.out.println("Loading File: " + file.getAbsolutePath());
@@ -111,23 +103,6 @@ public class BINavController {
 
 	public WindowTheme getWindowTheme() {
 		return windowTheme;
-	}
-
-	public SqlStyledDocument getSqlStyledDocument() {
-		return textEditorController.getSqlStyledDocument();
-	}
-
-	public int getRowStart(int offset) throws BadLocationException {
-		return Utilities.getRowStart(textEditorController.getTextPane(), offset);
-	}
-
-	public int getRowEnd(int offset) throws BadLocationException {
-		return Utilities.getRowEnd(textEditorController.getTextPane(), offset);
-	}
-
-
-	public int getCaretPosition() {
-		return textEditorController.getTextPane().getCaretPosition();
 	}
 
 

@@ -1,8 +1,7 @@
 package binavigator.backend.sql;
 
-import binavigator.backend.ArrayUtils;
+import binavigator.backend.utils.ArrayUtils;
 
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class SqlHelper {

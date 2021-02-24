@@ -1,19 +1,24 @@
 package binavigator.backend.texteditor;
 
 import binavigator.backend.BINavController;
+import binavigator.ui.LinePainter;
 import binavigator.ui.colortheme.Monokai;
 import binavigator.ui.colortheme.RandomColorTheme;
 import binavigator.ui.colortheme.TextColorTheme;
 import binavigator.ui.colortheme.WindowTheme;
-import binavigator.ui.texteditor.InfoPanel;
-import binavigator.ui.texteditor.SqlStyledDocument;
-import binavigator.ui.texteditor.TextEditorPanel;
+import binavigator.ui.texteditor.*;
 
 import javax.swing.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Utilities;
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class TextEditorController {
 	//Controller
@@ -22,26 +27,31 @@ public class TextEditorController {
 	//UI Components
 	private TextEditorPanel textEditorPanel;
 	private SqlStyledDocument sqlDoc = new SqlStyledDocument(this);
-	private InfoPanel infoPanel = new InfoPanel(" ");
+	private InfoPanel infoPanel;
+	private ParenthesesPainter parenthesesPainter;
+	private TextLineNumber textLineNumber;
+	private LinePainter linePainter;
 
 	//Font Settings
 	private TextColorTheme textColorTheme;
 	private Font font = new Font(Font.MONOSPACED, Font.PLAIN, 16);
 
-	//Unused for now
-	private boolean displayLineNumbers = true;
+	//State Varaibles
+	private boolean textLineNumbersEnabled = true;
+	private boolean parenthesesPainterEnable = true;
+	private boolean infoPanelEnabled = true;
 
 	//* Simple Text Editor Controller
 	public TextEditorController() {
 		try {
 			textEditorPanel = new TextEditorPanel(this);
 			textEditorPanel.setup();
+			configurePanel();
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
 	}
 
-	
 	public TextEditorController(BINavController biNavController) {
 		this.parentController = biNavController;
 		this. textColorTheme =  new Monokai(this);
@@ -49,8 +59,83 @@ public class TextEditorController {
 		try {
 			textEditorPanel = new TextEditorPanel(this);
 			textEditorPanel.setup();
+			configurePanel();
 		} catch (BadLocationException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private void configurePanel() {
+
+		configureParenthesesPainter();
+		configureTextLineNumbers();
+		configureInfoPanel();
+		linePainter = new LinePainter(textEditorPanel.getTextPane(), textEditorPanel.getBackground());
+
+		//TODO Create Class for this
+		getTextPane().addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent keyEvent) {
+
+			}
+
+			@Override
+			public void keyPressed(KeyEvent keyEvent) {
+
+			}
+
+			@Override
+			public void keyReleased(KeyEvent keyEvent) {
+				if (keyEvent.getKeyCode() == KeyEvent.VK_RIGHT || keyEvent.getKeyCode() == KeyEvent.VK_LEFT || keyEvent.getKeyCode() == KeyEvent.VK_UP ||
+						keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
+					parenthesesPainter.resetHighlight();
+				}
+			}
+		});
+
+		getTextPane().addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent focusEvent) {
+				System.out.println("Text Area Gained Focus");
+			}
+
+			public void focusLost(FocusEvent focusEvent) {
+				System.out.println("Text Area Lost Focus");
+			}
+		});
+
+		getTextPane().addCaretListener(new CaretListener() {
+			@Override
+			public void caretUpdate(CaretEvent caretEvent) {
+				caretMoved();
+			}
+		});
+
+		setFont(font);
+	}
+
+	private void configureInfoPanel() {
+		if(infoPanelEnabled = true) {
+			infoPanel = new InfoPanel(getInfoString());
+			textEditorPanel.add(infoPanel, BorderLayout.SOUTH);
+		} else {
+			infoPanel = null;
+		}
+	}
+
+	private void configureTextLineNumbers() {
+		if(textLineNumbersEnabled) {
+			textLineNumber = new TextLineNumber(getTextPane(), this);
+			textEditorPanel.getjScrollPane().setRowHeaderView(textLineNumber);
+		} else {
+			textEditorPanel.getjScrollPane().setRowHeaderView(null);
+		}
+	}
+
+	private void configureParenthesesPainter() {
+		if(parenthesesPainterEnable == true) {
+			parenthesesPainter = new ParenthesesPainter(getTextPane());
+		} else {
+			parenthesesPainter = null;
 		}
 	}
 
@@ -144,6 +229,19 @@ public class TextEditorController {
 				return;
 			default:
 				this.textColorTheme = new Monokai(this);
+		}
+	}
+
+	public void setFont(Font font) {
+		this.font = font;
+		if(this.textEditorPanel != null) {
+			this.textEditorPanel.setFont(font);
+		}
+		if(this.textLineNumber != null) {
+			this.textLineNumber.setFont(font);
+		}
+		if(this.infoPanel != null) {
+			this.infoPanel.setFont(font);
 		}
 	}
 }
