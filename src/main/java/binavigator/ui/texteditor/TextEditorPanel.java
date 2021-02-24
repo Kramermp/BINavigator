@@ -1,6 +1,7 @@
 package binavigator.ui.texteditor;
 
 import binavigator.backend.BINavController;
+import binavigator.backend.texteditor.TextEditorController;
 import binavigator.ui.colortheme.TextColorTheme;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,7 +18,8 @@ import java.awt.event.FocusListener;
  * TextEditor Panel is the panel Containg Text Editor and its deails i.e. Line Numbers
  */
 public class TextEditorPanel extends JPanel {
-	private final BINavController parentController;
+	private BINavController parentController = null;
+	private TextEditorController textEditorController;
 	Log log = LogFactory.getLog(this.getClass());
 
    	private JTextPane textPane =  null;
@@ -51,8 +53,6 @@ public class TextEditorPanel extends JPanel {
 				"1 = \"TEST\" \nAND TESTColmn2 IN ( SELECT TestColumn2 \n\tFROM TESTTable2);"
 		);
 
-
-
 		textPane.addCaretListener(new CaretListener() {
 			@Override
 			public void caretUpdate(CaretEvent caretEvent) {
@@ -74,6 +74,53 @@ public class TextEditorPanel extends JPanel {
 			}
 		});
 
+	}
+
+	public TextEditorPanel(final TextEditorController textEditorController) throws BadLocationException {
+		super();
+		this.textEditorController = textEditorController;
+		this.setLayout(new BorderLayout());
+
+		doc = this.textEditorController.getSqlStyledDocument();
+
+		textPane = this.textEditorController.getNewSqlPane();
+//		new LinePainter(textPane, this.getBackground());
+
+		textPane.setText("Created Correctly;"
+		);
+
+
+
+		textPane.addCaretListener(new CaretListener() {
+			@Override
+			public void caretUpdate(CaretEvent caretEvent) {
+				textEditorController.caretMoved();
+			}
+		});
+
+		jScrollPane = new JScrollPane(textPane);
+		jScrollPane.setBorder(null);
+		add(jScrollPane);
+
+		textPane.addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent focusEvent) {
+				System.out.println("Text Area Gained Focus");
+			}
+
+			public void focusLost(FocusEvent focusEvent) {
+				System.out.println("Text Area Lost Focus");
+			}
+		});
+
+	}
+
+	public void setup() {
+		if(parentController == null) {
+			jScrollPane.setRowHeaderView(new TextLineNumber(getTextPane(), textEditorController.getParentController()));
+		} else {
+			jScrollPane.setRowHeaderView(new TextLineNumber(getTextPane(), parentController));
+		}
+		addInfoPanel(new InfoPanel( " "));
 	}
 
 	public void repaintDocument() {
@@ -150,6 +197,7 @@ public class TextEditorPanel extends JPanel {
 	}
 
 	public void addTextLineNumber(TextLineNumber textLineNumber) {
+		System.out.println("Adding Text Line Numbers");
 		jScrollPane.setRowHeaderView(textLineNumber);
 	}
 

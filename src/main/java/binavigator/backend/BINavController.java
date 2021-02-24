@@ -1,6 +1,7 @@
 package binavigator.backend;
 
 import binavigator.backend.net.OracleCloudConnection;
+import binavigator.backend.texteditor.TextEditorController;
 import binavigator.ui.*;
 import binavigator.ui.colortheme.WindowTheme;
 import binavigator.ui.colortheme.TextColorTheme;
@@ -34,8 +35,12 @@ public class BINavController {
 
 	private int tabSize = 8;
 
+	private TextEditorController textEditorController;
+
 
 	public BINavController() throws UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, BadLocationException {
+
+
 		textColorTheme = new Monokai(this);
 		UIManager.setLookAndFeel(new FlatDarculaLaf());
 		frame = new BINavigatorFrame();
@@ -49,7 +54,9 @@ public class BINavController {
 
 		frame.setExtendedState( frame.getExtendedState()| JFrame.MAXIMIZED_BOTH );
 		frame.setJMenuBar(menuBar);
-		frame.add(panel);
+//		frame.add(panel);
+		this.textEditorController =  new TextEditorController(this);
+		frame.add(textEditorController.getTextEditorPanel());
 		frame.add(new ButtonPanel(this), BorderLayout.NORTH);
 
 		frame.setVisible(true);
