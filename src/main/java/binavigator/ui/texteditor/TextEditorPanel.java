@@ -1,21 +1,12 @@
 package binavigator.ui.texteditor;
 
-import binavigator.backend.BINavController;
 import binavigator.backend.texteditor.TextEditorController;
-import binavigator.ui.LinePainter;
-import binavigator.ui.colortheme.TextColorTheme;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.swing.*;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.text.*;
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 /**
  * TextEditor Panel is the panel Containg Text Editor and its deails i.e. Line Numbers
