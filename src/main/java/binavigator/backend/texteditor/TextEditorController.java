@@ -28,7 +28,7 @@ public class TextEditorController {
 
 	//Font Settings
 	private TextColorTheme textColorTheme;
-	private Font font = new Font(Font.MONOSPACED, Font.PLAIN, 16);
+	private Font font = new Font(Font.MONOSPACED, Font.PLAIN, 25);
 
 	//State Varaibles
 	private boolean textLineNumbersEnabled = true;
@@ -47,11 +47,13 @@ public class TextEditorController {
 	}
 
 	public TextEditorController(BINavController biNavController) {
+
 		this.parentController = biNavController;
 		this. textColorTheme =  new Monokai(this);
 
 		try {
 			textEditorPanel = new TextEditorPanel(this);
+			setFont(font);
 			textEditorPanel.setup();
 			configurePanel();
 		} catch (BadLocationException e) {
@@ -64,20 +66,21 @@ public class TextEditorController {
 		configureParenthesesPainter();
 		configureTextLineNumbers();
 		configureInfoPanel();
-		linePainter = new LinePainter(textEditorPanel.getTextPane(), textEditorPanel.getBackground());
+//		linePainter = new LinePainter(textEditorPanel.getTextPane(), textEditorPanel.getBackground());
 
 		TextEditorListener listener = new TextEditorListener(this);
-
 		getTextPane().addKeyListener(listener);
 		getTextPane().addFocusListener(listener);
 		getTextPane().addCaretListener(listener);
 
-		setFont(font);
+
 	}
 
 	private void configureParenthesesPainter() {
 		if(parenthesesPainterEnable == true) {
 			parenthesesPainter = new ParenthesesPainter(getTextPane(), this);
+			parenthesesPainter.setColor(textColorTheme.getParenthesesHiLightColor());
+			parenthesesPainter.setAlpha(150);
 		} else {
 			parenthesesPainter = null;
 		}
@@ -104,8 +107,105 @@ public class TextEditorController {
 
 	public void caretMoved() {
 		infoPanel.setCaretInfo(getInfoString());
-		resetHighlight();
+		try {
+			resetHighlight();
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
 	}
+
+	public void resetHighlight() throws BadLocationException {
+		int openIndex = checkForOpenParentheses(getTextPane().getCaretPosition());
+		int closeIndex = checkForCloseParentheses(getTextPane().getCaretPosition());
+
+
+		if (openIndex >=0 && closeIndex >= 0) {
+			System.out.println("On open and close");
+		}else if (openIndex < 0 && closeIndex < 0){
+			System.out.println("Not on a Parentheses");
+			 ;
+		} else if (openIndex >= 0){
+			System.out.println("On an Open Parentheses");
+			closeIndex = searchForClose(openIndex);
+		} else if (closeIndex >= 0) {
+			System.out.println("On a Close Parentheses");
+			openIndex = searchForOpenParentheses(closeIndex);
+		}
+
+		System.out.println("Open: " + openIndex + " Close: " + closeIndex);
+
+		parenthesesPainter.resetHighlight(openIndex, closeIndex);
+	}
+
+	private int checkForOpenParentheses(int startPostion) {
+		int textLength = getTextPane().getText().length();
+		if (startPostion >= textLength || startPostion < 0) {
+			// Do Nothing
+		} else if (getTextPane().getText().charAt(startPostion) == '(') {
+			return startPostion;
+		}
+
+		if (startPostion - 1 >= textLength || startPostion - 1 < 0) {
+			return -1;
+		} else if (getTextPane().getText().charAt(startPostion - 1) == '(') {
+			return (startPostion - 1);
+		}
+
+		return -1;
+	}
+
+	private int checkForCloseParentheses(int startPostion) {
+		int textLength = getTextPane().getText().length();
+		if (startPostion >= textLength || startPostion < 0) {
+			// Do Nothing;
+		} else if (getTextPane().getText().charAt(startPostion) == ')') {
+			return startPostion;
+		}
+
+		if (startPostion - 1 >= textLength || startPostion - 1 < 0) {
+			return -1;
+		} else if (getTextPane().getText().charAt(startPostion - 1) == ')') {
+			return (startPostion - 1);
+		}
+
+		return -1;
+	}
+
+	private int searchForOpenParentheses(int startIndex) {
+		int countNeeded = 1;
+		int i;
+
+		i = startIndex;
+		while(i > 0 && countNeeded > 0) {
+			i--;
+			if(getTextPane().getText().charAt(i) == ')') {
+				countNeeded++;
+			} else if (getTextPane().getText().charAt(i) == '(') {
+				countNeeded--;
+			}
+		}
+
+		return i;
+	}
+
+	private int searchForClose(int startIndex) {
+		int countNeeded = 1;
+		int i = startIndex;
+		int lastIndex = getTextPane().getText().length() - 1;
+
+		while(i < lastIndex && countNeeded > 0) {
+			i++;
+			if(getTextPane().getText().charAt(i) == '(') {
+				countNeeded++;
+			} else if (getTextPane().getText().charAt(i) == ')') {
+				countNeeded--;
+			}
+		}
+
+		return i;
+	}
+
+
 
 	public void repaintDocument() {
 		textEditorPanel.repaintDocument();
@@ -182,7 +282,7 @@ public class TextEditorController {
 		return new JTextPane(getSqlStyledDocument());
 	}
 
-	//SETTERS
+	// ** SETTERS **
 	public void setTextColorTheme(String textColorTheme) {
 		switch (textColorTheme.toUpperCase()) {
 			case "MONOKAI":
@@ -201,15 +301,11 @@ public class TextEditorController {
 		if(this.textEditorPanel != null) {
 			this.textEditorPanel.setFont(font);
 		}
-		if(this.textLineNumber != null) {
-			this.textLineNumber.setFont(font);
-		}
-		if(this.infoPanel != null) {
-			this.infoPanel.setFont(font);
-		}
-	}
-
-	public void resetHighlight() {
-		parenthesesPainter.resetHighlight();
+//		if(this.textLineNumber != null) {
+//			this.textLineNumber.setFont(font);
+//		}
+//		if(this.infoPanel != null) {
+//			this.infoPanel.setFont(font);
+//		}
 	}
 }

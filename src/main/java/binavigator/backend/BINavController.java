@@ -34,9 +34,11 @@ public class BINavController {
 		frame.setExtendedState( frame.getExtendedState()| JFrame.MAXIMIZED_BOTH );
 		frame.setJMenuBar(menuBar);
 
+//		frame.add(new JEditorPane());
 		frame.add(textEditorController.getTextEditorPanel());
 		frame.add(new ButtonPanel(this), BorderLayout.NORTH);
 		frame.setVisible(true);
+		System.out.println(textEditorController.getTextPane().getFontMetrics(textEditorController.getFont()).stringWidth(" "));
 
 	}
 

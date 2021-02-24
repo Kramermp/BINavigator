@@ -3,6 +3,7 @@ package binavigator.ui.texteditor;
 import binavigator.backend.texteditor.TextEditorController;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Attr;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -24,11 +25,16 @@ public class TextEditorPanel extends JPanel {
 	private JScrollPane jScrollPane = null;
 	private JPanel infoPanel = null;
 
+	//States
+	private int tabSize = 4;
+
 	//Unused for now
 	private int lineCount = 1;
 
 	public TextEditorPanel(final TextEditorController textEditorController) throws BadLocationException {
 		super();
+		System.setProperty("awt.useSystemAAFontSettings","off");
+		System.setProperty("swing.aatext", "false");
 		this.controller = textEditorController;
 		this.setLayout(new BorderLayout());
 
@@ -42,8 +48,28 @@ public class TextEditorPanel extends JPanel {
 	}
 
 	public void setup() {
-		this.setFont(controller.getFont());
-		this.textPane.setText("SELECT\nTestTable.TestColumn1,\nTestTable.TestColumn2\nFROM\nTestTable\nWhere\nTestColumn2 = \"test\"");
+//		this.setFont(controller.getFont());
+		textPane.setText("SELECT\nTestTable.TestColumn1,\nTestTable.TestColumn2\nFROM\nTestTable\nWhere\nTestColumn2 = \"test\"");
+		buildTabs();
+	}
+
+
+	private void buildTabs(){
+		StyleContext sc = StyleContext.getDefaultStyleContext();
+		TabStop[] test = new TabStop[50];
+		int spaceWidth  = getFontMetrics((getFont())).stringWidth(" ");
+		int charWidth  = getFontMetrics(getFont()).stringWidth("T");
+
+		for(int i = 0; i < 50; i++) {
+			System.out.println("Space" + spaceWidth);
+			System.out.println("Char " + charWidth);
+			test[i] = new TabStop((spaceWidth * (i) * tabSize ) ) ;
+			System.out.println(test[i].getPosition());
+		}
+		TabSet tabs = new TabSet( test );
+		AttributeSet paraSet = sc.addAttribute(sc.getEmptySet(), StyleConstants.TabSet, tabs);
+//		textPane.setParagraphAttributes(0, getTextPane());
+		textPane.setParagraphAttributes(paraSet, false);
 	}
 
 	public void repaintDocument() {
@@ -91,6 +117,11 @@ public class TextEditorPanel extends JPanel {
 		if (textPane != null) {
 			this.textPane.setFont(font);
 		}
+	}
+
+	public void setTabSize(int tabSize) {
+		this.tabSize = tabSize;
+		buildTabs();
 	}
 
 }

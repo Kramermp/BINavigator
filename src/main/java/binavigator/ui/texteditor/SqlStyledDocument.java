@@ -7,6 +7,7 @@ import binavigator.ui.colortheme.TextColorTheme;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.swing.*;
 import javax.swing.text.*;
 
 import java.awt.*;
@@ -165,20 +166,5 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 	public void remove (int offs, int len) throws BadLocationException {
 		super.remove(offs, len);
 
-	}
-
-	public Font getCurrentFont() {
-		return this.getFont(textEditorController.getTextColorTheme().getDefaultStyle());
-	}
-
-	public static class HiliteWord {
-
-		int wordStart;
-		String word;
-
-		public HiliteWord(String word, int position) {
-			wordStart = position;
-			this.word = word;
-		}
 	}
 }
