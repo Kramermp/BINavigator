@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class InfoPanel extends JPanel {
 
-	JLabel caretInfo;
+	private JLabel caretInfo;
 
 	public InfoPanel(String string) {
 		super();
@@ -18,6 +18,14 @@ public class InfoPanel extends JPanel {
 
 	public void setCaretInfo(String text) {
 		caretInfo.setText(text);
+	}
+
+	@Override
+	public void setFont(Font font) {
+		super.setFont(font);
+		if(caretInfo != null){
+			caretInfo.setFont(font);
+		}
 	}
 
 
