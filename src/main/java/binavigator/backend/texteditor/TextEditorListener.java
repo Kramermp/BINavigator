@@ -17,7 +17,11 @@ public class TextEditorListener implements KeyListener, MouseMotionListener, Mou
 
 	@Override
 	public void keyPressed(KeyEvent keyEvent) {
-
+		//Paint Current Scope
+		if (keyEvent.getKeyCode() == KeyEvent.VK_9 && keyEvent.isControlDown()) {
+			System.out.println("Print Here");
+			controller.findParentheses();
+		}
 	}
 
 	@Override

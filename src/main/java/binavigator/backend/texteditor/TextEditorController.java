@@ -123,16 +123,22 @@ public class TextEditorController {
 			System.out.println("On open and close");
 		}else if (openIndex < 0 && closeIndex < 0){
 			System.out.println("Not on a Parentheses");
-			 ;
 		} else if (openIndex >= 0){
 			System.out.println("On an Open Parentheses");
-			closeIndex = searchForClose(openIndex);
+			closeIndex = searchForCloseParentheses(openIndex);
 		} else if (closeIndex >= 0) {
 			System.out.println("On a Close Parentheses");
 			openIndex = searchForOpenParentheses(closeIndex);
 		}
 
 		System.out.println("Open: " + openIndex + " Close: " + closeIndex);
+
+		parenthesesPainter.resetHighlight(openIndex, closeIndex);
+	}
+
+	public void findParentheses() {
+		int openIndex  = searchForOpenParentheses(textEditorPanel.getTextPane().getCaretPosition());
+		int closeIndex = searchForCloseParentheses(textEditorPanel.getTextPane().getCaretPosition());
 
 		parenthesesPainter.resetHighlight(openIndex, closeIndex);
 	}
@@ -188,7 +194,7 @@ public class TextEditorController {
 		return i;
 	}
 
-	private int searchForClose(int startIndex) {
+	private int searchForCloseParentheses(int startIndex) {
 		int countNeeded = 1;
 		int i = startIndex;
 		int lastIndex = getTextPane().getText().length() - 1;

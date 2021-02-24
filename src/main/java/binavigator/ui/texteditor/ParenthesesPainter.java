@@ -232,25 +232,6 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 
 					lastShape = currentShapes;
 
-//					Rectangle currentView = null;
-//					try {
-//						currentView = getCurrentView(component);
-//					} catch (BadLocationException e) {
-//						e.printStackTrace();
-//					}
-//
-//					//  Remove the highlighting from the previously highlighted line
-//					if (!lastView.equals(currentView)) {
-//						System.out.println("Repainting");
-//
-//						System.out.println(currentView.width);
-//						component.validate();
-//						component.paintImmediately(lastView);
-//						component.paintImmediately(currentView);
-//						component.validate();
-//
-//						lastView = currentView;
-//					}
 				}
 			});
 		}

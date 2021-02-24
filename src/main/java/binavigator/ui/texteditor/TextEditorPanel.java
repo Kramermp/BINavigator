@@ -48,7 +48,6 @@ public class TextEditorPanel extends JPanel {
 	}
 
 	public void setup() {
-//		this.setFont(controller.getFont());
 		buildTabs();
 		textPane.setText("SELECT\nTestTable.TestColumn1,\nTestTable.TestColumn2\nFROM\nTestTable\nWhere\nTestColumn2 = \"test\"");
 	}
@@ -68,7 +67,6 @@ public class TextEditorPanel extends JPanel {
 		}
 		TabSet tabs = new TabSet( test );
 		AttributeSet paraSet = sc.addAttribute(sc.getEmptySet(), StyleConstants.TabSet, tabs);
-//		textPane.setParagraphAttributes(0, getTextPane());
 		textPane.setParagraphAttributes(paraSet, false);
 	}
 
