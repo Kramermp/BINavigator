@@ -16,17 +16,32 @@ import javax.swing.text.Utilities;
 import java.awt.*;
 
 public class TextEditorController {
+	//Controller
 	private BINavController parentController;
 
+	//UI Components
 	private TextEditorPanel textEditorPanel;
 	private SqlStyledDocument sqlDoc = new SqlStyledDocument(this);
-
-	private boolean displayLineNumbers = true;
 	private InfoPanel infoPanel = new InfoPanel(" ");
 
+	//Font Settings
 	private TextColorTheme textColorTheme;
 	private Font font = new Font(Font.MONOSPACED, Font.PLAIN, 16);
 
+	//Unused for now
+	private boolean displayLineNumbers = true;
+
+	//* Simple Text Editor Controller
+	public TextEditorController() {
+		try {
+			textEditorPanel = new TextEditorPanel(this);
+			textEditorPanel.setup();
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
+	}
+
+	
 	public TextEditorController(BINavController biNavController) {
 		this.parentController = biNavController;
 		this. textColorTheme =  new Monokai(this);
