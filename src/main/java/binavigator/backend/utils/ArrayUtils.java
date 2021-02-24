@@ -1,4 +1,4 @@
-package binavigator.backend;
+package binavigator.backend.utils;
 
 public class ArrayUtils {
 
