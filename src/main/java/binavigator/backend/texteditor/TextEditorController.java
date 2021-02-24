@@ -68,8 +68,6 @@ public class TextEditorController {
 
 		TextEditorListener listener = new TextEditorListener(this);
 
-
-
 		getTextPane().addKeyListener(listener);
 		getTextPane().addFocusListener(listener);
 		getTextPane().addCaretListener(listener);
@@ -77,14 +75,14 @@ public class TextEditorController {
 		setFont(font);
 	}
 
-	private void configureInfoPanel() {
-		if(infoPanelEnabled = true) {
-			infoPanel = new InfoPanel(getInfoString());
-			textEditorPanel.add(infoPanel, BorderLayout.SOUTH);
+	private void configureParenthesesPainter() {
+		if(parenthesesPainterEnable == true) {
+			parenthesesPainter = new ParenthesesPainter(getTextPane(), this);
 		} else {
-			infoPanel = null;
+			parenthesesPainter = null;
 		}
 	}
+
 
 	private void configureTextLineNumbers() {
 		if(textLineNumbersEnabled) {
@@ -95,16 +93,18 @@ public class TextEditorController {
 		}
 	}
 
-	private void configureParenthesesPainter() {
-		if(parenthesesPainterEnable == true) {
-			parenthesesPainter = new ParenthesesPainter(getTextPane());
+	private void configureInfoPanel() {
+		if(infoPanelEnabled == true) {
+			infoPanel = new InfoPanel(getInfoString());
+			textEditorPanel.add(infoPanel, BorderLayout.SOUTH);
 		} else {
-			parenthesesPainter = null;
+			infoPanel = null;
 		}
 	}
 
 	public void caretMoved() {
 		infoPanel.setCaretInfo(getInfoString());
+		resetHighlight();
 	}
 
 	public void repaintDocument() {

@@ -4,7 +4,7 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import java.awt.event.*;
 
-public class TextEditorListener implements KeyListener, MouseListener, FocusListener, CaretListener{
+public class TextEditorListener implements KeyListener, MouseMotionListener, MouseListener, FocusListener, CaretListener{
 	private TextEditorController controller;
 
 	public TextEditorListener (TextEditorController controller){
@@ -30,12 +30,12 @@ public class TextEditorListener implements KeyListener, MouseListener, FocusList
 
 	@Override
 	public void mouseClicked(MouseEvent mouseEvent) {
-
+		controller.caretMoved();
 	}
 
 	@Override
 	public void mousePressed(MouseEvent mouseEvent) {
-
+		controller.caretMoved();
 	}
 
 	@Override
@@ -66,5 +66,15 @@ public class TextEditorListener implements KeyListener, MouseListener, FocusList
 	@Override
 	public void caretUpdate(CaretEvent caretEvent) {
 		controller.caretMoved();
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent mouseEvent) {
+		controller.caretMoved();
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent mouseEvent) {
+
 	}
 }

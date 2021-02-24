@@ -15,7 +15,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretListener, MouseListener, MouseMotionListener {
+public class ParenthesesPainter implements Highlighter.HighlightPainter {
 
 	private JTextComponent component;
 
@@ -70,10 +70,6 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 
 		//  Add listeners so we know when to change highlighting
 
-		component.addCaretListener( this );
-		component.addMouseListener( this );
-		component.addMouseMotionListener( this );
-
 		//  Turn highlighting on by adding a dummy highlight
 
 		try
@@ -107,6 +103,7 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 			int lineCount = component.getText().substring(component.getCaretPosition(), i).split("\n", - 1).length;
 			rec.height = rec.height * lineCount;
 		} else  if (checkForCloseParenthese(component)){
+
 			rec.width = component.getWidth();
 
 			FontMetrics fm = component.getGraphics().getFontMetrics(parentController.getFont());
@@ -334,34 +331,6 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter, CaretLi
 		public void getCloseIndex(JTextComponent component) {
 
 		}
-
-		//  Implement CaretListener
-
-		public void caretUpdate(CaretEvent e)
-		{
-			resetHighlight();
-		}
-
-		//  Implement MouseListener
-
-		public void mousePressed(MouseEvent e)
-		{
-			resetHighlight();
-		}
-
-		public void mouseClicked(MouseEvent e) {}
-		public void mouseEntered(MouseEvent e) {}
-		public void mouseExited(MouseEvent e) {}
-		public void mouseReleased(MouseEvent e) {}
-
-		//  Implement MouseMotionListener
-
-		public void mouseDragged(MouseEvent e)
-		{
-			resetHighlight();
-		}
-
-		public void mouseMoved(MouseEvent e) {}
 
 		private boolean checkForOpenParentheses(JTextComponent c) {
 			int caretPosition = c.getCaretPosition();
