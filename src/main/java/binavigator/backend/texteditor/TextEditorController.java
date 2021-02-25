@@ -114,14 +114,14 @@ public class TextEditorController {
 	}
 
 	private void configureCharacterCountPainter() {
-		ccp = new CharacterCountPainter(this);
+//		ccp = new CharacterCountPainter(this);
 	}
 
 	public void initializeUI() {
 
 //		resetHighlight();
 
-		ccp.drawLine();
+//		ccp.drawLine();
 	}
 
 	public void caretMoved() {

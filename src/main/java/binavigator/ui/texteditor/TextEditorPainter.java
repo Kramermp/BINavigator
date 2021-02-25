@@ -17,6 +17,7 @@ public class TextEditorPainter extends JComponent implements Highlighter.Highlig
 
 	private int alpha = 100;
 	private Color color = Color.YELLOW;
+	private Color activeLineColor = Color.BLUE;
 	private Color hilightColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
 	private Color characterLineColor  = Color.RED;
 
@@ -36,6 +37,7 @@ public class TextEditorPainter extends JComponent implements Highlighter.Highlig
 	public TextEditorPainter(TextEditorController textEditorController, JTextComponent component) {
 		this.component = component;
 		this.controller = textEditorController;
+		this.activeLineColor = component.getBackground().brighter();
 
 		//  Add listeners so we know when to change highlighting
 
@@ -50,25 +52,6 @@ public class TextEditorPainter extends JComponent implements Highlighter.Highlig
 
 	public void updateCharacterShape(JTextComponent component, int beginIndex, int endIndex) throws BadLocationException {
 		System.out.println("Updating Character Shape;");
-
-		//Update Character Count line
-		FontMetrics fm = controller.getTextPane()
-				.getGraphics()
-				.getFontMetrics(
-						controller.getFont());
-		int characterWidth = fm.stringWidth(" ");
-		int maxCharacterWidth = characterWidth * lineCount;
-
-		line.x = maxCharacterWidth;
-		line.width = 3;
-		line.y = 0;
-		line.height = controller.getTextPane().getHeight();
-
-
-
-		Graphics g = controller.getTextPane().getGraphics();
-		controller.getTextPane().paintImmediately(line);
-
 
 		//Update Parentheses Shape
 		lastShape = currentShapes;
@@ -196,25 +179,51 @@ public class TextEditorPainter extends JComponent implements Highlighter.Highlig
 
 	public void paint(Graphics g, int p0, int p1, Shape bounds, JTextComponent c)
 	{
+
+
+		Rectangle rec = null;
+
+
+
+//		Graphics g = controller.getTextPane().getGraphics();
+//		controller.getTextPane().paintImmediately(line);
+
+		//Paint Active Line
 		try
 		{
+
+
 			Rectangle r = c.modelToView(c.getCaretPosition());
-			g.setColor( color );
+			g.setColor(activeLineColor);
 			g.fillRect(0, r.y, c.getWidth(), r.height);
 
 			if (lastView == null)
+//				component.paintImmediately(lastView);
 				lastView = r;
 		}
 		catch(BadLocationException ble) {System.out.println(ble);}
 
-		Rectangle rec = null;
 
+		//Paint Parentheses
 		g.setColor(hilightColor);
 		for(int i = 0; i < this.currentShapes.length; i++) {
 			if(currentShapes[i] != null)
 				g.fillRect(currentShapes[i].x, currentShapes[i].y, currentShapes[i].width, currentShapes[i].height);
 		}
 
+		//Paint Character Line
+		//Update Character Count line
+		FontMetrics fm = controller.getTextPane()
+				.getGraphics()
+				.getFontMetrics(
+						controller.getFont());
+		int characterWidth = fm.stringWidth(" ");
+		int maxCharacterWidth = characterWidth * lineCount;
+
+		line.x = maxCharacterWidth;
+		line.width = 3;
+		line.y = 0;
+		line.height = controller.getTextPane().getHeight();
 		g.setColor(characterLineColor);
 		g.fillRect(line.x, line.y, line.width, line.height);
 
