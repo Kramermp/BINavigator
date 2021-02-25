@@ -211,7 +211,6 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 				{
 					System.out.println("Reseting Highlight");
 
-
 					try {
 						updateCharacterShape(component, startIndex, endIndex);
 					} catch (BadLocationException e) {
