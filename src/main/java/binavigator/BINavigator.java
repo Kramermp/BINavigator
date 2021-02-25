@@ -17,7 +17,7 @@ public class BINavigator {
 	public static void main(String[] args) {
 		log.debug("Launching BINavigator");
 		try {
-			new BINavController();
+			new BINavController().initializeUI();
 		}  catch (UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}

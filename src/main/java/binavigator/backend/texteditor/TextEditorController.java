@@ -25,6 +25,7 @@ public class TextEditorController {
 	private ParenthesesPainter parenthesesPainter;
 	private TextLineNumber textLineNumber;
 	private LinePainter linePainter;
+	private CharacterCountPainter ccp;
 
 	//Font Settings
 	private TextColorTheme textColorTheme;
@@ -63,6 +64,7 @@ public class TextEditorController {
 
 	private void configurePanel() {
 
+		configureCharacterCountPainter();
 		configureParenthesesPainter();
 		configureTextLineNumbers();
 		configureInfoPanel();
@@ -105,8 +107,28 @@ public class TextEditorController {
 		}
 	}
 
+	private void configureCharacterCountPainter() {
+		ccp = new CharacterCountPainter(this);
+	}
+
+	public void initializeUI() {
+//		infoPanel.setCaretInfo(getInfoString());
+
+		try {
+			resetHighlight();
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
+
+		ccp.drawLine();
+	}
+
+	public void drawComponents() {
+	}
+
 	public void caretMoved() {
 		infoPanel.setCaretInfo(getInfoString());
+		ccp.drawLine();
 		try {
 			resetHighlight();
 		} catch (BadLocationException e) {
@@ -119,14 +141,14 @@ public class TextEditorController {
 		int closeIndex = checkForCloseParentheses(getTextPane().getCaretPosition());
 
 
-		if (openIndex >=0 && closeIndex >= 0) {
+		if (openIndex >=0 && closeIndex >= 0 && openIndex < closeIndex) {
 			System.out.println("On open and close");
 		}else if (openIndex < 0 && closeIndex < 0){
 			System.out.println("Not on a Parentheses");
-		} else if (openIndex >= 0){
+		} else if (openIndex >= 0 && openIndex > closeIndex){
 			System.out.println("On an Open Parentheses");
 			closeIndex = searchForCloseParentheses(openIndex);
-		} else if (closeIndex >= 0) {
+		} else if (closeIndex >= 0 && closeIndex > openIndex) {
 			System.out.println("On a Close Parentheses");
 			openIndex = searchForOpenParentheses(closeIndex);
 		}

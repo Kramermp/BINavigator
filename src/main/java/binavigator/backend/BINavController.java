@@ -42,6 +42,10 @@ public class BINavController {
 
 	}
 
+	public void initializeUI() {
+		textEditorController.initializeUI();
+	}
+
 	public void exitSafely() {
 		System.exit(0);
 	}
