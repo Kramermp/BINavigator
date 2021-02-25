@@ -26,6 +26,7 @@ public class TextEditorController {
 	private TextLineNumber textLineNumber;
 //	private LinePainter linePainter;
 	private CharacterCountPainter ccp;
+	private TextEditorPainter tep;
 
 	//Font Settings
 	private TextColorTheme textColorTheme;
@@ -39,9 +40,12 @@ public class TextEditorController {
 	//* Simple Text Editor Controller
 	public TextEditorController() {
 		try {
+
 			textEditorPanel = new TextEditorPanel(this);
 			textEditorPanel.setup();
-			configurePanel();
+
+			textEditorPanel.getTextPane().getHighlighter().addHighlight(0, 0, new TextEditorPainter(this, this.getTextPane()));
+
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
@@ -53,10 +57,12 @@ public class TextEditorController {
 		this. textColorTheme =  new Monokai(this);
 
 		try {
+
 			textEditorPanel = new TextEditorPanel(this);
 			setFont(font);
 			textEditorPanel.setup();
 			configurePanel();
+			this.tep = new TextEditorPainter(this, this.getTextPane());
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
@@ -64,10 +70,10 @@ public class TextEditorController {
 
 	private void configurePanel() {
 
-		configureCharacterCountPainter();
-		configureParenthesesPainter();
-		configureTextLineNumbers();
-		configureInfoPanel();
+//		configureCharacterCountPainter();
+//		configureParenthesesPainter();
+//		configureTextLineNumbers();
+//		configureInfoPanel();
 //		linePainter = new LinePainter(textEditorPanel.getTextPane(), textEditorPanel.getBackground());
 
 		TextEditorListener listener = new TextEditorListener(this);
@@ -79,32 +85,32 @@ public class TextEditorController {
 	}
 
 	private void configureParenthesesPainter() {
-		if(parenthesesPainterEnabled) {
-			parenthesesPainter = new ParenthesesPainter(getTextPane(), this);
-			parenthesesPainter.setColor(textColorTheme.getParenthesesHiLightColor());
-			parenthesesPainter.setAlpha(150);
-		} else {
-			parenthesesPainter = null;
-		}
+//		if(parenthesesPainterEnabled) {
+//			parenthesesPainter = new ParenthesesPainter(getTextPane(), this);
+//			parenthesesPainter.setColor(textColorTheme.getParenthesesHiLightColor());
+//			parenthesesPainter.setAlpha(150);
+//		} else {
+//			parenthesesPainter = null;
+//		}
 	}
 
 
 	private void configureTextLineNumbers() {
-		if(textLineNumbersEnabled) {
-			textLineNumber = new TextLineNumber(getTextPane(), this);
-			textEditorPanel.getjScrollPane().setRowHeaderView(textLineNumber);
-		} else {
-			textEditorPanel.getjScrollPane().setRowHeaderView(null);
-		}
+//		if(textLineNumbersEnabled) {
+//			textLineNumber = new TextLineNumber(getTextPane(), this);
+//			textEditorPanel.getjScrollPane().setRowHeaderView(textLineNumber);
+//		} else {
+//			textEditorPanel.getjScrollPane().setRowHeaderView(null);
+//		}
 	}
 
 	private void configureInfoPanel() {
-		if(infoPanelEnabled) {
-			infoPanel = new InfoPanel(getInfoString());
-			textEditorPanel.add(infoPanel, BorderLayout.SOUTH);
-		} else {
-			infoPanel = null;
-		}
+//		if(infoPanelEnabled) {
+//			infoPanel = new InfoPanel(getInfoString());
+//			textEditorPanel.add(infoPanel, BorderLayout.SOUTH);
+//		} else {
+//			infoPanel = null;
+//		}
 	}
 
 	private void configureCharacterCountPainter() {
@@ -113,38 +119,47 @@ public class TextEditorController {
 
 	public void initializeUI() {
 
-		resetHighlight();
+//		resetHighlight();
 
 		ccp.drawLine();
 	}
 
 	public void caretMoved() {
-		infoPanel.setCaretInfo(getInfoString());
-		ccp.drawLine();
-		resetHighlight();
+		int[] highlightArgs = getHighLightArgs();
+//		infoPanel.setCaretInfo(getInfoString());
+//		ccp.drawLine();
+//		resetHighlight();
+		tep.resetHighlight(highlightArgs[0], highlightArgs[1]);
+//		/tep.paint(textEditorPanel.getTextPane().getGraphics());
+//		ccp.drawLine();
+//		parenthesesPainter.resetHighlight(highlightArgs[0], highlightArgs[1]);
+
+
 	}
 
-	private void resetHighlight() {
+	public int[] getHighLightArgs() {
 		int openIndex = checkForOpenParentheses(getTextPane().getCaretPosition());
 		int closeIndex = checkForCloseParentheses(getTextPane().getCaretPosition());
 
 
 		if (openIndex >=0 && closeIndex >= 0 && openIndex < closeIndex) {
-			System.out.println("On open and close");
+//			System.out.println("On open and close");
+			//Do Nothing
 		}else if (openIndex < 0 && closeIndex < 0){
-			System.out.println("Not on a Parentheses");
+//			System.out.println("Not on a Parentheses");
+			//Do Nothing
 		} else if (openIndex >= 0 && openIndex > closeIndex){
 			System.out.println("On an Open Parentheses");
 			closeIndex = searchForCloseParentheses(openIndex);
 		} else //noinspection ConstantConditions
 			if (closeIndex >= 0 && closeIndex > openIndex) {
-			System.out.println("On a Close Parentheses");
-			openIndex = searchForOpenParentheses(closeIndex);
-		}
+				System.out.println("On a Close Parentheses");
+				openIndex = searchForOpenParentheses(closeIndex);
+			}
 
-		System.out.println("Open: " + openIndex + " Close: " + closeIndex);
+//		System.out.println("Open: " + openIndex + " Close: " + closeIndex);
 
-		parenthesesPainter.resetHighlight(openIndex, closeIndex);
+		return new int[]{openIndex, closeIndex};
 	}
 
 	public void findParentheses() {
