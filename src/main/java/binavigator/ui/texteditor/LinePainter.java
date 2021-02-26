@@ -1,4 +1,4 @@
-package binavigator.ui;
+package binavigator.ui.texteditor;
 
 import binavigator.ui.colortheme.TextColorTheme;
 
