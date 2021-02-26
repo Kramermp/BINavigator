@@ -1,19 +1,16 @@
 package binavigator.ui.texteditor;
 
-import binavigator.ui.colortheme.TextColorTheme;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
-import javax.xml.soap.Text;
 
 /*
  *  Track the movement of the Caret by painting a background line at the
  *  current caret position.
  */
-public class LinePainter
+public class CaretLinePainter
 		implements Highlighter.HighlightPainter, CaretListener, MouseListener, MouseMotionListener
 {
 	private JTextComponent component;
@@ -28,7 +25,7 @@ public class LinePainter
 	 *
 	 *  @param component  text component that requires background line painting
 	 */
-	public LinePainter(JTextComponent component)
+	public CaretLinePainter(JTextComponent component)
 	{
 		this(component, null);
 		setLighter(component.getSelectionColor());
@@ -40,7 +37,7 @@ public class LinePainter
 	 *  @param component  text component that requires background line painting
 	 *  @param color      the color of the background line
 	 */
-	public LinePainter(JTextComponent component, Color color)
+	public CaretLinePainter(JTextComponent component, Color color)
 	{
 		this.component = component;
 		setColor( color );
