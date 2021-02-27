@@ -72,7 +72,7 @@ public class TextEditorPanel extends JPanel {
 		doc.setParagraphAttributes(0, textPane.getText().length(), paraSet, false);
 	}
 
-	public void repaintDocument() {
+	public void highlightText() {
 		JViewport viewport = jScrollPane.getViewport();
 		Point startPoint = viewport.getViewPosition();
 		Dimension size = viewport.getExtentSize();

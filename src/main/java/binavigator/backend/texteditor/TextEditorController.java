@@ -36,7 +36,9 @@ public class TextEditorController {
 	private boolean textLineNumbersEnabled = true;
 	private boolean parenthesesPainterEnabled = true;
 	private boolean infoPanelEnabled = true;
+	private boolean characterCountLineEnabled = true;
 	private int tabSize = 4;
+	private int characterCountLimit = 80;
 
 	//* Simple Text Editor Controller
 	public TextEditorController() {
@@ -78,9 +80,7 @@ public class TextEditorController {
 
 	}
 
-
-
-	public void caretMoved() {
+	public void repaintTextEditor() {
 		int[] highlightArgs = getHighLightArgs();
 
 		tep.resetHighlight(highlightArgs[0], highlightArgs[1]);
@@ -190,14 +190,14 @@ public class TextEditorController {
 
 
 
-	public void repaintDocument() {
-		textEditorPanel.repaintDocument();
+	public void highlightText() {
+		textEditorPanel.highlightText();
 	}
 
 	public void refreshUi() {
 		textColorTheme.updateStyles();
-		repaintDocument();
-		caretMoved();
+		highlightText();
+		repaintTextEditor();
 	}
 
 	//GETTERS
@@ -269,6 +269,14 @@ public class TextEditorController {
 		return tabSize;
 	}
 
+	public int getCharacterCountLimit() {
+		return this.characterCountLimit;
+	}
+
+	public boolean getCharacterCountLineEnabled() {
+		return this.characterCountLineEnabled;
+	}
+
 	// ** SETTERS **
 	public void setTextColorTheme(String textColorTheme) {
 		switch (textColorTheme.toUpperCase()) {
@@ -307,4 +315,16 @@ public class TextEditorController {
 		this.tabSize = newTabSize;
 		textEditorPanel.setTabSize(newTabSize);
 	}
+
+	public void setCharacterCountLimit(int limit) {
+		this.characterCountLimit = limit;
+		repaintTextEditor();
+	}
+
+	public void setChararcterCountLineEnabled(boolean chararcterCountLine) {
+		this.characterCountLineEnabled = chararcterCountLine;
+		repaintTextEditor();
+	}
+
+
 }

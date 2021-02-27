@@ -120,4 +120,12 @@ public class BINavController {
 	public void setTabSize(int tabSize) {
 		textEditorController.setTabSize(tabSize);
 	}
+
+	public void setCharacterCountLine(boolean characterCountLine) {
+		this.textEditorController.setChararcterCountLineEnabled(characterCountLine);
+	}
+
+	public void setCharacterCountLimit(int characterCountLimit) {
+		this.textEditorController.setCharacterCountLimit(characterCountLimit);
+	}
 }

@@ -2,7 +2,6 @@ package binavigator.ui.texteditor;
 
 import binavigator.backend.texteditor.TextEditorController;
 
-import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Highlighter;
 import javax.swing.text.JTextComponent;
@@ -10,7 +9,6 @@ import java.awt.*;
 
 public class CharacterCountPainter implements Highlighter.HighlightPainter {
 	private TextEditorController controller;
-	private int lineCount = 80;
 	private int height  = 0;
 
 	private Rectangle line = new Rectangle();
@@ -21,11 +19,11 @@ public class CharacterCountPainter implements Highlighter.HighlightPainter {
 		this.controller = controller;
 
 
-		try {
-			controller.getTextPane().getHighlighter().addHighlight(0, 0, this);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			controller.getTextPane().getHighlighter().addHighlight(0, 0, this);
+//		} catch (BadLocationException e) {
+//			e.printStackTrace();
+//		}
 
 	}
 
@@ -49,7 +47,7 @@ public class CharacterCountPainter implements Highlighter.HighlightPainter {
 				.getFontMetrics(
 						controller.getFont());
 		int characterWidth = fm.stringWidth(" ");
-		int maxCharacterWidth = characterWidth * lineCount;
+		int maxCharacterWidth = characterWidth * controller.getCharacterCountLimit();
 
 		line.x = maxCharacterWidth;
 		line.width = 3;
@@ -57,5 +55,9 @@ public class CharacterCountPainter implements Highlighter.HighlightPainter {
 		line.height = controller.getTextPane().getHeight();
 		g.setColor(characterLineColor);
 		g.fillRect(line.x, line.y, line.width, line.height);
+	}
+
+	public void repaint() {
+		controller.getTextPane().repaint(line);
 	}
 }

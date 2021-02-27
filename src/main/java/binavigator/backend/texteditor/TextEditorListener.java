@@ -28,13 +28,13 @@ public class TextEditorListener implements KeyListener, MouseMotionListener, Mou
 	public void keyReleased(KeyEvent keyEvent) {
 		if (keyEvent.getKeyCode() == KeyEvent.VK_RIGHT || keyEvent.getKeyCode() == KeyEvent.VK_LEFT || keyEvent.getKeyCode() == KeyEvent.VK_UP ||
 				keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
-			controller.caretMoved();
+			controller.repaintTextEditor();
 		}
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent mouseEvent) {
-		controller.caretMoved();
+		controller.repaintTextEditor();
 	}
 
 	@Override
@@ -69,12 +69,12 @@ public class TextEditorListener implements KeyListener, MouseMotionListener, Mou
 
 	@Override
 	public void caretUpdate(CaretEvent caretEvent) {
-		controller.caretMoved();
+		controller.repaintTextEditor();
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent mouseEvent) {
-		controller.caretMoved();
+		controller.repaintTextEditor();
 	}
 
 	@Override

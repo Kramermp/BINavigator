@@ -46,11 +46,11 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 
 		//  Turn highlighting on by adding a dummy highlight
 
-		try
-		{
-			component.getHighlighter().addHighlight(0, 0, this);
-		}
-		catch(BadLocationException ble) {}
+//		try
+//		{
+//			component.getHighlighter().addHighlight(0, 0, this);
+//		}
+//		catch(BadLocationException ble) {}
 	}
 
 

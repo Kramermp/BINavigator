@@ -26,6 +26,7 @@ public class ViewMenu extends JMenu {
 
 		buildThemeSelector();
 		buildTabMenu();
+		buildCharacterCountMenu();
 	}
 
 	public void buildThemeSelector() {
@@ -114,6 +115,51 @@ public class ViewMenu extends JMenu {
 		tabSizeBtn.add(eightSpaceBtn);
 
 		this.add(tabSizeBtn);
+	}
+
+	private void buildCharacterCountMenu() {
+		JMenu characterLineBtn = new JMenu("Character Count Line");
+
+		JMenuItem offBtn = new JMenuItem(("Off"));
+		offBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				parentController.setCharacterCountLine(false);
+			}
+		});
+
+		JMenuItem onBtn = new JMenuItem(("On"));
+		onBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				parentController.setCharacterCountLine(true);
+			}
+		});
+
+		JMenuItem eightyBtn = new JMenuItem(("80 Characters"));
+		eightyBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				parentController.setCharacterCountLimit(80);
+			}
+		});
+
+		JMenuItem onehundredTwentyBtn = new JMenuItem(("120 Characters"));
+		onehundredTwentyBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				parentController.setCharacterCountLimit(120);
+			}
+		});
+
+
+		characterLineBtn.add(offBtn);
+		characterLineBtn.add(onBtn);
+		characterLineBtn.add(eightyBtn);
+		characterLineBtn.add(onehundredTwentyBtn);
+
+
+		this.add(characterLineBtn);
 	}
 
 
