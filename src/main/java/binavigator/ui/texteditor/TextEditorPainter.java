@@ -202,23 +202,9 @@ public class TextEditorPainter extends JComponent implements Highlighter.Highlig
 
 				//Painting Parentheses
 				calculateParenthesesShape(startIndex, endIndex);
+				
 
-				try
-				{
-					int offset =  component.getCaretPosition();
-					Rectangle currentView = component.modelToView(offset);
-
-					//  Remove the highlighting from the previously highlighted line
-
-					if (lastView.y != currentView.y)
-					{
-						component.repaint(0, lastView.y, component.getWidth(), lastView.height);
-						lastView = currentView;
-					}
-				}
-				catch(BadLocationException ble) {}
-
-//				refreshActiveLine();
+				refreshActiveLine();
 				refreshParenthesesShape();
 				refreshCharacterCountLine();
 
