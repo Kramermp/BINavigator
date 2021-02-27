@@ -29,26 +29,6 @@ public class CharacterCountPainter implements Highlighter.HighlightPainter {
 
 	}
 
-	public void drawLine() {
-
-		FontMetrics fm = controller.getTextPane()
-				.getGraphics()
-				.getFontMetrics(
-						controller.getFont());
-		int characterWidth = fm.stringWidth(" ");
-		int maxCharacterWidth = characterWidth * lineCount;
-
-		line.x = maxCharacterWidth;
-		line.width = 3;
-		line.y = 0;
-		line.height = controller.getTextPane().getHeight();
-
-
-
-		Graphics g = controller.getTextPane().getGraphics();
-		controller.getTextPane().paintImmediately(line);
-	}
-
 
 	@Override
 	public void paint(Graphics g, int i, int i1, Shape shape, JTextComponent jTextComponent) {

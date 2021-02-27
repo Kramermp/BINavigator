@@ -70,71 +70,19 @@ public class TextEditorController {
 
 	private void configurePanel() {
 
-//		configureCharacterCountPainter();
-//		configureParenthesesPainter();
-//		configureTextLineNumbers();
-//		configureInfoPanel();
-//		linePainter = new CaretLinePainter(textEditorPanel.getTextPane(), textEditorPanel.getBackground());
-
 		TextEditorListener listener = new TextEditorListener(this);
 		getTextPane().addKeyListener(listener);
 		getTextPane().addFocusListener(listener);
 		getTextPane().addCaretListener(listener);
 
-
-	}
-
-	private void configureParenthesesPainter() {
-//		if(parenthesesPainterEnabled) {
-//			parenthesesPainter = new ParenthesesPainter(getTextPane(), this);
-//			parenthesesPainter.setColor(textColorTheme.getParenthesesHiLightColor());
-//			parenthesesPainter.setAlpha(150);
-//		} else {
-//			parenthesesPainter = null;
-//		}
 	}
 
 
-	private void configureTextLineNumbers() {
-//		if(textLineNumbersEnabled) {
-//			textLineNumber = new TextLineNumber(getTextPane(), this);
-//			textEditorPanel.getjScrollPane().setRowHeaderView(textLineNumber);
-//		} else {
-//			textEditorPanel.getjScrollPane().setRowHeaderView(null);
-//		}
-	}
-
-	private void configureInfoPanel() {
-//		if(infoPanelEnabled) {
-//			infoPanel = new InfoPanel(getInfoString());
-//			textEditorPanel.add(infoPanel, BorderLayout.SOUTH);
-//		} else {
-//			infoPanel = null;
-//		}
-	}
-
-	private void configureCharacterCountPainter() {
-//		ccp = new CharacterCountPainter(this);
-	}
-
-	public void initializeUI() {
-
-//		resetHighlight();
-
-//		ccp.drawLine();
-	}
 
 	public void caretMoved() {
 		int[] highlightArgs = getHighLightArgs();
-//		infoPanel.setCaretInfo(getInfoString());
-//		ccp.drawLine();
-//		resetHighlight();
+
 		tep.resetHighlight(highlightArgs[0], highlightArgs[1]);
-//		/tep.paint(textEditorPanel.getTextPane().getGraphics());
-//		ccp.drawLine();
-//		parenthesesPainter.resetHighlight(highlightArgs[0], highlightArgs[1]);
-
-
 	}
 
 	public int[] getHighLightArgs() {
@@ -166,7 +114,8 @@ public class TextEditorController {
 		int openIndex  = searchForOpenParentheses(textEditorPanel.getTextPane().getCaretPosition());
 		int closeIndex = searchForCloseParentheses(textEditorPanel.getTextPane().getCaretPosition());
 
-//		parenthesesPainter.resetHighlight(openIndex, closeIndex);
+
+		tep.resetHighlight(openIndex, closeIndex);
 	}
 
 	private int checkForOpenParentheses(int startPosition) {

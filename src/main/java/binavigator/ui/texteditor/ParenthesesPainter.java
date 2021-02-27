@@ -1,22 +1,15 @@
 package binavigator.ui.texteditor;
 
-import binavigator.backend.BINavController;
 import binavigator.backend.texteditor.TextEditorController;
 
-import javax.swing.*;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.text.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 
 public class ParenthesesPainter implements Highlighter.HighlightPainter {
 
 	private JTextComponent component;
 
-	private TextEditorController parentController = null;
+	private TextEditorController controller = null;
 
 	private int alpha = 100;
 	private Color color = Color.YELLOW;
@@ -45,9 +38,9 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 		 *  @param color      the color of the background line
 		 */
 
-	public ParenthesesPainter(JTextComponent component, TextEditorController parentController) {
+	public ParenthesesPainter(JTextComponent component, TextEditorController controller) {
 		this.component = component;
-		this.parentController = parentController;
+		this.controller = controller;
 
 		//  Add listeners so we know when to change highlighting
 
@@ -75,15 +68,15 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 					currentShapes = new Rectangle[] {};
 					return;
 				case 1:
-					currentShapes =  new Rectangle[]{getSingleLineShape(component, beginIndex, endIndex)};
+					currentShapes =  new Rectangle[]{calculateLineShape(component, beginIndex, endIndex)};
 					return;
 				default:
-					currentShapes = getMultiLineShape(component, beginIndex, endIndex, lines.length);
+					currentShapes = calculateMultiLineShape(component, beginIndex, endIndex, lines.length);
 			}
 		}
 	}
 
-	private Rectangle getSingleLineShape(JTextComponent component, int beginIndex, int endIndex) {
+	private Rectangle calculateLineShape(JTextComponent component, int beginIndex, int endIndex) {
 		System.out.println("Painting Single Line");
 		Rectangle rec = null;
 
@@ -105,14 +98,14 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 		return rec;
 	}
 
-	private Rectangle[] getMultiLineShape (JTextComponent component, int beginIndex, int endIndex, int lineCount) throws BadLocationException {
+	private Rectangle[] calculateMultiLineShape(JTextComponent component, int beginIndex, int endIndex, int lineCount) throws BadLocationException {
 		Rectangle[] recs = new Rectangle[lineCount];
 		FontMetrics fm = getFontMetric(component);
 
 		if(lineCount == 0) {
 			return new Rectangle[]{};
 		} else if (lineCount == 1) {
-			return new Rectangle[] {getSingleLineShape(component, beginIndex, endIndex)};
+			return new Rectangle[] {calculateLineShape(component, beginIndex, endIndex)};
 		} else {
 			System.out.println("Lines: " + lineCount);
 			String[] lines = (component.getText().substring(0, beginIndex).split("\n", -1));
@@ -133,6 +126,7 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 			recs[0].y = component.getMargin().top + (lineOffset * fm.getHeight());
 			recs[0].height = fm.getHeight();
 
+			//TODO: This is poorly designed should just make one large rectangle
 			for(int i = 1; i < recs.length - 1; i++) {
 				recs[i] = new Rectangle();
 				recs[i].x = component.getMargin().left;
@@ -154,7 +148,6 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 				charCount=lastLine.length();
 			}
 
-			//For the life of me cannot figure out why it needs two margins
 			recs[recs.length - 1].width = fm.stringWidth(" " ) * charCount;
 
 			recs[recs.length - 1].y = component.getMargin().top + ((lineOffset + recs.length - 1) * fm.getHeight());
@@ -169,7 +162,7 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 		for(int i = 0; i < lastLine.length(); i++) {
 			if(lastLine.charAt(i) == '\t') {
 				//Tabsize
-				charPosition = charPosition + (4-(charPosition%4));
+				charPosition = charPosition + (4-( charPosition%4));
 //				System.out.println("TabSize: " + ( 4 - (i%4)));
 			} else {
 				charPosition++;
@@ -180,13 +173,8 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 
 	}
 
-	private FontMetrics getFontMetric(JTextComponent textComponent) {
-		return  textComponent.getGraphics().getFontMetrics(parentController.getFont());
-	}
-
 
 	//  Paint the background highlight
-
 	public void paint(Graphics g, int p0, int p1, Shape bounds, JTextComponent c)
 	{
 		Rectangle rec = null;
@@ -197,77 +185,6 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 				g.fillRect(currentShapes[i].x, currentShapes[i].y, currentShapes[i].width, currentShapes[i].height);
 		}
 
-	}
-
-	private boolean checkForOpenParentheses(JTextComponent c) {
-		int caretPosition = c.getCaretPosition();
-		if(caretPosition == 0) {
-			caretPosition = 1;
-		}
-
-		//If is in the array we check it
-		if(!(caretPosition >= c.getText().length() || caretPosition < 0))  {
-			if(c.getText().charAt(caretPosition) == '(') {
-				return true;
-			}
-		}
-
-		if(!(caretPosition - 1 < 0 || caretPosition - 1 >= c.getText().length())) {
-			if(c.getText().charAt(caretPosition - 1) == '(') {
-				return true;
-			}
-		}
-
-		return false;
-
-	}
-
-	private boolean checkForCloseParenthese(JTextComponent c) {
-		int caretPosition = c.getCaretPosition();
-		if(caretPosition == 0) {
-			caretPosition = 1;
-		}
-
-		//If is in the array we check it
-		if(!(caretPosition >= c.getText().length() || caretPosition < 0))  {
-			if(c.getText().charAt(caretPosition) == ')') {
-				return true;
-			}
-		}
-
-		if(!(caretPosition - 1 < 0 || caretPosition - 1 >= c.getText().length())) {
-			if(c.getText().charAt(caretPosition - 1) == ')') {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public void setAlpha(int alpha) {
-		this.alpha = alpha;
-		hilightColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
-	}
-
-	public void setColor(Color color) {
-		this.color = color;
-		if(alpha == 0){
-			this.hilightColor = hilightColor;
-		} else {
-			this.hilightColor = new Color(color.getRed(), color.getBlue(), color.getGreen(), alpha);
-		}
-	}
-
-	public Rectangle[] getCharacterShape() {
-		return currentShapes;
-	}
-
-	public Rectangle[] getOldShapes() {
-		return this.lastShape;
-	}
-
-	public void setLastShape(Rectangle[] oldShapes) {
-			this.lastShape = oldShapes;
 	}
 
 	public void fillParenthesesShape(Graphics g) {
@@ -292,5 +209,42 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 		for(int i = 0; i < lastShape.length; i++) {
 			component.paintImmediately(lastShape[i]);
 		}
+	}
+
+
+
+	public Rectangle[] getCharacterShape() {
+		return currentShapes;
+	}
+
+	public Rectangle[] getOldShapes() {
+		return this.lastShape;
+	}
+
+	private FontMetrics getFontMetric(JTextComponent textComponent) {
+		return  textComponent.getGraphics().getFontMetrics(controller.getFont());
+	}
+
+
+
+
+
+	//Setters
+	public void setAlpha(int alpha) {
+		this.alpha = alpha;
+		hilightColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+		if(alpha == 0){
+			this.hilightColor = hilightColor;
+		} else {
+			this.hilightColor = new Color(color.getRed(), color.getBlue(), color.getGreen(), alpha);
+		}
+	}
+
+	public void setLastShape(Rectangle[] oldShapes) {
+		this.lastShape = oldShapes;
 	}
 }
