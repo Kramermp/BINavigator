@@ -23,7 +23,6 @@ public class TextEditorPanel extends JPanel {
    	private JTextPane textPane =  null;
 	private SqlStyledDocument doc = null;
 	private JScrollPane jScrollPane = null;
-	private JPanel infoPanel = null;
 
 	//States
 	private int tabSize = 4;
@@ -33,8 +32,6 @@ public class TextEditorPanel extends JPanel {
 
 	public TextEditorPanel(final TextEditorController textEditorController) throws BadLocationException {
 		super();
-		System.setProperty("awt.useSystemAAFontSettings","off");
-		System.setProperty("swing.aatext", "false");
 		this.controller = textEditorController;
 		this.setLayout(new BorderLayout());
 
@@ -50,6 +47,9 @@ public class TextEditorPanel extends JPanel {
 	public void setup() {
 		buildTabs();
 		textPane.setText("SELECT\nTestTable.TestColumn1,\nTestTable.TestColumn2\nFROM\nTestTable\nWhere\nTestColumn2 = \"test\"");
+
+		jScrollPane.setRowHeaderView(new TextLineNumber(getTextPane(), controller));
+
 	}
 
 
@@ -58,13 +58,11 @@ public class TextEditorPanel extends JPanel {
 		TabStop[] test = new TabStop[50];
 		int spaceWidth  = getFontMetrics((getFont())).stringWidth(" ");
 		int charWidth  = getFontMetrics(getFont()).stringWidth("T");
+		log.trace("Space Width for Tab: " + spaceWidth);
 		SqlStyledDocument doc = (SqlStyledDocument) textPane.getDocument();
 
 		for(int i = 0; i < 50; i++) {
-			System.out.println("Space" + spaceWidth);
-			System.out.println("Char " + charWidth);
 			test[i] = new TabStop((spaceWidth * (i) * tabSize ) ) ;
-			System.out.println(test[i].getPosition());
 		}
 		TabSet tabs = new TabSet( test );
 		AttributeSet paraSet = sc.addAttribute(sc.getEmptySet(), StyleConstants.TabSet, tabs);

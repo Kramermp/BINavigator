@@ -58,6 +58,6 @@ public class CharacterCountPainter implements Highlighter.HighlightPainter {
 	}
 
 	public void repaint() {
-		controller.getTextPane().repaint(line);
+//		controller.getTextPane().repaint(line);
 	}
 }

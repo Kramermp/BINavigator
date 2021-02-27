@@ -9,15 +9,14 @@ public class InfoPanel extends JPanel {
 
 	private JLabel caretInfo;
 
-	public InfoPanel(String string) {
+	public static final String DEFAULT_STRING = "";
+
+	public InfoPanel() {
 		super();
-		this.caretInfo = new JLabel(string);
+		this.caretInfo = new JLabel(" ");
+		this.setCaretInfo(0, 0);
 		this.setLayout(new BorderLayout());
 		this.add(caretInfo, BorderLayout.WEST);
-	}
-
-	public void setCaretInfo(String text) {
-		caretInfo.setText(text);
 	}
 
 	@Override
@@ -29,4 +28,8 @@ public class InfoPanel extends JPanel {
 	}
 
 
+	public void setCaretInfo(int columnPosition, int characterPostion) {
+		System.out.println(columnPosition+ " " + characterPostion);
+		caretInfo.setText("Col: " + String.format("%03d", columnPosition)  + " Char: " + String.format("%4d", characterPostion));
+	}
 }

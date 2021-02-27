@@ -22,11 +22,8 @@ public class TextEditorController {
 	private TextEditorPanel textEditorPanel;
 	private final SqlStyledDocument sqlDoc = new SqlStyledDocument(this);
 	private InfoPanel infoPanel;
-	private ParenthesesPainter parenthesesPainter;
 	private TextLineNumber textLineNumber;
-//	private CaretLinePainter linePainter;
-//	private CharacterCountPainter ccp;
-	private TextEditorPainter tep;
+	private TextEditorPainter tePainter;
 
 	//Font Settings
 	private TextColorTheme textColorTheme;
@@ -48,6 +45,7 @@ public class TextEditorController {
 			textEditorPanel.setup();
 
 			textEditorPanel.getTextPane().getHighlighter().addHighlight(0, 0, new TextEditorPainter(this, this.getTextPane()));
+			textEditorPanel.add(new InfoPanel(), BorderLayout.SOUTH);
 
 		} catch (BadLocationException e) {
 			e.printStackTrace();
@@ -65,7 +63,7 @@ public class TextEditorController {
 			setFont(font);
 			textEditorPanel.setup();
 			configurePanel();
-			this.tep = new TextEditorPainter(this, this.getTextPane());
+			this.tePainter = new TextEditorPainter(this, this.getTextPane());
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
@@ -78,12 +76,18 @@ public class TextEditorController {
 		getTextPane().addFocusListener(listener);
 		getTextPane().addCaretListener(listener);
 
+		infoPanel = new InfoPanel();
+		textEditorPanel.add(infoPanel, BorderLayout.SOUTH);
 	}
 
 	public void repaintTextEditor() {
 		int[] highlightArgs = getHighLightArgs();
-
-		tep.resetHighlight(highlightArgs[0], highlightArgs[1]);
+		try {
+			infoPanel.setCaretInfo((getCaretColumn() + 1), getCaretPosition() + 1);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
+		tePainter.resetHighlight(highlightArgs[0], highlightArgs[1]);
 	}
 
 	public int[] getHighLightArgs() {
@@ -116,7 +120,7 @@ public class TextEditorController {
 		int closeIndex = searchForCloseParentheses(textEditorPanel.getTextPane().getCaretPosition());
 
 
-		tep.resetHighlight(openIndex, closeIndex);
+		tePainter.resetHighlight(openIndex, closeIndex);
 	}
 
 	private int checkForOpenParentheses(int startPosition) {
@@ -230,15 +234,6 @@ public class TextEditorController {
 
 	private int getCaretPosition() {
 		return getTextPane().getCaretPosition();
-	}
-
-	private String getInfoString() {
-		try {
-			return "Col: " + String.format("%03d", (getCaretColumn() + 1)) + " Char: " + String.format("%4d", getCaretPosition() + 1);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-			return 	"Col: " + String.format("%03d", 0) + " Char: " + String.format("%4d", 0);
-		}
 	}
 
 	public BINavController getParentController() {
