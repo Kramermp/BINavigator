@@ -39,7 +39,7 @@ public class TextEditorListener implements KeyListener, MouseMotionListener, Mou
 
 	@Override
 	public void mousePressed(MouseEvent mouseEvent) {
-		controller.caretMoved();
+
 	}
 
 	@Override

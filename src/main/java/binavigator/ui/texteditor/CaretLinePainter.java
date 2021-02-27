@@ -100,9 +100,11 @@ public class CaretLinePainter implements Highlighter.HighlightPainter {
 
 			//  Remove the highlighting from the previously highlighted line
 
+			System.out.println(currentView.width);
 			if (lastView.y != currentView.y)
 			{
 				component.repaint(0, lastView.y, component.getWidth(), lastView.height);
+				component.repaint(0, currentView.y, component.getWidth(), currentView.height);
 				lastView = currentView;
 			}
 		}
