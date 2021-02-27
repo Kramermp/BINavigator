@@ -15,7 +15,7 @@ public class CharacterCountPainter implements Highlighter.HighlightPainter {
 
 	private Rectangle line = new Rectangle();
 
-	private Color hilightColor = Color.RED;
+	private Color characterLineColor = Color.RED;
 
 	public CharacterCountPainter(TextEditorController controller) {
 		this.controller = controller;
@@ -52,8 +52,30 @@ public class CharacterCountPainter implements Highlighter.HighlightPainter {
 
 	@Override
 	public void paint(Graphics g, int i, int i1, Shape shape, JTextComponent jTextComponent) {
-		g.setColor(hilightColor);
+		g.setColor(characterLineColor);
 
+		g.fillRect(line.x, line.y, line.width, line.height);
+	}
+
+	public void refreshCharacterCountLine() {
+		controller.getTextPane().paintImmediately(line);
+	}
+
+	public void fillCharacterCountLineShape(Graphics g) {
+		//Paint Character Line
+		//Update Character Count line
+		FontMetrics fm = controller.getTextPane()
+				.getGraphics()
+				.getFontMetrics(
+						controller.getFont());
+		int characterWidth = fm.stringWidth(" ");
+		int maxCharacterWidth = characterWidth * lineCount;
+
+		line.x = maxCharacterWidth;
+		line.width = 3;
+		line.y = 0;
+		line.height = controller.getTextPane().getHeight();
+		g.setColor(characterLineColor);
 		g.fillRect(line.x, line.y, line.width, line.height);
 	}
 }

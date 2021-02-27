@@ -24,8 +24,8 @@ public class TextEditorController {
 	private InfoPanel infoPanel;
 	private ParenthesesPainter parenthesesPainter;
 	private TextLineNumber textLineNumber;
-//	private LinePainter linePainter;
-	private CharacterCountPainter ccp;
+//	private CaretLinePainter linePainter;
+//	private CharacterCountPainter ccp;
 	private TextEditorPainter tep;
 
 	//Font Settings
@@ -74,7 +74,7 @@ public class TextEditorController {
 //		configureParenthesesPainter();
 //		configureTextLineNumbers();
 //		configureInfoPanel();
-//		linePainter = new LinePainter(textEditorPanel.getTextPane(), textEditorPanel.getBackground());
+//		linePainter = new CaretLinePainter(textEditorPanel.getTextPane(), textEditorPanel.getBackground());
 
 		TextEditorListener listener = new TextEditorListener(this);
 		getTextPane().addKeyListener(listener);
@@ -166,7 +166,7 @@ public class TextEditorController {
 		int openIndex  = searchForOpenParentheses(textEditorPanel.getTextPane().getCaretPosition());
 		int closeIndex = searchForCloseParentheses(textEditorPanel.getTextPane().getCaretPosition());
 
-		parenthesesPainter.resetHighlight(openIndex, closeIndex);
+//		parenthesesPainter.resetHighlight(openIndex, closeIndex);
 	}
 
 	private int checkForOpenParentheses(int startPosition) {

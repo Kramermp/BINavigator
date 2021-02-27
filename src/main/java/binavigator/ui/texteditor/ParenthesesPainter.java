@@ -61,7 +61,7 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 	}
 
 
-	public void updateCharacterShape(JTextComponent component, int beginIndex, int endIndex) throws BadLocationException {
+	public void updateShape(int beginIndex, int endIndex) throws BadLocationException {
 		System.out.println("Updating Character Shape;");
 		lastShape = currentShapes;
 		if(beginIndex  == endIndex || beginIndex < 0 || endIndex < 0) {
@@ -177,6 +177,7 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 		}
 
 		return charPosition;
+
 	}
 
 	private FontMetrics getFontMetric(JTextComponent textComponent) {
@@ -198,104 +199,64 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 
 	}
 
-		/*
-		 *   Caret position has changed, remove the highlight
-		 */
-		public void resetHighlight(final int startIndex, final int endIndex)
-		{
-			//  Use invokeLater to make sure updates to the Document are completed,
-			//  otherwise Undo processing causes the modelToView method to loop.
-
-			SwingUtilities.invokeLater(new Runnable()
-			{
-				public void run()
-				{
-
-
-				}
-			});
-
-			System.out.println("Reseting Highlight");
-
-			try {
-				updateCharacterShape(component, startIndex, endIndex);
-			} catch (BadLocationException e) {
-				e.printStackTrace();
-			}
-
-			for(int i = 0; i < currentShapes.length; i++) {
-				if(currentShapes[i] != null) {
-					component.paintImmediately(currentShapes[i]);
-				} else {
-					System.out.println(i + " was null");
-				}
-
-			}
-			for(int i = 0; i < lastShape.length; i++) {
-				component.paintImmediately(lastShape[i]);
-			}
-
-			lastShape = currentShapes;
+	private boolean checkForOpenParentheses(JTextComponent c) {
+		int caretPosition = c.getCaretPosition();
+		if(caretPosition == 0) {
+			caretPosition = 1;
 		}
 
-		private boolean checkForOpenParentheses(JTextComponent c) {
-			int caretPosition = c.getCaretPosition();
-			if(caretPosition == 0) {
-				caretPosition = 1;
-			}
-
-			//If is in the array we check it
-			if(!(caretPosition >= c.getText().length() || caretPosition < 0))  {
-				if(c.getText().charAt(caretPosition) == '(') {
-					return true;
-				}
-			}
-
-			if(!(caretPosition - 1 < 0 || caretPosition - 1 >= c.getText().length())) {
-				if(c.getText().charAt(caretPosition - 1) == '(') {
-					return true;
-				}
-			}
-
-			return false;
-
-		}
-
-		private boolean checkForCloseParenthese(JTextComponent c) {
-			int caretPosition = c.getCaretPosition();
-			if(caretPosition == 0) {
-				caretPosition = 1;
-			}
-
-			//If is in the array we check it
-			if(!(caretPosition >= c.getText().length() || caretPosition < 0))  {
-				if(c.getText().charAt(caretPosition) == ')') {
-					return true;
-				}
-			}
-
-			if(!(caretPosition - 1 < 0 || caretPosition - 1 >= c.getText().length())) {
-				if(c.getText().charAt(caretPosition - 1) == ')') {
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		public void setAlpha(int alpha) {
-			this.alpha = alpha;
-			hilightColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
-		}
-
-		public void setColor(Color color) {
-			this.color = color;
-			if(alpha == 0){
-				this.hilightColor = hilightColor;
-			} else {
-				this.hilightColor = new Color(color.getRed(), color.getBlue(), color.getGreen(), alpha);
+		//If is in the array we check it
+		if(!(caretPosition >= c.getText().length() || caretPosition < 0))  {
+			if(c.getText().charAt(caretPosition) == '(') {
+				return true;
 			}
 		}
+
+		if(!(caretPosition - 1 < 0 || caretPosition - 1 >= c.getText().length())) {
+			if(c.getText().charAt(caretPosition - 1) == '(') {
+				return true;
+			}
+		}
+
+		return false;
+
+	}
+
+	private boolean checkForCloseParenthese(JTextComponent c) {
+		int caretPosition = c.getCaretPosition();
+		if(caretPosition == 0) {
+			caretPosition = 1;
+		}
+
+		//If is in the array we check it
+		if(!(caretPosition >= c.getText().length() || caretPosition < 0))  {
+			if(c.getText().charAt(caretPosition) == ')') {
+				return true;
+			}
+		}
+
+		if(!(caretPosition - 1 < 0 || caretPosition - 1 >= c.getText().length())) {
+			if(c.getText().charAt(caretPosition - 1) == ')') {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public void setAlpha(int alpha) {
+		this.alpha = alpha;
+		hilightColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+		if(alpha == 0){
+			this.hilightColor = hilightColor;
+		} else {
+			this.hilightColor = new Color(color.getRed(), color.getBlue(), color.getGreen(), alpha);
+		}
+	}
 
 	public Rectangle[] getCharacterShape() {
 		return currentShapes;
@@ -309,5 +270,27 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 			this.lastShape = oldShapes;
 	}
 
+	public void fillParenthesesShape(Graphics g) {
+		//Paint Parentheses
+		g.setColor(hilightColor);
+		for(int i = 0; i < this.currentShapes.length; i++) {
+			if(currentShapes[i] != null)
+				g.fillRect(currentShapes[i].x, currentShapes[i].y, currentShapes[i].width, currentShapes[i].height);
+		}
 
+	}
+
+	public void refreshParenthesesShape() {
+		for(int i = 0; i < currentShapes.length; i++) {
+			if(currentShapes[i] != null) {
+				component.paintImmediately(currentShapes[i]);
+			} else {
+				System.out.println(i + " was null");
+			}
+
+		}
+		for(int i = 0; i < lastShape.length; i++) {
+			component.paintImmediately(lastShape[i]);
+		}
+	}
 }
