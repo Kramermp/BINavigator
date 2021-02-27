@@ -30,14 +30,13 @@ public class TextEditorPainter extends JComponent implements Highlighter.Highlig
 
 	private Rectangle line = new Rectangle();
 
-//	private Color color;
-
 	private Rectangle lastView;
 
 	public TextEditorPainter(TextEditorController textEditorController, JTextComponent component) {
 		this.component = component;
 		this.controller = textEditorController;
 		this.activeLineColor = component.getBackground().brighter();
+		this.pp = new ParenthesesPainter(textEditorController.getTextPane());
 
 		//  Add listeners so we know when to change highlighting
 
@@ -179,56 +178,9 @@ public class TextEditorPainter extends JComponent implements Highlighter.Highlig
 
 	public void paint(Graphics g, int p0, int p1, Shape bounds, JTextComponent c)
 	{
-
-
-		Rectangle rec = null;
-
-
-
-//		Graphics g = controller.getTextPane().getGraphics();
-//		controller.getTextPane().paintImmediately(line);
-
-		//Paint Active Line
-		try
-		{
-
-
-			Rectangle r = c.modelToView(c.getCaretPosition());
-			g.setColor(activeLineColor);
-			g.fillRect(0, r.y, c.getWidth(), r.height);
-
-			if (lastView == null)
-//				component.paintImmediately(lastView);
-				lastView = r;
-		}
-		catch(BadLocationException ble) {System.out.println(ble);}
-
-
-		//Paint Parentheses
-		g.setColor(hilightColor);
-		for(int i = 0; i < this.currentShapes.length; i++) {
-			if(currentShapes[i] != null)
-				g.fillRect(currentShapes[i].x, currentShapes[i].y, currentShapes[i].width, currentShapes[i].height);
-		}
-
-		//Paint Character Line
-		//Update Character Count line
-		FontMetrics fm = controller.getTextPane()
-				.getGraphics()
-				.getFontMetrics(
-						controller.getFont());
-		int characterWidth = fm.stringWidth(" ");
-		int maxCharacterWidth = characterWidth * lineCount;
-
-		line.x = maxCharacterWidth;
-		line.width = 3;
-		line.y = 0;
-		line.height = controller.getTextPane().getHeight();
-		g.setColor(characterLineColor);
-		g.fillRect(line.x, line.y, line.width, line.height);
-
-
-
+		fillActiveLineShaep(g);
+		fillParenthesesShape(g);
+		fillCharacterCountLineShape(g);
 	}
 
 	/*
@@ -245,44 +197,35 @@ public class TextEditorPainter extends JComponent implements Highlighter.Highlig
 			{
 
 				System.out.println("Reseting Highlight");
+				Graphics g = component.getGraphics();
+
 
 				//Painting Parentheses
-				try {
-					updateCharacterShape(component, startIndex, endIndex);
-				} catch (BadLocationException e) {
-					e.printStackTrace();
-				}
+				calculateParenthesesShape(startIndex, endIndex);
 
-				for(int i = 0; i < currentShapes.length; i++) {
-					if(currentShapes[i] != null) {
-						component.paintImmediately(currentShapes[i]);
-					} else {
-						System.out.println(i + " was null");
+				try
+				{
+					int offset =  component.getCaretPosition();
+					Rectangle currentView = component.modelToView(offset);
+
+					//  Remove the highlighting from the previously highlighted line
+
+					if (lastView.y != currentView.y)
+					{
+						component.repaint(0, lastView.y, component.getWidth(), lastView.height);
+						lastView = currentView;
 					}
+				}
+				catch(BadLocationException ble) {}
 
-				}
-				for(int i = 0; i < lastShape.length; i++) {
-					component.paintImmediately(lastShape[i]);
-				}
+//				refreshActiveLine();
+				refreshParenthesesShape();
+				refreshCharacterCountLine();
+
 
 				//Used to Paint Active Line
-				lastShape = currentShapes;
 
-				int offset =  component.getCaretPosition();
-				Rectangle currentView = null;
-				try {
-					currentView = component.modelToView(offset);
-				} catch (BadLocationException e) {
-					e.printStackTrace();
-				}
 
-				//  Remove the highlighting from the previously highlighted line
-
-				if (lastView.y != currentView.y)
-				{
-					component.repaint(0, lastView.y, component.getWidth(), lastView.height);
-					lastView = currentView;
-				}
 
 			}
 		});
@@ -290,54 +233,8 @@ public class TextEditorPainter extends JComponent implements Highlighter.Highlig
 
 	}
 
-	private boolean checkForOpenParentheses(JTextComponent c) {
-		int caretPosition = c.getCaretPosition();
-		if(caretPosition == 0) {
-			caretPosition = 1;
-		}
-
-		//If is in the array we check it
-		if(!(caretPosition >= c.getText().length() || caretPosition < 0))  {
-			if(c.getText().charAt(caretPosition) == '(') {
-				return true;
-			}
-		}
-
-		if(!(caretPosition - 1 < 0 || caretPosition - 1 >= c.getText().length())) {
-			if(c.getText().charAt(caretPosition - 1) == '(') {
-				return true;
-			}
-		}
-
-		return false;
-
-	}
-
-	private boolean checkForCloseParenthese(JTextComponent c) {
-		int caretPosition = c.getCaretPosition();
-		if(caretPosition == 0) {
-			caretPosition = 1;
-		}
-
-		//If is in the array we check it
-		if(!(caretPosition >= c.getText().length() || caretPosition < 0))  {
-			if(c.getText().charAt(caretPosition) == ')') {
-				return true;
-			}
-		}
-
-		if(!(caretPosition - 1 < 0 || caretPosition - 1 >= c.getText().length())) {
-			if(c.getText().charAt(caretPosition - 1) == ')') {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public void setAlpha(int alpha) {
-		this.alpha = alpha;
-		hilightColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
+	private void refreshCharacterCountLine() {
+		component.paintImmediately(line);
 	}
 
 	public void setColor(Color color) {
@@ -349,17 +246,85 @@ public class TextEditorPainter extends JComponent implements Highlighter.Highlig
 		}
 	}
 
-	public Rectangle[] getCharacterShape() {
-		return currentShapes;
+
+	public void fillParenthesesShape(Graphics g) {
+		//Paint Parentheses
+		g.setColor(hilightColor);
+		for(int i = 0; i < this.currentShapes.length; i++) {
+			if(currentShapes[i] != null)
+				g.fillRect(currentShapes[i].x, currentShapes[i].y, currentShapes[i].width, currentShapes[i].height);
+		}
+
 	}
 
-	public Rectangle[] getOldShapes() {
-		return this.lastShape;
+	public void fillCharacterCountLineShape(Graphics g) {
+		//Paint Character Line
+		//Update Character Count line
+		FontMetrics fm = controller.getTextPane()
+				.getGraphics()
+				.getFontMetrics(
+						controller.getFont());
+		int characterWidth = fm.stringWidth(" ");
+		int maxCharacterWidth = characterWidth * lineCount;
+
+		line.x = maxCharacterWidth;
+		line.width = 3;
+		line.y = 0;
+		line.height = controller.getTextPane().getHeight();
+		g.setColor(characterLineColor);
+		g.fillRect(line.x, line.y, line.width, line.height);
 	}
 
-	public void setLastShape(Rectangle[] oldShapes) {
-		this.lastShape = oldShapes;
+	public void fillActiveLineShaep(Graphics g) {
+		try
+		{
+			Rectangle r = component.modelToView(component.getCaretPosition());
+			g.setColor( color );
+			g.fillRect(component.getMargin().left, r.y, component.getWidth(), r.height);
+
+			if (lastView == null)
+				lastView = r;
+		}
+		catch(BadLocationException ble) {System.out.println(ble);}
 	}
 
+	public void calculateParenthesesShape(int startIndex, int endIndex) {
+		try {
+			updateCharacterShape(component, startIndex, endIndex);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void refreshParenthesesShape() {
+		for(int i = 0; i < currentShapes.length; i++) {
+			if(currentShapes[i] != null) {
+				component.paintImmediately(currentShapes[i]);
+			} else {
+				System.out.println(i + " was null");
+			}
+
+		}
+		for(int i = 0; i < lastShape.length; i++) {
+			component.paintImmediately(lastShape[i]);
+		}
+	}
+
+	public void refreshActiveLine() {
+		try
+		{
+			int offset =  component.getCaretPosition();
+			Rectangle currentView = component.modelToView(offset);
+
+			//  Remove the highlighting from the previously highlighted line
+
+			if (lastView.y != currentView.y)
+			{
+				component.repaint(0, lastView.y, component.getWidth(), lastView.height);
+				lastView = currentView;
+			}
+		}
+		catch(BadLocationException ble) {}
+	}
 
 }
