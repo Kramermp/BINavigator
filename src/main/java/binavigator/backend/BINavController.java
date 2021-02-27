@@ -41,11 +41,6 @@ public class BINavController {
 		System.out.println(textEditorController.getTextPane().getFontMetrics(textEditorController.getFont()).stringWidth(" "));
 
 	}
-
-	public void initializeUI() {
-		textEditorController.initializeUI();
-	}
-
 	public void exitSafely() {
 		System.exit(0);
 	}
@@ -122,4 +117,7 @@ public class BINavController {
 		textEditorController.setTextColorTheme(textColorTheme);
 	}
 
+	public void setTabSize(int tabSize) {
+		textEditorController.setTabSize(tabSize);
+	}
 }

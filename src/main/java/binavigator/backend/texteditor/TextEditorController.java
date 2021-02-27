@@ -36,6 +36,7 @@ public class TextEditorController {
 	private boolean textLineNumbersEnabled = true;
 	private boolean parenthesesPainterEnabled = true;
 	private boolean infoPanelEnabled = true;
+	private int tabSize = 4;
 
 	//* Simple Text Editor Controller
 	public TextEditorController() {
@@ -264,6 +265,10 @@ public class TextEditorController {
 		return new JTextPane(getSqlStyledDocument());
 	}
 
+	public int  getTabSize() {
+		return tabSize;
+	}
+
 	// ** SETTERS **
 	public void setTextColorTheme(String textColorTheme) {
 		switch (textColorTheme.toUpperCase()) {
@@ -296,5 +301,10 @@ public class TextEditorController {
 	@SuppressWarnings("unused")
 	public void setInfoPanelEnabled(boolean state) {
 		infoPanelEnabled = state;
+	}
+
+	public void setTabSize(int newTabSize) {
+		this.tabSize = newTabSize;
+		textEditorPanel.setTabSize(newTabSize);
 	}
 }

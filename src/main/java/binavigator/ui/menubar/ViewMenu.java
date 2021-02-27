@@ -25,6 +25,7 @@ public class ViewMenu extends JMenu {
 		this.setMnemonic(KeyEvent.VK_V);
 
 		buildThemeSelector();
+		buildTabMenu();
 	}
 
 	public void buildThemeSelector() {
@@ -77,6 +78,42 @@ public class ViewMenu extends JMenu {
 		});
 
 		textThemeBtn.add(textBtn2);
+	}
+
+	private void buildTabMenu() {
+		JMenu tabSizeBtn = new JMenu("Tab Size");
+
+		JMenuItem twoSpaceBtn = new JMenuItem(("2 Spaces"));
+		twoSpaceBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				parentController.setTabSize(2);
+			}
+		});
+
+		JMenuItem fourSpaceBtn = new JMenuItem(("4 Spaces"));
+		fourSpaceBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				parentController.setTabSize(4);
+			}
+		});
+
+
+
+		JMenuItem eightSpaceBtn = new JMenuItem(("8 Spaces"));
+		eightSpaceBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				parentController.setTabSize(8);
+			}
+		});
+
+		tabSizeBtn.add(twoSpaceBtn);
+		tabSizeBtn.add(fourSpaceBtn);
+		tabSizeBtn.add(eightSpaceBtn);
+
+		this.add(tabSizeBtn);
 	}
 
 

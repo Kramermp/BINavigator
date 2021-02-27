@@ -58,6 +58,7 @@ public class TextEditorPanel extends JPanel {
 		TabStop[] test = new TabStop[50];
 		int spaceWidth  = getFontMetrics((getFont())).stringWidth(" ");
 		int charWidth  = getFontMetrics(getFont()).stringWidth("T");
+		SqlStyledDocument doc = (SqlStyledDocument) textPane.getDocument();
 
 		for(int i = 0; i < 50; i++) {
 			System.out.println("Space" + spaceWidth);
@@ -67,7 +68,8 @@ public class TextEditorPanel extends JPanel {
 		}
 		TabSet tabs = new TabSet( test );
 		AttributeSet paraSet = sc.addAttribute(sc.getEmptySet(), StyleConstants.TabSet, tabs);
-		textPane.setParagraphAttributes(paraSet, false);
+
+		doc.setParagraphAttributes(0, textPane.getText().length(), paraSet, false);
 	}
 
 	public void repaintDocument() {
