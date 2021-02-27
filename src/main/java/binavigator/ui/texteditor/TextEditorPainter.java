@@ -57,8 +57,9 @@ public class TextEditorPainter extends JComponent implements Highlighter.Highlig
 
 	public void paint(Graphics g, int p0, int p1, Shape bounds, JTextComponent c)
 	{
-		clp.fillActiveLineShape(g);
+		clp.fillActiveLineShape(g, pp.getCharacterShape());
 		pp.fillParenthesesShape(g);
+
 		if(controller.getCharacterCountLineEnabled()) {
 			ccp.fillCharacterCountLineShape(g);
 		}
@@ -86,6 +87,8 @@ public class TextEditorPainter extends JComponent implements Highlighter.Highlig
 
 				clp.refreshActiveLine();
 				pp.refreshParenthesesShape();
+
+
 				if(controller.getCharacterCountLineEnabled()) {
 					ccp.refreshCharacterCountLine();
 				} else {

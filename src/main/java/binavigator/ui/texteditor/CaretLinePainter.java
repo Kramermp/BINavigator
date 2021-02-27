@@ -4,6 +4,7 @@ import binavigator.backend.texteditor.TextEditorController;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Area;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
@@ -19,6 +20,8 @@ public class CaretLinePainter implements Highlighter.HighlightPainter {
 	private Color color;
 
 	private Rectangle lastView;
+
+	private Rectangle currentView;
 
 	/*
 	 *  The line color will be calculated automatically by attempting
@@ -95,14 +98,24 @@ public class CaretLinePainter implements Highlighter.HighlightPainter {
 		catch(BadLocationException ble) {}
 	}
 
-	public void fillActiveLineShape(Graphics g) {
+	public void fillActiveLineShape(Graphics g, Rectangle[] characterShape) {
 		try {
-			Rectangle r = component.modelToView(component.getCaretPosition());
+			currentView = component.modelToView(component.getCaretPosition());
+			currentView.x = component.getMargin().left;
+			currentView.width = component.getWidth();
+
 			g.setColor( color );
-			g.fillRect(component.getMargin().left, r.y, component.getWidth(), r.height);
+
+			Area area = new Area(currentView);
+			for(int i = 0; i < characterShape.length; i++) {
+				area.subtract(new Area(characterShape[i]));
+			}
+
+			currentView = area.getBounds();
+			g.fillRect(currentView.x, currentView.y, currentView.width, currentView.height);
 
 			if (lastView == null)
-				lastView = r;
+				lastView = currentView;
 		}
 		catch(BadLocationException ble) {System.out.println(ble);}
 	}
