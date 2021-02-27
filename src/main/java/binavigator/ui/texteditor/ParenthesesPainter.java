@@ -99,62 +99,72 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 	}
 
 	private Rectangle[] calculateMultiLineShape(JTextComponent component, int beginIndex, int endIndex, int lineCount) throws BadLocationException {
-		Rectangle[] recs = new Rectangle[lineCount];
+		Rectangle[] recs = new Rectangle[0];
 		FontMetrics fm = getFontMetric(component);
+		String[] lines = (component.getText().substring(0, beginIndex).split("\n", -1));
+		int lineOffset = lines.length - 1 ;
 
 		if(lineCount == 0) {
 			return new Rectangle[]{};
-		} else if (lineCount == 1) {
+		} if (lineCount == 1) {
 			return new Rectangle[] {calculateLineShape(component, beginIndex, endIndex)};
-		} else {
-			System.out.println("Lines: " + lineCount);
-			String[] lines = (component.getText().substring(0, beginIndex).split("\n", -1));
-			int lineOffset = lines.length - 1 ;
+		} else if (lineCount == 2) {
+			recs = new Rectangle[2];
+			getFirstLineShape(recs, beginIndex, lineOffset, fm);
+			getLastLineShape(recs, endIndex, lineOffset, lineCount, fm);
+		} else if (lineCount > 3)  {
+			recs = new Rectangle[3];
 
-			// First And Last Line have to Be handled specially
-			recs[0] = new Rectangle();
-			String firstLine = component.getText().substring(Utilities.getRowStart(component, beginIndex), beginIndex);
-			int firstLineCharCount = 0;
-			if(firstLine.contains("\t")) {
-				firstLineCharCount = charCountWithTabs(firstLine);
-			} else {
-				firstLineCharCount = firstLine.length();
-			}
-			recs[0].x = component.getMargin().left + (fm.stringWidth(" ") * firstLineCharCount);
-			recs[0].width = component.getWidth();
-
-			recs[0].y = component.getMargin().top + (lineOffset * fm.getHeight());
-			recs[0].height = fm.getHeight();
-
-			//TODO: This is poorly designed should just make one large rectangle
-			for(int i = 1; i < recs.length - 1; i++) {
-				recs[i] = new Rectangle();
-				recs[i].x = component.getMargin().left;
-				recs[i].width = component.getWidth();
-
-				recs[i].y = component.getMargin().top + ((lineOffset + i) * fm.getHeight());
-				recs[i].height = fm.getHeight();
-			}
-
-			recs[recs.length - 1] = new Rectangle();
-
-			String lastLine = component.getText().substring(Utilities.getRowStart(component, endIndex), endIndex + 1 );
-			recs[recs.length - 1].x = component.getMargin().left;
-
-			int charCount = 0;
-			if(lastLine.contains("\t")) {
-				charCount = charCountWithTabs(lastLine);
-			} else {
-				charCount=lastLine.length();
-			}
-
-			recs[recs.length - 1].width = fm.stringWidth(" " ) * charCount;
-
-			recs[recs.length - 1].y = component.getMargin().top + ((lineOffset + recs.length - 1) * fm.getHeight());
-			recs[recs.length - 1].height = fm.getHeight();
+			getFirstLineShape(recs, beginIndex, lineOffset, fm);
+			getBodyShape(recs, beginIndex, lineOffset, lineCount, fm);
+			getLastLineShape(recs, endIndex, lineOffset, lineCount, fm);
 		}
 
 		return recs;
+	}
+
+	private void getLastLineShape(Rectangle[] recs, int endIndex, int lineOffset, int lineCount, FontMetrics fm) throws BadLocationException {
+		recs[recs.length - 1] = new Rectangle();
+
+		String lastLine = component.getText().substring(Utilities.getRowStart(component, endIndex), endIndex + 1 );
+		recs[recs.length - 1].x = component.getMargin().left;
+
+		int charCount = 0;
+		if(lastLine.contains("\t")) {
+			charCount = charCountWithTabs(lastLine);
+		} else {
+			charCount=lastLine.length();
+		}
+
+		recs[recs.length - 1].width = fm.stringWidth(" " ) * charCount;
+
+		recs[recs.length - 1].y = component.getMargin().top + ((lineOffset + lineCount - 1) * fm.getHeight());
+		recs[recs.length - 1].height = fm.getHeight();
+	}
+
+	private void getFirstLineShape(Rectangle[] recs, int beginIndex, int lineOffset, FontMetrics fm) throws BadLocationException {
+		// First And Last Line have to Be handled specially
+		recs[0] = new Rectangle();
+		String firstLine = component.getText().substring(Utilities.getRowStart(component, beginIndex), beginIndex);
+		int firstLineCharCount = 0;
+		if(firstLine.contains("\t")) {
+			firstLineCharCount = charCountWithTabs(firstLine);
+		} else {
+			firstLineCharCount = firstLine.length();
+		}
+		recs[0].x = component.getMargin().left + (fm.stringWidth(" ") * firstLineCharCount);
+		recs[0].width = component.getWidth();
+
+		recs[0].y = component.getMargin().top + (lineOffset * fm.getHeight());
+		recs[0].height = fm.getHeight();
+	}
+
+	private void getBodyShape(Rectangle[] recs, int beginIndex, int lineOffset, int lineCount, FontMetrics fm) {
+		recs[1] = new Rectangle();
+		recs[1].x = component.getMargin().left;
+		recs[1].width = component.getWidth();
+		recs[1].y = component.getMargin().top + ((lineOffset + 1) * fm.getHeight());
+		recs[1].height = fm.getHeight() * (lineCount - 2); // minus 2 because last line is minus 1
 	}
 
 	public int charCountWithTabs(String lastLine) {
