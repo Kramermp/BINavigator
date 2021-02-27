@@ -80,16 +80,7 @@ public class CaretLinePainter implements Highlighter.HighlightPainter {
 
 	public void paint(Graphics g, int p0, int p1, Shape bounds, JTextComponent c)
 	{
-		try
-		{
-			Rectangle r = c.modelToView(c.getCaretPosition());
-			g.setColor( color );
-			g.fillRect(0, r.y, c.getWidth(), r.height);
 
-			if (lastView == null)
-				lastView = r;
-		}
-		catch(BadLocationException ble) {System.out.println(ble);}
 	}
 
 	public void refreshActiveLine() {
