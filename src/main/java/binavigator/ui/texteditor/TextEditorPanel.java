@@ -46,7 +46,8 @@ public class TextEditorPanel extends JPanel {
 
 	public void setup() {
 		buildTabs();
-		textPane.setText("SELECT\nTestTable.TestColumn1,\nTestTable.TestColumn2\nFROM\nTestTable\nWhere\nTestColumn2 = \"test\"");
+		textPane.setText("SELECT\nTestTable.TestColumn1, --Sample Comment Goes Here\nTestTable.TestColumn2\nFROM\n" +
+				"TestTable\nWhere\nTestColumn2 = \'test\'\nAND TestTable1.Column2 = -1234 /*This\nis a sample block comment.\n*/\nAND Table2 = 'test'");
 
 		jScrollPane.setRowHeaderView(new TextLineNumber(getTextPane(), controller));
 
