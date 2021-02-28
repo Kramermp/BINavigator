@@ -43,7 +43,8 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 		SegmentType type = SegmentType.TEXT;
 //		StringBuilder sb = new StringBuilder();
 
-		int i = lineStart;
+		int i = 0;
+//		int i = lineStart;
 //		ArrayList<Character> charList = new ArrayList<Character>();
 //		charList.add('e');
 
@@ -70,16 +71,16 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 				i += charBuffer.length - 1; //-1 because of the backwards includes of open '-'
 				segmentStart = i + 1;
 				charBuffer = emptyArray;
-			} else //if(searchArray[i] == '*' && i!= 0 && searchArray[i - 1] == '/') {
-//				processSegment(charBuffer, segmentStart);
-//				segmentStart = i - 1;
-//				charBuffer = emptyArray;
-//				charBuffer = findBlockCommentEnd(searchArray, charBuffer, i - 1);
-//				paintSegment(segmentStart, segmentStart + charBuffer.length, SegmentType.COMMENT);
-//				i += charBuffer.length;
-//				segmentStart = i + 1;
-//				charBuffer = emptyArray;
-//			} else
+			} else if(searchArray[i] == '*' && i!= 0 && searchArray[i - 1] == '/') {
+				processSegment(charBuffer, segmentStart);
+				segmentStart = i - 1;
+				charBuffer = emptyArray;
+				charBuffer = findBlockCommentEnd(searchArray, charBuffer, i - 1);
+				paintSegment(segmentStart, segmentStart + charBuffer.length, SegmentType.COMMENT);
+				i += charBuffer.length;
+				segmentStart = i + 1;
+				charBuffer = emptyArray;
+			} else
 				if(searchArray[i] == ' ' || searchArray[i] == '\n') {
 				processSegment(charBuffer, segmentStart);
 				charBuffer = emptyArray;
@@ -88,6 +89,11 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 				charBuffer = addCharToBuffer(charBuffer, searchArray[i]);
 			}
 		}
+
+		if(charBuffer != emptyArray) {
+			processSegment(charBuffer, segmentStart);
+		}
+
 //		System.out.println("Checking Last Segment");
 //		processSegment(searchArray, segmentStart, (searchArray.length - 1));
 
