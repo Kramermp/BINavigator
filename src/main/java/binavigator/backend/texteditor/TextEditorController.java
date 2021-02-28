@@ -110,7 +110,7 @@ public class TextEditorController {
 				openIndex = searchForOpenParentheses(closeIndex);
 			}
 
-//		System.out.println("Open: " + openIndex + " Close: " + closeIndex);
+		System.out.println("Open: " + openIndex + " Close: " + closeIndex);
 
 		return new int[]{openIndex, closeIndex};
 	}
@@ -159,20 +159,29 @@ public class TextEditorController {
 	}
 
 	private int searchForOpenParentheses(int startIndex) {
+		System.out.println("Searching for OpenParentheses");
+		long startTime = System.nanoTime();
 		int countNeeded = 1;
 		int i;
 
 		i = startIndex;
+
+		char[] searchArray = getTextPane().getText().toCharArray();
+
 		while(i > 0 && countNeeded > 0) {
 			i--;
-			if(getTextPane().getText().charAt(i) == ')') {
-				countNeeded++;
-			} else if (getTextPane().getText().charAt(i) == '(') {
+			if(searchArray[i] == '(') {
 				countNeeded--;
+			} else if (searchArray[i] == ')') {
+				countNeeded++;
+			}
+
+			if (countNeeded == 0) {
+				return i;
 			}
 		}
 
-		return i;
+		return 0;
 	}
 
 	private int searchForCloseParentheses(int startIndex) {
@@ -180,13 +189,20 @@ public class TextEditorController {
 		int i = startIndex;
 		int lastIndex = getTextPane().getText().length() - 1;
 
-		while(i < lastIndex && countNeeded > 0) {
-			i++;
-			if(getTextPane().getText().charAt(i) == '(') {
-				countNeeded++;
-			} else if (getTextPane().getText().charAt(i) == ')') {
+		char[] searchArray = getTextPane().getText().toCharArray();
+
+		while(i < searchArray.length && countNeeded > 0) {
+
+			if(searchArray[i] == ')') {
 				countNeeded--;
+			} else if (searchArray[i] == '(') {
+				countNeeded++;
 			}
+
+			if (countNeeded == 0) {
+				return i;
+			}
+			i++;
 		}
 
 		return i;

@@ -73,10 +73,8 @@ public class TextEditorPainter extends JComponent implements Highlighter.Highlig
 		//  Use invokeLater to make sure updates to the Document are completed,
 		//  otherwise Undo processing causes the modelToView method to loop.
 
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
+		Thread test  = new Thread(){
+			public void run() {
 
 				//Painting Parentheses
 				try {
@@ -95,7 +93,10 @@ public class TextEditorPainter extends JComponent implements Highlighter.Highlig
 					ccp.repaint();
 				}
 			}
-		});
+		};
+
+		test.run();
+
 	}
 
 	public void setColor(Color color) {

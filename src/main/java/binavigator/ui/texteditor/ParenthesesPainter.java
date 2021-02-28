@@ -60,10 +60,19 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 		if(beginIndex  == endIndex || beginIndex < 0 || endIndex < 0) {
 			currentShapes = new Rectangle[] {new Rectangle()};
 		} else {
-			String[] lines = component.getText().substring(beginIndex, endIndex).split("\n", - 1);
+
+			char[] lines = component.getText(beginIndex, endIndex - beginIndex).toCharArray();
+
+			int lineCount = 1;
+			for(int i  = 0; i < lines.length; i++) {
+				if(lines[i] == '\n') {
+					lineCount++;
+				}
+			}
+
 			System.out.println("Get from character " + beginIndex + " - " + endIndex);
 
-			switch (lines.length) {
+			switch (lineCount) {
 				case 0:
 					currentShapes = new Rectangle[] {};
 					return;
@@ -71,7 +80,7 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 					currentShapes =  new Rectangle[]{calculateLineShape(component, beginIndex, endIndex)};
 					return;
 				default:
-					currentShapes = calculateMultiLineShape(component, beginIndex, endIndex, lines.length);
+					currentShapes = calculateMultiLineShape(component, beginIndex, endIndex, lineCount);
 			}
 		}
 	}
@@ -112,7 +121,7 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 			recs = new Rectangle[2];
 			getFirstLineShape(recs, beginIndex, lineOffset, fm);
 			getLastLineShape(recs, endIndex, lineOffset, lineCount, fm);
-		} else if (lineCount > 3)  {
+		} else if (lineCount >= 3)  {
 			recs = new Rectangle[3];
 
 			getFirstLineShape(recs, beginIndex, lineOffset, fm);
@@ -120,26 +129,8 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 			getLastLineShape(recs, endIndex, lineOffset, lineCount, fm);
 		}
 
+
 		return recs;
-	}
-
-	private void getLastLineShape(Rectangle[] recs, int endIndex, int lineOffset, int lineCount, FontMetrics fm) throws BadLocationException {
-		recs[recs.length - 1] = new Rectangle();
-
-		String lastLine = component.getText().substring(Utilities.getRowStart(component, endIndex), endIndex + 1 );
-		recs[recs.length - 1].x = component.getMargin().left;
-
-		int charCount = 0;
-		if(lastLine.contains("\t")) {
-			charCount = charCountWithTabs(lastLine);
-		} else {
-			charCount=lastLine.length();
-		}
-
-		recs[recs.length - 1].width = fm.stringWidth(" " ) * charCount;
-
-		recs[recs.length - 1].y = component.getMargin().top + ((lineOffset + lineCount - 1) * fm.getHeight());
-		recs[recs.length - 1].height = fm.getHeight();
 	}
 
 	private void getFirstLineShape(Rectangle[] recs, int beginIndex, int lineOffset, FontMetrics fm) throws BadLocationException {
@@ -165,6 +156,33 @@ public class ParenthesesPainter implements Highlighter.HighlightPainter {
 		recs[1].width = component.getWidth();
 		recs[1].y = component.getMargin().top + ((lineOffset + 1) * fm.getHeight());
 		recs[1].height = fm.getHeight() * (lineCount - 2); // minus 2 because last line is minus 1
+	}
+
+	private void getLastLineShape(Rectangle[] recs, int endIndex, int lineOffset, int lineCount, FontMetrics fm) throws BadLocationException {
+		recs[recs.length - 1] = new Rectangle();
+
+//		System.out.println("Row Start: " + Utilities.getRowStart(component, endIndex));
+//		System.out.println("End Index: " + endIndex);
+//
+//		System.out.println("Length: " + component.getDocument().getLength());
+
+		int rowStart = Utilities.getRowStart(component, endIndex);
+		String lastLine = component.getText(rowStart, endIndex - rowStart + 1);
+
+
+		recs[recs.length - 1].x = component.getMargin().left;
+
+		int charCount = 0;
+		if(lastLine.contains("\t")) {
+			charCount = charCountWithTabs(lastLine);
+		} else {
+			charCount=lastLine.length();
+		}
+
+		recs[recs.length - 1].width = fm.stringWidth(" " ) * charCount;
+
+		recs[recs.length - 1].y = component.getMargin().top + ((lineOffset + lineCount - 1) * fm.getHeight());
+		recs[recs.length - 1].height = fm.getHeight();
 	}
 
 	public int charCountWithTabs(String lastLine) {
