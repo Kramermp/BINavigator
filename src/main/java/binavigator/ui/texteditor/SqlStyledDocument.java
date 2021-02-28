@@ -71,17 +71,16 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 				i += charBuffer.length - 1; //-1 because of the backwards includes of open '-'
 				segmentStart = i + 1;
 				charBuffer = emptyArray;
-			} else if(searchArray[i] == '*' && i!= 0 && searchArray[i - 1] == '/') {
+			} else if(searchArray[i] == '/' && i!= searchArray.length && searchArray[i + 1] == '*') {
 				processSegment(charBuffer, segmentStart);
-				segmentStart = i - 1;
+				segmentStart = i;
 				charBuffer = emptyArray;
-				charBuffer = findBlockCommentEnd(searchArray, charBuffer, i - 1);
+				charBuffer = findBlockCommentEnd(searchArray, charBuffer, i);
 				paintSegment(segmentStart, segmentStart + charBuffer.length, SegmentType.COMMENT);
 				i += charBuffer.length;
 				segmentStart = i + 1;
 				charBuffer = emptyArray;
-			} else
-				if(searchArray[i] == ' ' || searchArray[i] == '\n') {
+			} else if(searchArray[i] == ' ' || searchArray[i] == '\n' || searchArray[i] == '\t') {
 				processSegment(charBuffer, segmentStart);
 				charBuffer = emptyArray;
 				segmentStart = i + 1;
@@ -115,7 +114,6 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 		long insertEndTime = System.currentTimeMillis();
 
 		System.out.println("Insert Completed in " + ((insertEndTime - insertStartTime) / 1000) + "s");
-
 	}
 
 	private char[] findLineCommentEnd(char[] searchArray, char[] charBuffer, int startIndex) {
@@ -142,6 +140,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 			}
 		}
 
+//		System.out.println("Block Comment Detected to be:" + new String(charBuffer));
 		return charBuffer;
 	}
 
@@ -165,15 +164,16 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 		charBuffer =  addCharToBuffer(charBuffer, searchArray[startIndex]);
 
+
 		for(int i = startIndex + 1; i < searchArray.length; i++){
+			charBuffer = addCharToBuffer(charBuffer, searchArray[i]);
 			if(searchArray[i] == '\'' || searchArray[i] == '\n' || searchArray[i] == '\''){
 				break;
-			} else {
-				charBuffer = addCharToBuffer(charBuffer, searchArray[i]);
 			}
+
 		}
 
-//		System.out.println("Found String to be " + new String(charBuffer));
+		//System.out.println("Found String to be " + new String(charBuffer));
 		return charBuffer;
 	}
 
