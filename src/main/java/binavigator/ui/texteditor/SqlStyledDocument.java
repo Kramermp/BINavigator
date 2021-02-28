@@ -136,10 +136,9 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 		charBuffer =  addCharToBuffer(charBuffer, searchArray[startIndex]);
 
 		for(int i = startIndex + 1; i < searchArray.length; i++){
+			charBuffer = addCharToBuffer(charBuffer, searchArray[i]);
 			if(searchArray[i] == '/' && i != 0 && searchArray[i - 1] == '*'){
 				break;
-			} else {
-				charBuffer = addCharToBuffer(charBuffer, searchArray[i]);
 			}
 		}
 
