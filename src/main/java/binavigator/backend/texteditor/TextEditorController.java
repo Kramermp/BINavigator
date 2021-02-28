@@ -1,6 +1,7 @@
 package binavigator.backend.texteditor;
 
 import binavigator.backend.BINavController;
+import binavigator.backend.utils.CharArrayUtil;
 import binavigator.ui.colortheme.Monokai;
 import binavigator.ui.colortheme.RandomColorTheme;
 import binavigator.ui.colortheme.TextColorTheme;
@@ -91,9 +92,11 @@ public class TextEditorController {
 	}
 
 	public int[] getHighLightArgs() {
+
 		int openIndex = checkForOpenParentheses(getTextPane().getCaretPosition());
 		int closeIndex = checkForCloseParentheses(getTextPane().getCaretPosition());
 
+		char[] searchArray = textEditorPanel.getTextPane().getText().toCharArray();
 
 		if (openIndex >=0 && closeIndex >= 0 && openIndex < closeIndex) {
 //			System.out.println("On open and close");
@@ -103,11 +106,11 @@ public class TextEditorController {
 			//Do Nothing
 		} else if (openIndex >= 0 && openIndex > closeIndex){
 			System.out.println("On an Open Parentheses");
-			closeIndex = searchForCloseParentheses(openIndex);
+			closeIndex = CharArrayUtil.findCloseParentheses(openIndex, searchArray);
 		} else //noinspection ConstantConditions
 			if (closeIndex >= 0 && closeIndex > openIndex) {
 				System.out.println("On a Close Parentheses");
-				openIndex = searchForOpenParentheses(closeIndex);
+				openIndex = CharArrayUtil.findOpenParentheses(closeIndex, searchArray);
 			}
 
 		System.out.println("Open: " + openIndex + " Close: " + closeIndex);
@@ -116,8 +119,9 @@ public class TextEditorController {
 	}
 
 	public void findParentheses() {
-		int openIndex  = searchForOpenParentheses(textEditorPanel.getTextPane().getCaretPosition());
-		int closeIndex = searchForCloseParentheses(textEditorPanel.getTextPane().getCaretPosition());
+		char[] searchArray = textEditorPanel.getTextPane().getText().toCharArray();
+		int openIndex  = CharArrayUtil.findOpenParentheses(textEditorPanel.getTextPane().getCaretPosition(), searchArray);
+		int closeIndex = CharArrayUtil.findCloseParentheses(textEditorPanel.getTextPane().getCaretPosition(), searchArray);
 
 
 		tePainter.resetHighlight(openIndex, closeIndex);
@@ -157,58 +161,6 @@ public class TextEditorController {
 
 		return -1;
 	}
-
-	private int searchForOpenParentheses(int startIndex) {
-		System.out.println("Searching for OpenParentheses");
-		long startTime = System.nanoTime();
-		int countNeeded = 1;
-		int i;
-
-		i = startIndex;
-
-		char[] searchArray = getTextPane().getText().toCharArray();
-
-		while(i > 0 && countNeeded > 0) {
-			i--;
-			if(searchArray[i] == '(') {
-				countNeeded--;
-			} else if (searchArray[i] == ')') {
-				countNeeded++;
-			}
-
-			if (countNeeded == 0) {
-				return i;
-			}
-		}
-
-		return 0;
-	}
-
-	private int searchForCloseParentheses(int startIndex) {
-		int countNeeded = 1;
-		int i = startIndex;
-		int lastIndex = getTextPane().getText().length() - 1;
-
-		char[] searchArray = getTextPane().getText().toCharArray();
-
-		while(i < searchArray.length && countNeeded > 0) {
-
-			if(searchArray[i] == ')') {
-				countNeeded--;
-			} else if (searchArray[i] == '(') {
-				countNeeded++;
-			}
-
-			if (countNeeded == 0) {
-				return i;
-			}
-			i++;
-		}
-
-		return i;
-	}
-
-
 
 	public void highlightText() {
 		textEditorPanel.highlightText();

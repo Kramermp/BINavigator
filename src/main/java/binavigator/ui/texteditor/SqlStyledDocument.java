@@ -3,6 +3,7 @@ package binavigator.ui.texteditor;
 import binavigator.backend.BINavController;
 import binavigator.backend.sql.SqlHelper;
 import binavigator.backend.texteditor.TextEditorController;
+import binavigator.backend.utils.CharArrayUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -36,64 +37,11 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 		//System.out.println("Insert Completed in " + ((insertEndTime - insertStartTime) / 1000) + "s");
 	}
 
-	private char[] findLineCommentEnd(char[] searchArray, char[] charBuffer, int startIndex) {
-		charBuffer =  addCharToBuffer(charBuffer, searchArray[startIndex]);
-
-		for(int i = startIndex + 1; i < searchArray.length; i++){
-			if(searchArray[i] == '\n'){
-				break;
-			} else {
-				charBuffer = addCharToBuffer(charBuffer, searchArray[i]);
-			}
-		}
-
-		return charBuffer;
-	}
-
-	private char[] findBlockCommentEnd(char[] searchArray, char[] charBuffer, int startIndex) {
-		charBuffer =  addCharToBuffer(charBuffer, searchArray[startIndex]);
-
-		for(int i = startIndex + 1; i < searchArray.length; i++){
-			charBuffer = addCharToBuffer(charBuffer, searchArray[i]);
-			if(searchArray[i] == '/' && i != 0 && searchArray[i - 1] == '*'){
-				break;
-			}
-		}
-
-//		System.out.println("Block Comment Detected to be:" + new String(charBuffer));
-		return charBuffer;
-	}
-
 	private char[] addCharToBuffer(char[] buffer, char charToAdd) {
 		buffer = Arrays.copyOf(buffer, buffer.length + 1);
 
 		buffer[buffer.length - 1] = charToAdd;
 		return buffer;
-	}
-
-	private int findLineStart(char[] searchArray, int offset) {
-		for(int i = offset; i > 0; i--) {
-			if(searchArray[i] == '\n') {
-				return i;
-			}
-		}
-		return 0;
-	}
-
-	private char[] findStringEnd(char[] searchArray, char[] charBuffer, int startIndex) {
-
-		charBuffer =  addCharToBuffer(charBuffer, searchArray[startIndex]);
-
-		for(int i = startIndex + 1; i < searchArray.length; i++){
-			charBuffer = addCharToBuffer(charBuffer, searchArray[i]);
-			if(searchArray[i] == '\'' || searchArray[i] == '\n' || searchArray[i] == '\''){
-				break;
-			}
-
-		}
-
-		//System.out.println("Found String to be " + new String(charBuffer));
-		return charBuffer;
 	}
 
 	private void paintSegment(int start, int end, SegmentType type) {
@@ -165,7 +113,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 				processSegment(charBuffer, segmentStart);
 				segmentStart = i;
 				charBuffer = emptyArray;
-				charBuffer = findStringEnd(searchArray, charBuffer, i);
+				charBuffer = CharArrayUtil.findStringEnd(searchArray, charBuffer, i);
 				paintSegment(segmentStart, segmentStart + charBuffer.length, SegmentType.STRING);
 				i += charBuffer.length;
 				segmentStart = i + 1;
@@ -174,7 +122,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 				processSegment(charBuffer, segmentStart);
 				segmentStart = i - 1;
 				charBuffer = emptyArray;
-				charBuffer = findLineCommentEnd(searchArray, charBuffer, i - 1);
+				charBuffer = CharArrayUtil.findLineCommentEnd(searchArray, charBuffer, i - 1);
 				paintSegment(segmentStart, segmentStart + charBuffer.length, SegmentType.COMMENT);
 				i += charBuffer.length - 1; //-1 because of the backwards includes of open '-'
 				segmentStart = i + 1;
@@ -183,7 +131,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 				processSegment(charBuffer, segmentStart);
 				segmentStart = i;
 				charBuffer = emptyArray;
-				charBuffer = findBlockCommentEnd(searchArray, charBuffer, i);
+				charBuffer = CharArrayUtil.findBlockCommentEnd(searchArray, charBuffer, i);
 				paintSegment(segmentStart, segmentStart + charBuffer.length, SegmentType.COMMENT);
 				i += charBuffer.length;
 				segmentStart = i + 1;

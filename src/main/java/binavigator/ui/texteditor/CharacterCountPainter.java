@@ -33,6 +33,7 @@ public class CharacterCountPainter implements Highlighter.HighlightPainter {
 		g.setColor(characterLineColor);
 
 		g.fillRect(line.x, line.y, line.width, line.height);
+//		g.drawLine(line.x, line.y, line.x, line.height);
 	}
 
 	public void refreshCharacterCountLine() {
@@ -50,11 +51,12 @@ public class CharacterCountPainter implements Highlighter.HighlightPainter {
 		int maxCharacterWidth = characterWidth * controller.getCharacterCountLimit();
 
 		line.x = maxCharacterWidth;
-		line.width = 3;
+		line.width = 1;
 		line.y = 0;
 		line.height = controller.getTextPane().getHeight();
 		g.setColor(characterLineColor);
 		g.fillRect(line.x, line.y, line.width, line.height);
+//		g.drawLine(line.x, line.y, line.x, line.height);
 	}
 
 	public void repaint() {
