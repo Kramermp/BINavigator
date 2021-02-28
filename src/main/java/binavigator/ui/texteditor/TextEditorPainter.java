@@ -39,7 +39,7 @@ public class TextEditorPainter extends JComponent implements Highlighter.Highlig
 		this.activeLineColor = component.getBackground().brighter();
 		this.pp = new ParenthesesPainter(textEditorController.getTextPane(), textEditorController);
 		this.ccp = new CharacterCountPainter(textEditorController);
-		this.clp = new CaretLinePainter(textEditorController);
+//		this.clp = new CaretLinePainter(textEditorController);
 
 		try
 		{
@@ -57,7 +57,7 @@ public class TextEditorPainter extends JComponent implements Highlighter.Highlig
 
 	public void paint(Graphics g, int p0, int p1, Shape bounds, JTextComponent c)
 	{
-		clp.fillActiveLineShape(g, pp.getCharacterShape());
+//		clp.fillActiveLineShape(g, pp.getCharacterShape());
 		pp.fillParenthesesShape(g);
 
 		if(controller.getCharacterCountLineEnabled()) {
@@ -83,7 +83,7 @@ public class TextEditorPainter extends JComponent implements Highlighter.Highlig
 					e.printStackTrace();
 				}
 
-				clp.refreshActiveLine();
+//				clp.refreshActiveLine();
 				pp.refreshParenthesesShape();
 
 
