@@ -49,11 +49,11 @@ public class BINavController {
 		try {
 			switch (windowTheme) {
 				case DARK:
-					System.out.println("Setting WindowTheme to Dark");
+					log.info("Setting WindowTheme to Dark");
 					UIManager.setLookAndFeel(new FlatDarculaLaf());
 					break;
 				case LIGHT:
-					System.out.println("Setting WindowTheme to Light");
+					log.info("Setting WindowTheme to Light");
 					UIManager.setLookAndFeel(new FlatLightLaf());
 					break;
 			}
