@@ -119,6 +119,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 				charBuffer = emptyArray;
 				charBuffer = CharArrayUtil.findStringEnd(searchArray, charBuffer, i);
 				paintSegment(segmentStart, charBuffer.length, SegmentType.STRING);
+				docMap.add(i, (i + charBuffer.length - 1));
 				i += charBuffer.length -1;
 				segmentStart = i + 1;
 				charBuffer = emptyArray;

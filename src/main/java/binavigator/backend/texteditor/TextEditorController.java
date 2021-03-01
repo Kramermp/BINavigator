@@ -94,11 +94,11 @@ public class TextEditorController {
 	public int[] getHighLightArgs() {
 
 		int openIndex = checkForOpenParentheses(getTextPane().getCaretPosition());
-		if(sqlDoc.getDocMap().isInComment(openIndex)) {
+		if(sqlDoc.getDocMap().isInIgnore(openIndex)) {
 			openIndex = -1;
 		}
 		int closeIndex = checkForCloseParentheses(getTextPane().getCaretPosition());
-		if(sqlDoc.getDocMap().isInComment(closeIndex)) {
+		if(sqlDoc.getDocMap().isInIgnore(closeIndex)) {
 			closeIndex = -1;
 		}
 

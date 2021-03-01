@@ -15,7 +15,7 @@ public class DocMap {
 		ignoreSegments[ignoreSegments.length - 1] = new int[] {start, end};
 	}
 
-	public boolean isInComment(int indexToCheck) {
+	public boolean isInIgnore(int indexToCheck) {
 		for (int i = 0; i < ignoreSegments.length; i++) {
 			if (indexToCheck >= ignoreSegments[i][0] && indexToCheck <= ignoreSegments[i][1]) {
 				return true;
