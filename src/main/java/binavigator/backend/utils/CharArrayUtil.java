@@ -37,7 +37,7 @@ public class CharArrayUtil {
 		int i = startIndex + 1; //Start Index is the original '('
 
 		while(i < searchArray.length && countNeeded > 0) {
-
+			System.out.println("Checking " + searchArray[i]);
 
 			if(searchArray[i] == ')') {
 				countNeeded--;

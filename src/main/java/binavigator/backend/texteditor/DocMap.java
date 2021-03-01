@@ -26,23 +26,28 @@ public class DocMap {
 	}
 
 	public int getSearchDecrement(int indexToCheck) {
+		int nextIndex = indexToCheck - 1;
 		for(int i = 0; i < ignoreSegments.length; i++) {
-			if(indexToCheck > ignoreSegments[i][0]  && indexToCheck < ignoreSegments[i][1]) {
-				return (indexToCheck - ignoreSegments[i][0]);
+			if(nextIndex >= ignoreSegments[i][0]  && nextIndex <= ignoreSegments[i][1]) {
+				nextIndex = ignoreSegments[i][0] - 1;
+				break;
 			}
 		}
+		System.out.println(indexToCheck - nextIndex);
 
-		return 1;
+		return indexToCheck - nextIndex;
 	}
 
 	public int getSearchIncrement(int indexToCheck) {
+		int nextIndex = indexToCheck + 1;
 		for(int i = 0; i < ignoreSegments.length; i++) {
-			if(indexToCheck  > ignoreSegments[i][0]  && indexToCheck < ignoreSegments[i][1]) {
-				return (ignoreSegments[i][1] - indexToCheck);
+			if(nextIndex  >= ignoreSegments[i][0]  && nextIndex <= ignoreSegments[i][1]) {
+				nextIndex = ignoreSegments[i][1] + 1;
+				break;
 			}
 		}
 
-		return 1;
+		return nextIndex - indexToCheck;
 	}
 
 	public int size() {
