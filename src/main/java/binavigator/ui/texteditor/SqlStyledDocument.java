@@ -22,7 +22,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 	ArrayList<Integer> blockCommentStarts = new ArrayList<Integer>();
 
-	private DocMap commentMap = new DocMap();
+	private DocMap docMap = new DocMap();
 
 	public SqlStyledDocument(TextEditorController textEditorController) {
 		super();
@@ -98,7 +98,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 	public void paintDocument(int startIndex, int endIndex) {
 
-		commentMap = new DocMap();
+		docMap = new DocMap();
 		char[] searchArray = new char[0];
 
 		try {
@@ -128,7 +128,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 				charBuffer = emptyArray;
 				charBuffer = CharArrayUtil.findLineCommentEnd(searchArray, charBuffer, i);
 				paintSegment(segmentStart, charBuffer.length, SegmentType.COMMENT);
-				commentMap.add(i, (i + charBuffer.length - 1));
+				docMap.add(i, (i + charBuffer.length - 1));
 				i += charBuffer.length - 1;
 				segmentStart = i + 1;
 				charBuffer = emptyArray;
@@ -138,7 +138,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 				charBuffer = emptyArray;
 				charBuffer = CharArrayUtil.findBlockCommentEnd(searchArray, charBuffer, i);
 				paintSegment(segmentStart, charBuffer.length, SegmentType.COMMENT);
-				commentMap.add(i, (i + charBuffer.length - 1));
+				docMap.add(i, (i + charBuffer.length - 1));
 				i += charBuffer.length -1;
 				segmentStart = i + 1;
 //				try {
@@ -160,8 +160,8 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 			processSegment(charBuffer, segmentStart);
 		}
 
-//		System.out.println(commentMap.size() + " comments in this doc.");
-//		for(CommentInstance commentInstance : commentMap.getComments() ) {
+//		System.out.println(docMap.size() + " comments in this doc.");
+//		for(CommentInstance commentInstance : docMap.getComments() ) {
 //			System.out.println(commentInstance.toString());
 //		}
 	}
@@ -172,8 +172,8 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 		paintDocument(0, getLength());
 	}
 
-	public DocMap getCommentMap() {
-		return commentMap;
+	public DocMap getDocMap() {
+		return docMap;
 	}
 
 	public enum SegmentType {

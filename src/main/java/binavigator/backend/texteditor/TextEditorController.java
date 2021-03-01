@@ -94,11 +94,11 @@ public class TextEditorController {
 	public int[] getHighLightArgs() {
 
 		int openIndex = checkForOpenParentheses(getTextPane().getCaretPosition());
-		if(sqlDoc.getCommentMap().isInComment(openIndex)) {
+		if(sqlDoc.getDocMap().isInComment(openIndex)) {
 			openIndex = -1;
 		}
 		int closeIndex = checkForCloseParentheses(getTextPane().getCaretPosition());
-		if(sqlDoc.getCommentMap().isInComment(closeIndex)) {
+		if(sqlDoc.getDocMap().isInComment(closeIndex)) {
 			closeIndex = -1;
 		}
 
@@ -112,11 +112,11 @@ public class TextEditorController {
 			//Do Nothing
 		} else if (openIndex >= 0 && openIndex > closeIndex){
 			System.out.println("On an Open Parentheses");
-			closeIndex = CharArrayUtil.findCloseParentheses(openIndex, searchArray, sqlDoc.getCommentMap());
+			closeIndex = CharArrayUtil.findCloseParentheses(openIndex, searchArray, sqlDoc.getDocMap());
 		} else //noinspection ConstantConditions
 			if (closeIndex >= 0 && closeIndex > openIndex) {
 				System.out.println("On a Close Parentheses");
-				openIndex = CharArrayUtil.findOpenParentheses(closeIndex, searchArray, sqlDoc.getCommentMap());
+				openIndex = CharArrayUtil.findOpenParentheses(closeIndex, searchArray, sqlDoc.getDocMap());
 			}
 
 		System.out.println("Open: " + openIndex + " Close: " + closeIndex);
@@ -133,8 +133,8 @@ public class TextEditorController {
 
 	public void findParentheses() {
 		char[] searchArray = textEditorPanel.getTextPane().getText().toCharArray();
-		int openIndex  = CharArrayUtil.findOpenParentheses(textEditorPanel.getTextPane().getCaretPosition(), searchArray, sqlDoc.getCommentMap());
-		int closeIndex = CharArrayUtil.findCloseParentheses(textEditorPanel.getTextPane().getCaretPosition(), searchArray, sqlDoc.getCommentMap());
+		int openIndex  = CharArrayUtil.findOpenParentheses(textEditorPanel.getTextPane().getCaretPosition(), searchArray, sqlDoc.getDocMap());
+		int closeIndex = CharArrayUtil.findCloseParentheses(textEditorPanel.getTextPane().getCaretPosition(), searchArray, sqlDoc.getDocMap());
 
 
 		tePainter.resetHighlight(openIndex, closeIndex);
