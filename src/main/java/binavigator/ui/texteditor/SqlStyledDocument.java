@@ -2,7 +2,7 @@ package binavigator.ui.texteditor;
 
 import binavigator.backend.BINavController;
 import binavigator.backend.sql.SqlHelper;
-import binavigator.backend.texteditor.CommentMap;
+import binavigator.backend.texteditor.DocMap;
 import binavigator.backend.texteditor.TextEditorController;
 import binavigator.backend.utils.CharArrayUtil;
 import org.apache.commons.logging.Log;
@@ -22,7 +22,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 	ArrayList<Integer> blockCommentStarts = new ArrayList<Integer>();
 
-	private CommentMap commentMap = new CommentMap();
+	private DocMap commentMap = new DocMap();
 
 	public SqlStyledDocument(TextEditorController textEditorController) {
 		super();
@@ -98,7 +98,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 	public void paintDocument(int startIndex, int endIndex) {
 
-		commentMap = new CommentMap();
+		commentMap = new DocMap();
 		char[] searchArray = new char[0];
 
 		try {
@@ -172,7 +172,7 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 		paintDocument(0, getLength());
 	}
 
-	public CommentMap getCommentMap() {
+	public DocMap getCommentMap() {
 		return commentMap;
 	}
 
