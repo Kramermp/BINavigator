@@ -1,10 +1,12 @@
 package binavigator.backend.utils;
 
+import binavigator.backend.texteditor.CommentMap;
+
 import java.util.Arrays;
 
 public class CharArrayUtil {
 
-	public static int findOpenParentheses(int startIndex, char[] searchArray) {
+	public static int findOpenParentheses(int startIndex, char[] searchArray, CommentMap commentMap) {
 		int countNeeded = 1;
 		int i;
 
@@ -20,18 +22,19 @@ public class CharArrayUtil {
 			if (countNeeded == 0) {
 				return i;
 			}
-			i--;
+
+			i-=commentMap.getSearchDecrement(i);
 
 		}
-
 		return -1;
 	}
 
-	public static int findCloseParentheses(int startIndex, char[] searchArray) {
+	public static int findCloseParentheses(int startIndex, char[] searchArray, CommentMap commentMap) {
 		int countNeeded = 1;
 		int i = startIndex + 1; //Start Index is the original '('
 
 		while(i < searchArray.length && countNeeded > 0) {
+
 
 			if(searchArray[i] == ')') {
 				countNeeded--;
@@ -42,7 +45,7 @@ public class CharArrayUtil {
 			if (countNeeded == 0) {
 				return i;
 			}
-			i++;
+			i+=commentMap.getSearchIncrement(i);
 		}
 
 		return i;

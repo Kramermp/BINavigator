@@ -2,6 +2,7 @@ package binavigator.ui.texteditor;
 
 import binavigator.backend.BINavController;
 import binavigator.backend.sql.SqlHelper;
+import binavigator.backend.texteditor.CommentMap;
 import binavigator.backend.texteditor.TextEditorController;
 import binavigator.backend.utils.CharArrayUtil;
 import org.apache.commons.logging.Log;
@@ -21,6 +22,8 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 	ArrayList<Integer> blockCommentStarts = new ArrayList<Integer>();
 
+	private CommentMap commentMap = new CommentMap();
+
 	public SqlStyledDocument(TextEditorController textEditorController) {
 		super();
 		this.textEditorController = textEditorController;
@@ -28,13 +31,13 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 	public void insertString (int offset, String str, AttributeSet a) throws BadLocationException {
 		super.insertString(offset, str, a);
-		//long insertStartTime = System.currentTimeMillis();
+		long insertStartTime = System.currentTimeMillis();
 
 		paintDocument(0, getLength());
 
-		//long insertEndTime = System.currentTimeMillis();
+		long insertEndTime = System.currentTimeMillis();
 
-		//System.out.println("Insert Completed in " + ((insertEndTime - insertStartTime) / 1000) + "s");
+		System.out.println("Insert Completed in " + ((insertEndTime - insertStartTime) / 1000) + "s");
 	}
 
 	private char[] addCharToBuffer(char[] buffer, char charToAdd) {
@@ -44,30 +47,30 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 		return buffer;
 	}
 
-	private void paintSegment(int start, int end, SegmentType type) {
+	private void paintSegment(int start, int length, SegmentType type) {
 		switch (type) {
 			case STRING:
 				//System.out.println("Printing " + start + " - " + end + " as a string");
-				setCharacterAttributes(start, end - start,  textEditorController.getTextColorTheme().getStringStyle(), true);
+				setCharacterAttributes(start, length,  textEditorController.getTextColorTheme().getStringStyle(), true);
 				return;
 			case TEXT:
 				//System.out.println("Printing " + start + " - " + end + " as a text");
-				setCharacterAttributes(start, end - start, textEditorController.getTextColorTheme().getDefaultStyle(), false);
+				setCharacterAttributes(start, length, textEditorController.getTextColorTheme().getDefaultStyle(), false);
 				return;
 			case MISC:
-				setCharacterAttributes(start, end - start, textEditorController.getTextColorTheme().getMiscStyle(), false);
+				setCharacterAttributes(start, length, textEditorController.getTextColorTheme().getMiscStyle(), false);
 				return;
 			case NUMBER:
-				setCharacterAttributes(start, end - start, textEditorController.getTextColorTheme().getNumberStyle(), false);
+				setCharacterAttributes(start, length, textEditorController.getTextColorTheme().getNumberStyle(), false);
 				return;
 			case KEYWORD:
-				setCharacterAttributes(start, end - start, textEditorController.getTextColorTheme().getKeyWordSyle(), false);
+				setCharacterAttributes(start, length, textEditorController.getTextColorTheme().getKeyWordSyle(), false);
 				return;
 			case SECONDARY:
-				setCharacterAttributes(start, end - start, textEditorController.getTextColorTheme().getSecondaryStyle(), false);
+				setCharacterAttributes(start, length, textEditorController.getTextColorTheme().getSecondaryStyle(), false);
 				return;
 			case COMMENT:
-				setCharacterAttributes(start, end - start, textEditorController.getTextColorTheme().getCommentStyle(), false);
+				setCharacterAttributes(start, length, textEditorController.getTextColorTheme().getCommentStyle(), false);
 		}
 	}
 
@@ -78,23 +81,24 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 
 		switch (SqlHelper.getWordType(charBuffer)) {
 			case NUMBER:
-				paintSegment(segmentStart, segmentStart + charBuffer.length, SegmentType.NUMBER);
+				paintSegment(segmentStart, charBuffer.length, SegmentType.NUMBER);
 				return;
 			case KEY:
-				paintSegment(segmentStart, segmentStart + charBuffer.length, SegmentType.KEYWORD);
+				paintSegment(segmentStart, charBuffer.length, SegmentType.KEYWORD);
 				return;
 			case MISC:
-				paintSegment(segmentStart, segmentStart + charBuffer.length, SegmentType.MISC);
+				paintSegment(segmentStart, charBuffer.length, SegmentType.MISC);
 			case SECONDAY:
-				paintSegment(segmentStart, segmentStart + charBuffer.length, SegmentType.SECONDARY);
+				paintSegment(segmentStart, charBuffer.length, SegmentType.SECONDARY);
 				return;
 			case NONE:
-				paintSegment(segmentStart, segmentStart + charBuffer.length, SegmentType.TEXT);
+				paintSegment(segmentStart, charBuffer.length, SegmentType.TEXT);
 		}
 	}
 
 	public void paintDocument(int startIndex, int endIndex) {
 
+		commentMap = new CommentMap();
 		char[] searchArray = new char[0];
 
 		try {
@@ -114,17 +118,18 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 				segmentStart = i;
 				charBuffer = emptyArray;
 				charBuffer = CharArrayUtil.findStringEnd(searchArray, charBuffer, i);
-				paintSegment(segmentStart, segmentStart + charBuffer.length, SegmentType.STRING);
-				i += charBuffer.length;
+				paintSegment(segmentStart, charBuffer.length, SegmentType.STRING);
+				i += charBuffer.length -1;
 				segmentStart = i + 1;
 				charBuffer = emptyArray;
-			} else if (searchArray[i] == '-' && i != 0 && searchArray[i - 1] == '-') {
+			} else if (searchArray[i] == '-' && i != searchArray.length && searchArray[i + 1] == '-') {
 				processSegment(charBuffer, segmentStart);
-				segmentStart = i - 1;
+				segmentStart = i;
 				charBuffer = emptyArray;
-				charBuffer = CharArrayUtil.findLineCommentEnd(searchArray, charBuffer, i - 1);
-				paintSegment(segmentStart, segmentStart + charBuffer.length, SegmentType.COMMENT);
-				i += charBuffer.length - 1; //-1 because of the backwards includes of open '-'
+				charBuffer = CharArrayUtil.findLineCommentEnd(searchArray, charBuffer, i);
+				paintSegment(segmentStart, charBuffer.length, SegmentType.COMMENT);
+				commentMap.add(i, (i + charBuffer.length - 1));
+				i += charBuffer.length - 1;
 				segmentStart = i + 1;
 				charBuffer = emptyArray;
 			} else if(searchArray[i] == '/' && i!= searchArray.length && searchArray[i + 1] == '*') {
@@ -132,9 +137,15 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 				segmentStart = i;
 				charBuffer = emptyArray;
 				charBuffer = CharArrayUtil.findBlockCommentEnd(searchArray, charBuffer, i);
-				paintSegment(segmentStart, segmentStart + charBuffer.length, SegmentType.COMMENT);
-				i += charBuffer.length;
+				paintSegment(segmentStart, charBuffer.length, SegmentType.COMMENT);
+				commentMap.add(i, (i + charBuffer.length - 1));
+				i += charBuffer.length -1;
 				segmentStart = i + 1;
+//				try {
+//					System.out.println("Segment Start: " + segmentStart + " " + getText(0, getLength()).charAt(segmentStart));
+//				} catch (BadLocationException e) {
+//					e.printStackTrace();
+//				}
 				charBuffer = emptyArray;
 			} else if(searchArray[i] == ' ' || searchArray[i] == '\n' || searchArray[i] == '\t') {
 				processSegment(charBuffer, segmentStart);
@@ -148,6 +159,11 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 		if(charBuffer != emptyArray) {
 			processSegment(charBuffer, segmentStart);
 		}
+
+//		System.out.println(commentMap.size() + " comments in this doc.");
+//		for(CommentInstance commentInstance : commentMap.getComments() ) {
+//			System.out.println(commentInstance.toString());
+//		}
 	}
 
 	public void remove (int offs, int len) throws BadLocationException {
@@ -156,8 +172,13 @@ public class SqlStyledDocument extends DefaultStyledDocument {
 		paintDocument(0, getLength());
 	}
 
+	public CommentMap getCommentMap() {
+		return commentMap;
+	}
+
 	public enum SegmentType {
 		STRING,
 		NUMBER, KEYWORD, MISC, SECONDARY, TEXT, COMMENT
 	}
+
 }

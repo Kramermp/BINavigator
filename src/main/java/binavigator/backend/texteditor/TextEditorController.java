@@ -94,7 +94,13 @@ public class TextEditorController {
 	public int[] getHighLightArgs() {
 
 		int openIndex = checkForOpenParentheses(getTextPane().getCaretPosition());
+		if(sqlDoc.getCommentMap().isInComment(openIndex)) {
+			openIndex = -1;
+		}
 		int closeIndex = checkForCloseParentheses(getTextPane().getCaretPosition());
+		if(sqlDoc.getCommentMap().isInComment(closeIndex)) {
+			closeIndex = -1;
+		}
 
 		char[] searchArray = textEditorPanel.getTextPane().getText().toCharArray();
 
@@ -106,22 +112,29 @@ public class TextEditorController {
 			//Do Nothing
 		} else if (openIndex >= 0 && openIndex > closeIndex){
 			System.out.println("On an Open Parentheses");
-			closeIndex = CharArrayUtil.findCloseParentheses(openIndex, searchArray);
+			closeIndex = CharArrayUtil.findCloseParentheses(openIndex, searchArray, sqlDoc.getCommentMap());
 		} else //noinspection ConstantConditions
 			if (closeIndex >= 0 && closeIndex > openIndex) {
 				System.out.println("On a Close Parentheses");
-				openIndex = CharArrayUtil.findOpenParentheses(closeIndex, searchArray);
+				openIndex = CharArrayUtil.findOpenParentheses(closeIndex, searchArray, sqlDoc.getCommentMap());
 			}
 
 		System.out.println("Open: " + openIndex + " Close: " + closeIndex);
 
+		if(openIndex < 0) {
+			openIndex = 0;
+		}
+
+		if (closeIndex >= searchArray.length) {
+			closeIndex = searchArray.length - 1;
+		}
 		return new int[]{openIndex, closeIndex};
 	}
 
 	public void findParentheses() {
 		char[] searchArray = textEditorPanel.getTextPane().getText().toCharArray();
-		int openIndex  = CharArrayUtil.findOpenParentheses(textEditorPanel.getTextPane().getCaretPosition(), searchArray);
-		int closeIndex = CharArrayUtil.findCloseParentheses(textEditorPanel.getTextPane().getCaretPosition(), searchArray);
+		int openIndex  = CharArrayUtil.findOpenParentheses(textEditorPanel.getTextPane().getCaretPosition(), searchArray, sqlDoc.getCommentMap());
+		int closeIndex = CharArrayUtil.findCloseParentheses(textEditorPanel.getTextPane().getCaretPosition(), searchArray, sqlDoc.getCommentMap());
 
 
 		tePainter.resetHighlight(openIndex, closeIndex);
