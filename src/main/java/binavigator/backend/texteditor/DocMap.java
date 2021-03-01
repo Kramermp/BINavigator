@@ -25,15 +25,20 @@ public class DocMap {
 		return false;
 	}
 
+	/**
+	 * Determines the the decrement for searching through the Char[] of the SQL Document. If the next index is part
+	 * of a string or comment, it will return the number of steps require to pass over the comment or string
+	 *
+	 * @param  indexToCheck the index that is being searched from
+	 */
 	public int getSearchDecrement(int indexToCheck) {
 		int nextIndex = indexToCheck - 1;
 		for(int i = 0; i < ignoreSegments.length; i++) {
 			if(nextIndex >= ignoreSegments[i][0]  && nextIndex <= ignoreSegments[i][1]) {
-				nextIndex = ignoreSegments[i][0] - 1;
+				nextIndex = ignoreSegments[i][0] - 1; //Minus one because you want the index before the start
 				break;
 			}
 		}
-		System.out.println(indexToCheck - nextIndex);
 
 		return indexToCheck - nextIndex;
 	}
@@ -42,7 +47,7 @@ public class DocMap {
 		int nextIndex = indexToCheck + 1;
 		for(int i = 0; i < ignoreSegments.length; i++) {
 			if(nextIndex  >= ignoreSegments[i][0]  && nextIndex <= ignoreSegments[i][1]) {
-				nextIndex = ignoreSegments[i][1] + 1;
+				nextIndex = ignoreSegments[i][1] + 1; //Plus one because you want the index after the end
 				break;
 			}
 		}
