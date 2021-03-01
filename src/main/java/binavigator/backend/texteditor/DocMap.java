@@ -27,8 +27,8 @@ public class DocMap {
 
 	public int getSearchDecrement(int indexToCheck) {
 		for(int i = 0; i < ignoreSegments.length; i++) {
-			if(indexToCheck >= ignoreSegments[i][0]  && indexToCheck <= ignoreSegments[i][0]) {
-				return (indexToCheck - ignoreSegments[i][0]) + 1; // Magic +1 Guarantees a decrement so if you pass in start
+			if(indexToCheck > ignoreSegments[i][0]  && indexToCheck < ignoreSegments[i][1]) {
+				return (indexToCheck - ignoreSegments[i][0]);
 			}
 		}
 
@@ -37,8 +37,8 @@ public class DocMap {
 
 	public int getSearchIncrement(int indexToCheck) {
 		for(int i = 0; i < ignoreSegments.length; i++) {
-			if(indexToCheck >= ignoreSegments[i][0]  && indexToCheck <= ignoreSegments[i][0]) {
-				return (ignoreSegments[i][1] - indexToCheck) + 1; // Magic +1 Guarantees a decrement so if you pass in start
+			if(indexToCheck  > ignoreSegments[i][0]  && indexToCheck < ignoreSegments[i][1]) {
+				return (ignoreSegments[i][1] - indexToCheck);
 			}
 		}
 

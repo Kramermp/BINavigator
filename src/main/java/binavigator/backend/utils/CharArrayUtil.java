@@ -13,9 +13,12 @@ public class CharArrayUtil {
 		i = startIndex - 1;// Start Index is the original ')'
 
 		while (i > 0 && countNeeded > 0) {
+			System.out.println("Checking " + searchArray[i]);
 			if (searchArray[i] == ')') {
+				System.out.println("Found Extra ')'");
 				countNeeded++;
 			} else if(searchArray[i] == '(') {
+				System.out.println("Found '('");
 				countNeeded--;
 			}
 
